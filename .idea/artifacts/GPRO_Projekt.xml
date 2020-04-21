@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="GPRO-Projekt">
+    <output-path>$PROJECT_DIR$/out/artifacts/GPRO_Projekt</output-path>
+    <root id="root">
+      <element id="archive" name="GPRO_Projekt.jar">
+        <element id="module-output" name="GPRO-Projekt" />
+      </element>
+    </root>
+  </artifact>
+</component>
