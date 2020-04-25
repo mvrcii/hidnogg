@@ -34,7 +34,6 @@ public class Main extends Application {
         new GameLoop(canvas).start();
     }
 
-
     public static void main(String[] args) {
         launch(args);
     }

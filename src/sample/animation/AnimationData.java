@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -132,5 +133,16 @@ public class AnimationData {
 
     public ArrayList<FrameData> getFrames() {
         return frames;
+    }
+
+    private BufferedImage loadSprite() {
+        BufferedImage sprite = null;
+        try {
+            URL url = getClass().getResource("spriteSheet.png");
+            sprite = ImageIO.read(new File(url.getPath().toString()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sprite;
     }
 }
