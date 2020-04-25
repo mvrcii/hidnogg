@@ -14,7 +14,7 @@ public class FrameData {
     public FrameData(Image image, ArrayList<Point> hitBox){
         this.image = image;
         this.hitBox = hitBox;
-        System.out.println("Created Frame with "+hitBox.size()+" Pixels");
+        System.out.println("Created Frame with "+hitBox.size()+" HitBox Pixels");
     }
 
     public Image getImage() {

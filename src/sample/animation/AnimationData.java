@@ -4,13 +4,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import sample.controllers.HitBoxController;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.PixelGrabber;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -19,109 +20,73 @@ public class AnimationData {
     private ArrayList<FrameData> frames = new ArrayList<>();
 
     private static final int TILE_SIZE = 64;
-    private static final String SPRITE_SHEET_PATH = "C:\\Users\\Marcel\\Documents\\GitHub\\GPRO-Projekt\\src\\spritesheet.png";
+    private static final String SPRITE_SHEET_PATH = "src/spriteSheet.png";
 
-
-
+    // Constructor to load many different Sprites from the Sprite Sheet into one animation
     public AnimationData(Point... point) {
-        loadDifferentSprites(point);
-    }
-
-    public AnimationData(int row){
-        loadSpriteRow(row);
-    }
-
-    // TODO Noch zu erledigen!!
-    private void loadSpriteRow(int row){
-        try{
-            BufferedImage spriteSheet = ImageIO.read(new File(SPRITE_SHEET_PATH));
-            int i = 0;
-            while(i < spriteSheet.getWidth()){
-                BufferedImage bufferedImage = spriteSheet.getSubimage(i * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                frames.add(new FrameData(convertBufferedImageToImage(bufferedImage), calcHitBoxPixels(bufferedImage)));
-                i++;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Could not read spritesheet.");
-        }
-    }
-
-
-    private void loadDifferentSprites(Point... point){
         try {
             BufferedImage spriteSheet = ImageIO.read(new File(SPRITE_SHEET_PATH));
             for (Point p : point) {
                 BufferedImage sprite = spriteSheet.getSubimage(p.x * TILE_SIZE, p.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                frames.add(new FrameData(convertBufferedImageToImage(sprite), calcOutlineHitBoxPixels(sprite)));
+                frames.add(new FrameData(convertToFxImage(sprite), HitBoxController.getInstance().getHitBox(sprite)));
             }
         } catch (IOException exception) {
             exception.printStackTrace();
-            System.out.println("Could not read spritesheet.");
+            System.out.println("AnimationData: Could not read the Sprite sheet.");
         }
     }
 
-    // Converts a BufferedImage to an Image and adds it to the image ArrayList
-    private Image convertBufferedImageToImage(BufferedImage image) {
-        WritableImage wr = null;
-        if (image != null) {
-            wr = new WritableImage(image.getWidth(), image.getHeight());
-            PixelWriter pw = wr.getPixelWriter();
-            for (int x = 0; x < image.getWidth(); x++) {
-                for (int y = 0; y < image.getHeight(); y++) {
-                    pw.setArgb(x, y, image.getRGB(x, y));
+    // Constructor to load a complete Sprite Sheet row into one animation
+    public AnimationData(int row){
+        try{
+            BufferedImage spriteSheet = ImageIO.read(new File(SPRITE_SHEET_PATH));
+            int imageCount = 0;
+            while((imageCount * TILE_SIZE) < spriteSheet.getWidth()){
+                BufferedImage sprite = spriteSheet.getSubimage(imageCount * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+
+                // (1) calculate hitBox Pixels in HitBoxController
+                // (2) If hitBox != null -> continue
+                // (3) Else -> break -> All Sprites for Animation found
+                //    -->  ArrayList<Point> hitBox = HitBoxController.getInstance().getHitBoxPixels(sprite);
+                //    -->  if(hitBox != null){
+                //    -->     frames.add(new FrameData(convertToFxImage(sprite), hitBox));
+                //    -->  }else{
+                //    -->     break;
+                //    -->  }
+                ArrayList<Point> hitBox = HitBoxController.getInstance().getHitBox(sprite);
+
+                if(hitBox != null){
+                    frames.add(new FrameData(convertToFxImage(sprite), hitBox));
+                    imageCount++;
+                }else{
+                    break;
                 }
             }
+            System.out.println("Animation: ("+imageCount+"/"+spriteSheet.getWidth()/TILE_SIZE+") Sprites loaded in row "+row+".");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("AnimationData: Could not read the Sprite sheet.");
         }
-        return new ImageView(wr).getImage();
     }
 
-    // TODO ANDI - HitBoxController erzeugen und diese beiden Methoden auslagern
-    // Adds a Point(x,y) for each hitBox pixel to the hitBox ArrayList
-    private ArrayList<Point> calcHitBoxPixels(BufferedImage image) {
-        ArrayList<Point> hitBox = new ArrayList<>();
-        for (int y = 0; y < image.getWidth(); y++) {
-            for (int x = 0; x < image.getHeight(); x++) {
-                int pixel = image.getRGB(x, y);
-                boolean transparent = ((pixel >> 24) == 0x00);
-                if (!transparent) {
-                    hitBox.add(new Point(x, y));
-                }
-            }
-        }
-        //System.out.println("HitBox Pixel amount: "+hitBox.size());
-        return hitBox;
-    }
 
-    private ArrayList<Point> calcOutlineHitBoxPixels(BufferedImage bufferedImage){
-        ArrayList<Point> outlineHitBoxPixels = new ArrayList<>();
-            for (int y = 1; y < bufferedImage.getWidth(); y++) {
-                for (int x = 1; x < bufferedImage.getHeight(); x++) {
-                    int pixel = bufferedImage.getRGB(x, y);
-                    if(!transparencyCheck(pixel) && checkDirectNeighbours(bufferedImage, x, y)) {
-                        // TODO Hier könnte Performance eingespart werden
-                        outlineHitBoxPixels.add(new Point(x,y));
-                    }
-                }
-            }
-        return outlineHitBoxPixels;
-    }
+
 
 
     private boolean checkDirectNeighbours(BufferedImage image, int x, int y){
-        if(transparencyCheck(image.getRGB(x-1, y))){
+        if(checkPixelTransparency(image.getRGB(x-1, y))){
             return true;
-        }else if(transparencyCheck(image.getRGB(x, y-1))){
+        }else if(checkPixelTransparency(image.getRGB(x, y-1))){
             return true;
-        }else if(transparencyCheck(image.getRGB(x+1, y))){
+        }else if(checkPixelTransparency(image.getRGB(x+1, y))){
             return true;
-        }else if(transparencyCheck(image.getRGB(x, y+1))){
+        }else if(checkPixelTransparency(image.getRGB(x, y+1))){
             return true;
         }
         return false;
     }
 
-    private boolean transparencyCheck(int pixel){
+    private boolean checkPixelTransparency(int pixel){
         return ((pixel>>24) == 0x00);
     }
 
@@ -135,14 +100,18 @@ public class AnimationData {
         return frames;
     }
 
-    private BufferedImage loadSprite() {
-        BufferedImage sprite = null;
-        try {
-            URL url = getClass().getResource("spriteSheet.png");
-            sprite = ImageIO.read(new File(url.getPath().toString()));
-        } catch (IOException e) {
-            e.printStackTrace();
+    private static Image convertToFxImage(BufferedImage image) {
+        WritableImage wr = null;
+        if (image != null) {
+            wr = new WritableImage(image.getWidth(), image.getHeight());
+            PixelWriter pw = wr.getPixelWriter();
+            for (int x = 0; x < image.getWidth(); x++) {
+                for (int y = 0; y < image.getHeight(); y++) {
+                    pw.setArgb(x, y, image.getRGB(x, y));
+                }
+            }
         }
-        return sprite;
+        return new ImageView(wr).getImage();
     }
+
 }
