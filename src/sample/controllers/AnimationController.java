@@ -29,7 +29,6 @@ public class AnimationController {
         hashMap.put(AnimationType.PLAYER_IDLE_LOW, new AnimationData(new Point(0,0), new Point(1,0), new Point(1,0)));
         hashMap.put(AnimationType.PLAYER_IDLE_MEDIUM, new AnimationData(new Point(1,1)));
         hashMap.put(AnimationType.PLAYER_IDLE_HIGH, new AnimationData(new Point(0,2)));
-        //hashMap.put(AnimationType.PLAYER_IDLE_LOW, new AnimationData(0));
     }
 
 

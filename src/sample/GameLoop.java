@@ -32,6 +32,7 @@ public class GameLoop extends Thread implements Runnable {
     }
 
 
+
     public void run() {
 
         long lastTick = System.currentTimeMillis();
@@ -51,7 +52,13 @@ public class GameLoop extends Thread implements Runnable {
             clearScreen();
 
             // Draw all objects
-            draw();
+           draw();
+
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         }
     }
@@ -94,7 +101,8 @@ public class GameLoop extends Thread implements Runnable {
         }
     }
 
-    private void clearScreen() {
+    private void clearScreen()
+    {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 }
