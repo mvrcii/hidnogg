@@ -1,34 +1,30 @@
 package sample.animation;
 
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
-import sample.controllers.HitBoxController;
 
+import javafx.geometry.Point2D;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.PixelGrabber;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class AnimationData {
 
-    private ArrayList<FrameData> frames = new ArrayList<>();
+    private boolean imageTransparent;
+    private final ArrayList<FrameData> frames = new ArrayList<>();
 
     private static final int TILE_SIZE = 64;
-    private static final String SPRITE_SHEET_PATH = "src/spriteSheet.png";
+    private static final String SPRITE_SHEET_PATH = "src/spritesheet.png";
 
     // Constructor to load many different Sprites from the Sprite Sheet into one animation
     public AnimationData(Point... point) {
         try {
             BufferedImage spriteSheet = ImageIO.read(new File(SPRITE_SHEET_PATH));
             for (Point p : point) {
-                BufferedImage sprite = spriteSheet.getSubimage(p.x * TILE_SIZE, p.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                frames.add(new FrameData(convertToFxImage(sprite), HitBoxController.getInstance().getHitBox(sprite)));
+                BufferedImage bf = spriteSheet.getSubimage(p.x * TILE_SIZE, p.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                frames.add(calcFrameData(bf));
+                System.out.println("Frame finished");
             }
         } catch (IOException exception) {
             exception.printStackTrace();
@@ -42,27 +38,14 @@ public class AnimationData {
             BufferedImage spriteSheet = ImageIO.read(new File(SPRITE_SHEET_PATH));
             int imageCount = 0;
             while((imageCount * TILE_SIZE) < spriteSheet.getWidth()){
-                BufferedImage sprite = spriteSheet.getSubimage(imageCount * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                BufferedImage bf = spriteSheet.getSubimage(imageCount * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
-                // (1) calculate hitBox Pixels in HitBoxController
-                // (2) If hitBox != null -> continue
-                // (3) Else -> break -> All Sprites for Animation found
-                //    -->  ArrayList<Point> hitBox = HitBoxController.getInstance().getHitBoxPixels(sprite);
-                //    -->  if(hitBox != null){
-                //    -->     frames.add(new FrameData(convertToFxImage(sprite), hitBox));
-                //    -->  }else{
-                //    -->     break;
-                //    -->  }
-                ArrayList<Point> hitBox = HitBoxController.getInstance().getHitBox(sprite);
-
-                if(hitBox != null){
-                    frames.add(new FrameData(convertToFxImage(sprite), hitBox));
+                if(!imageTransparent){
+                    frames.add(calcFrameData(bf));
+                    System.out.println("Frame finished");
                     imageCount++;
-                }else{
-                    break;
                 }
             }
-            System.out.println("Animation: ("+imageCount+"/"+spriteSheet.getWidth()/TILE_SIZE+") Sprites loaded in row "+row+".");
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("AnimationData: Could not read the Sprite sheet.");
@@ -70,48 +53,105 @@ public class AnimationData {
     }
 
 
+    private FrameData calcFrameData(BufferedImage bf){
+        FrameData frameData = new FrameData(bf);                    // Initialize the frameData with the bufferedImage
+        imageTransparent = true;
+        ArrayList<Point2D> hitBox = new ArrayList<>();              // ArrayList which gets filled with hitBox pixels
+        ArrayList<Point2D> hitBoxInverted = new ArrayList<>();
+
+        System.out.println("Start Frame Reading");
+
+        int black = new Color(0,0,0).getRGB();
+        int white = new Color(255,255,255).getRGB();
+        int green = new Color(0,255,0).getRGB();
+        int blue = new Color(0,0,255).getRGB();
+
+        for (int y = 0; y < bf.getWidth(); y++) {
+            for (int x = 0; x < bf.getHeight(); x++) {
+                int pixel = bf.getRGB(x, y);                     // int Color value for a specific pixel
+
+                if(!isTransparent(pixel))                       // Check Transparency First
+                {
+                    imageTransparent = false;
+
+                    if(pixel == black)                           // Check Black Color
+                    {
+                        if(checkDirectNeighbours(bf, x, y))         // Check Outline Pixel
+                        {
+                            hitBox.add(new Point2D(x,y));           // Add to HitBox
+                            hitBoxInverted.add(new Point2D(bf.getWidth()-x, bf.getHeight()-y));
+                        }
+                    }
+                    else if(pixel == green)     // Check Green Color
+                    {
+                        System.out.println("Added Green Pixel ("+x+","+y+")");
+                        frameData.setSwordStartPoint(new Point2D(x,y));
+                    }
+                    else if(pixel == blue){      // Check Blue Color
+                        System.out.println("Added Blue Pixel ("+x+","+y+")");
+                        frameData.setSwordEndPoint(new Point2D(x,y));
+                    }
+                }
+            }
+        }
+        frameData.setHitBox(hitBox);
+        frameData.setHitBoxInverted(hitBoxInverted);
+        return frameData;
+    }
+
+    /* NOT UPDATED
+    private ArrayList<Point2D> calcHitBoxPixels(FrameData frameData) {
+        ArrayList<Point2D> hitBox = new ArrayList<>();
+        for (int y = 0; y < frameData.getBufferedImage().getWidth(); y++) {
+            for (int x = 0; x < frameData.getBufferedImage().getHeight(); x++) {
+                int pixel = frameData.getBufferedImage().getRGB(x, y);
+                boolean transparent = ((pixel >> 24) == 0x00);
+                if (!transparent) {
+                    hitBox.add(new Point2D(x, y));
+                }
+            }
+        }
+        return hitBox;
+    }
+    */
 
 
-
+    /**
+     * Help Methods
+     */
     private boolean checkDirectNeighbours(BufferedImage image, int x, int y){
-        if(checkPixelTransparency(image.getRGB(x-1, y))){
+        if(x>0){
+            if(isTransparent(image.getRGB(x-1, y))) {
+                return true;
+            }
+        }
+        if(y>0){
+            if(isTransparent(image.getRGB(x, y-1))) {
+                return true;
+            }
+        }
+        if(isTransparent(image.getRGB(x+1, y))){
             return true;
-        }else if(checkPixelTransparency(image.getRGB(x, y-1))){
-            return true;
-        }else if(checkPixelTransparency(image.getRGB(x+1, y))){
-            return true;
-        }else if(checkPixelTransparency(image.getRGB(x, y+1))){
+        }
+        if(isTransparent(image.getRGB(x, y+1))){
             return true;
         }
         return false;
     }
 
-    private boolean checkPixelTransparency(int pixel){
+    private boolean isTransparent(int pixel){
         return ((pixel>>24) == 0x00);
     }
 
-    public ArrayList<Image> getImages(){
-        return frames.stream()
-                .map(FrameData::getImage)
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
 
+    /**
+     * Getter Methods
+     */
     public ArrayList<FrameData> getFrames() {
         return frames;
     }
 
-    private static Image convertToFxImage(BufferedImage image) {
-        WritableImage wr = null;
-        if (image != null) {
-            wr = new WritableImage(image.getWidth(), image.getHeight());
-            PixelWriter pw = wr.getPixelWriter();
-            for (int x = 0; x < image.getWidth(); x++) {
-                for (int y = 0; y < image.getHeight(); y++) {
-                    pw.setArgb(x, y, image.getRGB(x, y));
-                }
-            }
-        }
-        return new ImageView(wr).getImage();
+    public static int getTileSize() {
+        return TILE_SIZE;
     }
-
 }

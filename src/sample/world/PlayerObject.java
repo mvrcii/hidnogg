@@ -3,7 +3,7 @@ package sample.world;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import sample.animation.Animation;
-import sample.controllers.AnimationController;
+import sample.controllers.DataController;
 import sample.controllers.KeyController;
 import sample.enums.Direction;
 import sample.enums.PlayerType;
@@ -15,14 +15,22 @@ import static sample.enums.AnimationType.PLAYER_IDLE_MEDIUM;
 public class PlayerObject extends MoveableObject implements  InputSystem{
 
     private PlayerType playerNumber;
+    private SwordObject swordObject;
 
     // Current Player Animation
-    private Animation animation = AnimationController.getInstance().getAnimation(PLAYER_IDLE_LOW);;
+    private Animation animation = DataController.getInstance().getAnimation(PLAYER_IDLE_LOW);
 
     public PlayerObject(int x, int y, PlayerType playerNumber, Direction direction){
         super(x,y,direction);
         this.playerNumber = playerNumber;
         animation.start();
+        initSword();
+    }
+
+
+    private void initSword(){
+        swordObject = new SwordObject(0,0,Direction.RIGHT);
+        swordObject.setPlayerObject(this);
     }
 
 
@@ -34,17 +42,19 @@ public class PlayerObject extends MoveableObject implements  InputSystem{
     @Override
     public void update() {
         animation.update();
+        swordObject.update();
     }
 
     @Override
     public void draw(GraphicsContext gc) {
-      gc.drawImage(animation.getSprite(), x, y);
+      gc.drawImage(animation.getSprite(), x, y, animation.getSprite().getWidth()* SCALE_FACTOR,animation.getSprite().getHeight()* SCALE_FACTOR);
+      swordObject.draw(gc);
     }
 
     @Override
     public void processInput() {
         KeyController keyController = KeyController.getInstance();
-        AnimationController animationController = AnimationController.getInstance();
+        DataController animationController = DataController.getInstance();
 
         if (playerNumber == PlayerType.PLAYER_ONE)
         {
@@ -130,5 +140,17 @@ public class PlayerObject extends MoveableObject implements  InputSystem{
             }
 
         }
+    }
+
+    public SwordObject getSwordObject() {
+        return swordObject;
+    }
+
+    public void setSwordObject(SwordObject swordObject) {
+        this.swordObject = swordObject;
+    }
+
+    public Animation getAnimation() {
+        return animation;
     }
 }

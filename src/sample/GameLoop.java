@@ -2,7 +2,7 @@ package sample;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import sample.controllers.AnimationController;
+import sample.controllers.DataController;
 import sample.controllers.KeyController;
 import sample.enums.Direction;
 import sample.enums.PlayerType;
@@ -10,6 +10,7 @@ import sample.world.GameObject;
 import sample.interfaces.InputSystem;
 import sample.world.MoveableObject;
 import sample.world.PlayerObject;
+import sample.world.SwordObject;
 
 import java.util.ArrayList;
 
@@ -25,6 +26,7 @@ public class GameLoop extends Thread implements Runnable {
 
     private PlayerObject player1;
     private PlayerObject player2;
+
 
     public GameLoop(Canvas canvas) {
         this.canvas = canvas;
@@ -68,13 +70,14 @@ public class GameLoop extends Thread implements Runnable {
 
     private void initialize() {
         KeyController.getInstance();
-        AnimationController.getInstance();
+        DataController.getInstance();
 
         gc = canvas.getGraphicsContext2D();
         gameObjects = new ArrayList<GameObject>();
 
         player1 = new PlayerObject(100,100, PlayerType.PLAYER_ONE, Direction.RIGHT);
         player2 = new PlayerObject(300, 100, PlayerType.PLAYER_TWO, Direction.RIGHT);
+
 
         gameObjects.add(player1);
         gameObjects.add(player2);
