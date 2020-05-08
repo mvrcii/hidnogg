@@ -27,13 +27,32 @@ public class GameLoop extends Thread implements Runnable {
     private PlayerObject player1;
     private PlayerObject player2;
 
+    private SwordObject sword1;
+    private SwordObject sword2;
 
-    public GameLoop(Canvas canvas) {
-        this.canvas = canvas;
+    public GameLoop() {
+        this.canvas = Main.canvas;
         initialize();
     }
 
 
+    private void initialize() {
+        KeyController.getInstance();
+        DataController.getInstance();
+
+        gc = canvas.getGraphicsContext2D();
+        gameObjects = new ArrayList<GameObject>();
+
+        player1 = new PlayerObject(100,100, PlayerType.PLAYER_ONE, Direction.RIGHT);
+        player2 = new PlayerObject(300, 100, PlayerType.PLAYER_TWO, Direction.RIGHT);
+        gameObjects.add(player1);
+        gameObjects.add(player2);
+
+        sword1 = new SwordObject(400,400, Direction.RIGHT, player1);
+        sword2 = new SwordObject(400,400, Direction.RIGHT, player2);
+        gameObjects.add(sword1);
+        gameObjects.add(sword2);
+    }
 
     public void run() {
 
@@ -47,14 +66,10 @@ public class GameLoop extends Thread implements Runnable {
             lastTick = currentTick;
 
 
-            // Update objects
             update();
-
-            // Clear
             clearScreen();
+            draw();
 
-            // Draw all objects
-           draw();
 
             try {
                 Thread.sleep(10);
@@ -66,25 +81,8 @@ public class GameLoop extends Thread implements Runnable {
     }
 
 
-
-
-    private void initialize() {
-        KeyController.getInstance();
-        DataController.getInstance();
-
-        gc = canvas.getGraphicsContext2D();
-        gameObjects = new ArrayList<GameObject>();
-
-        player1 = new PlayerObject(100,100, PlayerType.PLAYER_ONE, Direction.RIGHT);
-        player2 = new PlayerObject(300, 100, PlayerType.PLAYER_TWO, Direction.RIGHT);
-
-
-        gameObjects.add(player1);
-        gameObjects.add(player2);
-    }
-
-
     private void update() {
+        // TODO NOCH UNTERSCHIEDE, vlt fehler
         for (GameObject obj : gameObjects) {
             if(obj instanceof MoveableObject){
                 if(obj instanceof InputSystem){

@@ -4,6 +4,8 @@ package sample.animation;
 import javafx.geometry.Point2D;
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,84 +14,92 @@ import java.util.ArrayList;
 public class AnimationData {
 
     private boolean imageTransparent;
-    private final ArrayList<FrameData> frames = new ArrayList<>();
+    private ArrayList<FrameData> frames = new ArrayList<>();
 
     private static final int TILE_SIZE = 64;
-    private static final String SPRITE_SHEET_PATH = "src/spritesheet.png";
+    private static final String SPRITE_SHEET_PATH = "src/unbenannt.png";
 
-    // Constructor to load many different Sprites from the Sprite Sheet into one animation
-    public AnimationData(Point... point) {
-        try {
-            BufferedImage spriteSheet = ImageIO.read(new File(SPRITE_SHEET_PATH));
-            for (Point p : point) {
-                BufferedImage bf = spriteSheet.getSubimage(p.x * TILE_SIZE, p.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                frames.add(calcFrameData(bf));
-                System.out.println("Frame finished");
-            }
-        } catch (IOException exception) {
-            exception.printStackTrace();
-            System.out.println("AnimationData: Could not read the Sprite sheet.");
-        }
+    private final int black = new Color(0,0,0).getRGB();
+    private final int white = new Color(255,255,255).getRGB();
+    private final int green = new Color(0,255,0).getRGB();
+    private final int blue = new Color(0,0,255).getRGB();
+    private final int red = new Color(255,0,0).getRGB();
+
+    public AnimationData(){
+
     }
 
-    // Constructor to load a complete Sprite Sheet row into one animation
     public AnimationData(int row){
         try{
             BufferedImage spriteSheet = ImageIO.read(new File(SPRITE_SHEET_PATH));
-            int imageCount = 0;
-            while((imageCount * TILE_SIZE) < spriteSheet.getWidth()){
-                BufferedImage bf = spriteSheet.getSubimage(imageCount * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            for (int i = 0; (i * TILE_SIZE) < spriteSheet.getWidth(); ) {
+                BufferedImage bf = spriteSheet.getSubimage(i * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
-                if(!imageTransparent){
-                    frames.add(calcFrameData(bf));
-                    System.out.println("Frame finished");
-                    imageCount++;
+                if (!imageTransparent) {
+                    FrameData frame = calcFrameData(bf);
+                    if(frame.getSwordStartPoint() == null || frame.getSwordEndPoint() == null){
+                        break;
+                    }
+                    frames.add(frame);
+                    i++;
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("AnimationData: Could not read the Sprite sheet.");
         }
     }
 
 
+    public AnimationData rotate(int angle) {
+        AnimationData newAnimData = new AnimationData();
+        ArrayList<FrameData> newFrameList = new ArrayList<>();
+        for (FrameData oldFrame: frames) {
+            BufferedImage newBf = rotateBfImg(oldFrame.getBufferedImage(), angle, oldFrame.getSwordStartPoint());
+            FrameData newFrame = calcFrameData(newBf);
+            newFrame.setAngle(angle);
+            newFrame.setBufferedImage(newBf);
+            newFrame.setSwordStartPoint(oldFrame.getSwordStartPoint());
+            newFrameList.add(newFrame);
+        }
+        newAnimData.frames = newFrameList;
+        return newAnimData;
+    }
+
+    private BufferedImage rotateBfImg(BufferedImage bf, int angle, Point2D anker) {
+        double radian = Math.toRadians(angle);
+        AffineTransform affineTransform = new AffineTransform();
+        affineTransform.rotate(-radian, anker.getX(), anker.getY());
+
+        AffineTransformOp affineTransformOp = new AffineTransformOp(affineTransform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        BufferedImage rotated = new BufferedImage(bf.getWidth(),bf.getHeight(), bf.getType());
+        rotated = affineTransformOp.filter(bf,rotated);
+
+        return rotated;
+    }
+
+
+
     private FrameData calcFrameData(BufferedImage bf){
-        FrameData frameData = new FrameData(bf);                    // Initialize the frameData with the bufferedImage
-        imageTransparent = true;
-        ArrayList<Point2D> hitBox = new ArrayList<>();              // ArrayList which gets filled with hitBox pixels
+        FrameData frameData = new FrameData(bf);
+        ArrayList<Point2D> hitBox = new ArrayList<>();
         ArrayList<Point2D> hitBoxInverted = new ArrayList<>();
-
-        System.out.println("Start Frame Reading");
-
-        int black = new Color(0,0,0).getRGB();
-        int white = new Color(255,255,255).getRGB();
-        int green = new Color(0,255,0).getRGB();
-        int blue = new Color(0,0,255).getRGB();
+        imageTransparent = true;
 
         for (int y = 0; y < bf.getWidth(); y++) {
             for (int x = 0; x < bf.getHeight(); x++) {
-                int pixel = bf.getRGB(x, y);                     // int Color value for a specific pixel
-
-                if(!isTransparent(pixel))                       // Check Transparency First
-                {
+                int pixel = bf.getRGB(x, y);
+                if (!isTransparent(pixel)) {
                     imageTransparent = false;
-
-                    if(pixel == black)                           // Check Black Color
-                    {
-                        if(checkDirectNeighbours(bf, x, y))         // Check Outline Pixel
-                        {
-                            hitBox.add(new Point2D(x,y));           // Add to HitBox
-                            hitBoxInverted.add(new Point2D(bf.getWidth()-x, bf.getHeight()-y));
+                    //System.out.println(new Point(x,y).toString());
+                    if (pixel == red) {
+                        if (checkDirectNeighbours(bf, x, y)) {
+                            hitBox.add(new Point2D(x, y));
+                            hitBoxInverted.add(new Point2D(bf.getWidth() - x, bf.getHeight() - y));
                         }
-                    }
-                    else if(pixel == green)     // Check Green Color
-                    {
-                        System.out.println("Added Green Pixel ("+x+","+y+")");
-                        frameData.setSwordStartPoint(new Point2D(x,y));
-                    }
-                    else if(pixel == blue){      // Check Blue Color
-                        System.out.println("Added Blue Pixel ("+x+","+y+")");
-                        frameData.setSwordEndPoint(new Point2D(x,y));
+                    } else if (pixel == green){
+                        frameData.setSwordStartPoint(new Point2D(x, y));
+                    } else if (pixel == blue) {
+                        frameData.setSwordEndPoint(new Point2D(x, y));
                     }
                 }
             }
@@ -99,21 +109,7 @@ public class AnimationData {
         return frameData;
     }
 
-    /* NOT UPDATED
-    private ArrayList<Point2D> calcHitBoxPixels(FrameData frameData) {
-        ArrayList<Point2D> hitBox = new ArrayList<>();
-        for (int y = 0; y < frameData.getBufferedImage().getWidth(); y++) {
-            for (int x = 0; x < frameData.getBufferedImage().getHeight(); x++) {
-                int pixel = frameData.getBufferedImage().getRGB(x, y);
-                boolean transparent = ((pixel >> 24) == 0x00);
-                if (!transparent) {
-                    hitBox.add(new Point2D(x, y));
-                }
-            }
-        }
-        return hitBox;
-    }
-    */
+
 
 
     /**
@@ -130,11 +126,15 @@ public class AnimationData {
                 return true;
             }
         }
-        if(isTransparent(image.getRGB(x+1, y))){
-            return true;
+        if(x <= image.getWidth()){
+            if(isTransparent(image.getRGB(x+1, y))){
+                return true;
+            }
         }
-        if(isTransparent(image.getRGB(x, y+1))){
-            return true;
+        if(y <= image.getHeight()){
+            if(isTransparent(image.getRGB(x, y+1))){
+                return true;
+            }
         }
         return false;
     }

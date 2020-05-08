@@ -6,7 +6,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import sample.world.SwordObject;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -17,17 +16,16 @@ public class FrameData {
      * Container which holds all the relevant information of a SINGLE frame
      */
 
-    private final Image image;
-    private final BufferedImage bufferedImage;
+    private Image image;
+    private BufferedImage bufferedImage;
     private ArrayList<Point2D> hitBox;
     private ArrayList<Point2D> hitBoxInverted;
     private Point2D swordStartPoint, swordEndPoint;
+    private int angle = 0;
 
     public FrameData(BufferedImage bufferedImage){
         this.image = convertToFxImage(bufferedImage);
         this.bufferedImage = bufferedImage;
-        this.swordEndPoint = null;
-        this.swordStartPoint = null;
     }
 
     public static Image convertToFxImage(BufferedImage image) {
@@ -44,48 +42,67 @@ public class FrameData {
         return new ImageView(wr).getImage();
     }
 
-    public Image getImage() {
-        return image;
+
+    public void setBufferedImage(BufferedImage bufferedImage) {
+        this.bufferedImage = bufferedImage;
+        this.image = convertToFxImage(bufferedImage);
     }
 
-    public ArrayList<Point2D> getHitBox(Object object) {
-        /*if(object instanceof SwordObject){
-            BufferedImage tmp = new BufferedImage(this.bufferedImage);
-
-        }*/
-        return hitBox;
+    public Image getImage() {
+        return image;
     }
 
     public BufferedImage getBufferedImage() {
         return bufferedImage;
     }
 
-    public ArrayList<Point2D> getHitBoxInverted() {
-        return hitBoxInverted;
-    }
-
-    public Point2D getSwordStartPoint() {
-        return swordStartPoint;
-    }
-
-    public Point2D getSwordEndPoint() {
-        return swordEndPoint;
+    public ArrayList<Point2D> getHitBox() {
+        return hitBox;
     }
 
     public void setHitBox(ArrayList<Point2D> hitBox) {
         this.hitBox = hitBox;
     }
 
+    public ArrayList<Point2D> getHitBoxInverted() {
+        return hitBoxInverted;
+    }
+
     public void setHitBoxInverted(ArrayList<Point2D> hitBoxInverted) {
         this.hitBoxInverted = hitBoxInverted;
+    }
+
+    public Point2D getSwordStartPoint() {
+        return swordStartPoint;
     }
 
     public void setSwordStartPoint(Point2D swordStartPoint) {
         this.swordStartPoint = swordStartPoint;
     }
 
+    public Point2D getSwordEndPoint() {
+        return swordEndPoint;
+    }
+
     public void setSwordEndPoint(Point2D swordEndPoint) {
         this.swordEndPoint = swordEndPoint;
     }
 
+    public int getAngle() {
+        return angle;
+    }
+
+    public void setAngle(int angle) {
+        this.angle = angle;
+    }
+
+    public String toString(){
+        return "Image exists: "+!(image==null)+"\n" +
+                "BufferedImage exists: "+!(bufferedImage==null)+"\n" +
+                "HitBox size: "+hitBox.size()+"\n" +
+                "HitBox Inverted size: "+hitBoxInverted.size()+"\n" +
+                "Anker Start exists: "+!(swordStartPoint==null)+"\n" +
+                "Anker End exists: "+!(swordEndPoint==null)+"\n" +
+                "Sprite Angle: "+angle+"\n\n";
+    }
 }

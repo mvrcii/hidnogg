@@ -10,12 +10,10 @@ import sample.enums.PlayerType;
 import sample.interfaces.InputSystem;
 
 import static sample.enums.AnimationType.*;
-import static sample.enums.AnimationType.PLAYER_IDLE_MEDIUM;
 
 public class PlayerObject extends MoveableObject implements  InputSystem{
 
     private PlayerType playerNumber;
-    private SwordObject swordObject;
 
     // Current Player Animation
     private Animation animation = DataController.getInstance().getAnimation(PLAYER_IDLE_LOW);
@@ -24,13 +22,6 @@ public class PlayerObject extends MoveableObject implements  InputSystem{
         super(x,y,direction);
         this.playerNumber = playerNumber;
         animation.start();
-        initSword();
-    }
-
-
-    private void initSword(){
-        swordObject = new SwordObject(0,0,Direction.RIGHT);
-        swordObject.setPlayerObject(this);
     }
 
 
@@ -42,13 +33,11 @@ public class PlayerObject extends MoveableObject implements  InputSystem{
     @Override
     public void update() {
         animation.update();
-        swordObject.update();
     }
 
     @Override
     public void draw(GraphicsContext gc) {
-      gc.drawImage(animation.getSprite(), x, y, animation.getSprite().getWidth()* SCALE_FACTOR,animation.getSprite().getHeight()* SCALE_FACTOR);
-      swordObject.draw(gc);
+      gc.drawImage(animation.getSprite(), x, y, animation.getSprite().getWidth(),animation.getSprite().getHeight());
     }
 
     @Override
@@ -83,6 +72,11 @@ public class PlayerObject extends MoveableObject implements  InputSystem{
                     animation = animationController.getAnimation(PLAYER_IDLE_MEDIUM);
                     animation.start();
                 }
+                else if (animation.getType() == PLAYER_IDLE_HOLD_UP)
+                {
+                    animation = animationController.getAnimation(PLAYER_IDLE_HIGH);
+                    animation.start();
+                }
             }
 
             if (keyController.isKeyPressed(KeyCode.W))
@@ -97,6 +91,13 @@ public class PlayerObject extends MoveableObject implements  InputSystem{
                     animation = animationController.getAnimation(PLAYER_IDLE_HIGH);
                     animation.start();
                 }
+
+            }
+            if(keyController.isKeyPressed(KeyCode.F))
+            {
+                System.out.println("Pressed F");
+                animation = animationController.getAnimation(PLAYER_IDLE_HOLD_UP);
+                animation.start();
 
             }
         } else if (playerNumber == PlayerType.PLAYER_TWO)
@@ -140,14 +141,6 @@ public class PlayerObject extends MoveableObject implements  InputSystem{
             }
 
         }
-    }
-
-    public SwordObject getSwordObject() {
-        return swordObject;
-    }
-
-    public void setSwordObject(SwordObject swordObject) {
-        this.swordObject = swordObject;
     }
 
     public Animation getAnimation() {

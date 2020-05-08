@@ -2,7 +2,6 @@ package sample.animation;
 
 import javafx.scene.image.Image;
 import sample.enums.AnimationType;
-
 import java.util.ArrayList;
 
 
@@ -71,6 +70,7 @@ public class Animation {
     }
 
 
+
     public void update() {
         if (!stopped) {
             frameCount++;
@@ -90,6 +90,11 @@ public class Animation {
 
     }
 
+    public void update(double diffTime){
+
+    }
+
+
     public AnimationType getType() {
         return type;
     }
@@ -100,7 +105,4 @@ public class Animation {
 
     public FrameData getCurrentFrame(){ return frames.get(currentFrame);}
 
-    public int getCurrentFramePos(){return currentFrame;}
-
-    public AnimationData getAnimationData(){ return animationData;}
 }

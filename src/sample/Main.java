@@ -15,7 +15,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        primaryStage.setTitle("Collision Test");
+        primaryStage.setTitle("2D Stickfight");
         Group root = new Group();
         canvas = new Canvas(500, 500);
 
@@ -31,7 +31,7 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
-        new GameLoop(canvas).start();
+        new GameLoop().start();
     }
 
     public static void main(String[] args) {

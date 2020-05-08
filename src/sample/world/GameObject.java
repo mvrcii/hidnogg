@@ -5,7 +5,6 @@ import sample.enums.Direction;
 
 public abstract class GameObject {
 
-    protected final double SCALE_FACTOR = 1;
     protected int x,y;
     protected Direction direction;
 

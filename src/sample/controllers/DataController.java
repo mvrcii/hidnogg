@@ -3,16 +3,19 @@ package sample.controllers;
 
 import sample.animation.Animation;
 import sample.animation.AnimationData;
+import sample.animation.FrameData;
 import sample.enums.AnimationType;
 
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DataController {
 
     private static DataController instance;
-    private final HashMap<AnimationType, AnimationData> hashMap = new HashMap<>();
+    private final HashMap<AnimationType, AnimationData> basicAnimationData = new HashMap<>();
+    private final HashMap<Integer, AnimationData> swordAngleData = new HashMap<>();
 
     public static DataController getInstance()
     {
@@ -26,18 +29,29 @@ public class DataController {
 
     private DataController()
     {
-        //hashMap.put(AnimationType.PLAYER_IDLE_LOW, new AnimationData(new Point(0,0), new Point(1,0), new Point(1,0)));
-        hashMap.put(AnimationType.PLAYER_IDLE_LOW, new AnimationData(0));
-        hashMap.put(AnimationType.PLAYER_IDLE_MEDIUM, new AnimationData(new Point(0,1)));
-        hashMap.put(AnimationType.PLAYER_IDLE_HIGH, new AnimationData(new Point(1,1)));
+        basicAnimationData.put(AnimationType.PLAYER_IDLE_LOW, new AnimationData(0));
+        basicAnimationData.put(AnimationType.PLAYER_IDLE_MEDIUM, new AnimationData(1));
+        basicAnimationData.put(AnimationType.PLAYER_IDLE_HIGH, new AnimationData(3));
+        basicAnimationData.put(AnimationType.PLAYER_IDLE_HOLD_UP, new AnimationData(4));
 
-        System.out.println("Sword####");
-        hashMap.put(AnimationType.SWORD, new AnimationData(new Point(2,1)));
+        basicAnimationData.put(AnimationType.SWORD, new AnimationData(2));
 
+        for (int i = 1; i <= 360; i+=1) {
+            swordAngleData.put(i, basicAnimationData.get(AnimationType.SWORD).rotate(i));
+        }
+
+        // TESTING
+        ArrayList<FrameData> f = basicAnimationData.get(AnimationType.PLAYER_IDLE_HOLD_UP).getFrames();
+        System.out.println(f.size());
+        // TESTING
     }
 
 
     public Animation getAnimation(AnimationType animationType){
-        return new Animation(animationType, hashMap.get(animationType));
+        return new Animation(animationType, basicAnimationData.get(animationType));
+    }
+
+    public Animation getAnimation(AnimationType animationType, int angle){
+        return new Animation(animationType, swordAngleData.get(angle));
     }
 }

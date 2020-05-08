@@ -85,6 +85,8 @@ public class KeyController {
                 return true;
             case DOWN:
                 return true;
+            case F:
+                return true;
             default:
                 return false;
         }
