@@ -151,7 +151,4 @@ public class AnimationData {
         return frames;
     }
 
-    public static int getTileSize() {
-        return TILE_SIZE;
-    }
 }

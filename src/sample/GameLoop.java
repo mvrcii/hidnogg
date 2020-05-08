@@ -44,13 +44,17 @@ public class GameLoop extends Thread implements Runnable {
         gameObjects = new ArrayList<GameObject>();
 
         player1 = new PlayerObject(100,100, PlayerType.PLAYER_ONE, Direction.RIGHT);
-        player2 = new PlayerObject(300, 100, PlayerType.PLAYER_TWO, Direction.RIGHT);
         gameObjects.add(player1);
+
+        player2 = new PlayerObject(300, 100, PlayerType.PLAYER_TWO, Direction.RIGHT);
         gameObjects.add(player2);
 
         sword1 = new SwordObject(400,400, Direction.RIGHT, player1);
-        sword2 = new SwordObject(400,400, Direction.RIGHT, player2);
+        player1.setSwordObject(sword1);
         gameObjects.add(sword1);
+
+        sword2 = new SwordObject(400,400, Direction.RIGHT, player2);
+        player2.setSwordObject(sword2);
         gameObjects.add(sword2);
     }
 

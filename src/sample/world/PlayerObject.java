@@ -14,6 +14,7 @@ import static sample.enums.AnimationType.*;
 public class PlayerObject extends MoveableObject implements  InputSystem{
 
     private PlayerType playerNumber;
+    private SwordObject swordObject;
 
     // Current Player Animation
     private Animation animation = DataController.getInstance().getAnimation(PLAYER_IDLE_LOW);
@@ -145,5 +146,9 @@ public class PlayerObject extends MoveableObject implements  InputSystem{
 
     public Animation getAnimation() {
         return animation;
+    }
+
+    public void setSwordObject(SwordObject swordObject) {
+        this.swordObject = swordObject;
     }
 }
