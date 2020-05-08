@@ -80,7 +80,7 @@ public class GameLoop extends Thread implements Runnable {
         }
     }
 
-
+    /*
     private void update() {
         // TODO NOCH UNTERSCHIEDE, vlt fehler
         for (GameObject obj : gameObjects) {
@@ -93,6 +93,30 @@ public class GameLoop extends Thread implements Runnable {
             obj.update();
         }
         KeyController.getInstance().updateKeyController();
+    }
+    */
+
+
+    private void update() {
+        player1.update();
+        player1.processInput();
+        player2.update();
+        player2.processInput();
+        sword1.update();
+        sword2.update();
+
+        KeyController.getInstance().updateKeyController();
+
+        for (GameObject obj : gameObjects) {
+            if(obj instanceof MoveableObject){
+                if(obj instanceof InputSystem){
+                    ((InputSystem) obj).processInput();
+                }
+                ((MoveableObject) obj).update(diffSeconds);
+            }
+            obj.update();
+        }
+
     }
 
 
