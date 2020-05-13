@@ -13,28 +13,24 @@ import static sample.enums.AnimationType.*;
 
 public class PlayerObject extends MoveableObject implements  InputSystem{
 
-    private PlayerType playerNumber;
+    private final PlayerType playerNumber;
     private SwordObject swordObject;
 
-    // Current Player Animation
     private Animation animation = DataController.getInstance().getAnimation(PLAYER_IDLE_LOW);
 
     public PlayerObject(int x, int y, PlayerType playerNumber, Direction direction){
         super(x,y,direction);
         this.playerNumber = playerNumber;
-        animation.start();
+        this.swordObject = null;
     }
 
 
 
     @Override
-    public void update(double diffSeconds) {
+    public void update(long diffSeconds) {
+        animation.update(diffSeconds);
     }
 
-    @Override
-    public void update() {
-        animation.update();
-    }
 
     @Override
     public void draw(GraphicsContext gc) {
@@ -66,17 +62,14 @@ public class PlayerObject extends MoveableObject implements  InputSystem{
                 if (animation.getType() == PLAYER_IDLE_MEDIUM)
                 {
                     animation = animationController.getAnimation(PLAYER_IDLE_LOW);
-                    animation.start();
                 }
                 else if (animation.getType() == PLAYER_IDLE_HIGH)
                 {
                     animation = animationController.getAnimation(PLAYER_IDLE_MEDIUM);
-                    animation.start();
                 }
                 else if (animation.getType() == PLAYER_IDLE_HOLD_UP)
                 {
                     animation = animationController.getAnimation(PLAYER_IDLE_HIGH);
-                    animation.start();
                 }
             }
 
@@ -86,11 +79,9 @@ public class PlayerObject extends MoveableObject implements  InputSystem{
                 if (animation.getType() == PLAYER_IDLE_LOW)
                 {
                     animation = animationController.getAnimation(PLAYER_IDLE_MEDIUM);
-                    animation.start();
                 } else if (animation.getType() == PLAYER_IDLE_MEDIUM)
                 {
                     animation = animationController.getAnimation(PLAYER_IDLE_HIGH);
-                    animation.start();
                 }
 
             }
@@ -98,7 +89,6 @@ public class PlayerObject extends MoveableObject implements  InputSystem{
             {
                 System.out.println("Pressed F");
                 animation = animationController.getAnimation(PLAYER_IDLE_HOLD_UP);
-                animation.start();
 
             }
         } else if (playerNumber == PlayerType.PLAYER_TWO)
@@ -119,11 +109,9 @@ public class PlayerObject extends MoveableObject implements  InputSystem{
                 if (animation.getType() == PLAYER_IDLE_LOW)
                 {
                     animation = animationController.getAnimation(PLAYER_IDLE_MEDIUM);
-                    animation.start();
                 } else if (animation.getType() == PLAYER_IDLE_MEDIUM)
                 {
                     animation = animationController.getAnimation(PLAYER_IDLE_HIGH);
-                    animation.start();
                 }
             }
             if (keyController.isKeyPressed(KeyCode.DOWN))
@@ -132,12 +120,10 @@ public class PlayerObject extends MoveableObject implements  InputSystem{
                 if (animation.getType() == PLAYER_IDLE_MEDIUM)
                 {
                     animation = animationController.getAnimation(PLAYER_IDLE_LOW);
-                    animation.start();
                 }
                 else if (animation.getType() == PLAYER_IDLE_HIGH)
                 {
                     animation = animationController.getAnimation(PLAYER_IDLE_MEDIUM);
-                    animation.start();
                 }
             }
 

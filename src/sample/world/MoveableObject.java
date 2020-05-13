@@ -11,6 +11,4 @@ public abstract class MoveableObject extends GameObject {
         super(x, y, direction);
         this.speed = 1;
     }
-
-    public void update(double diffSeconds){};
 }

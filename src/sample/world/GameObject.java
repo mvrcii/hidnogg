@@ -17,7 +17,7 @@ public abstract class GameObject {
         this.direction = direction;
     }
 
-    public abstract void update();
+    public abstract void update(long diffSeconds);
 
     public abstract void draw(GraphicsContext gc);
 

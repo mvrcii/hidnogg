@@ -18,7 +18,6 @@ import java.util.ArrayList;
 public class GameLoop extends Thread implements Runnable {
 
 
-    private double diffSeconds;
     private Canvas canvas;
     private GraphicsContext gc;
 
@@ -66,61 +65,38 @@ public class GameLoop extends Thread implements Runnable {
 
             // Elapsed time
             long currentTick = System.currentTimeMillis();
-            diffSeconds = (currentTick - lastTick) / 1000.0;
+            long diffMillis = currentTick - lastTick;
             lastTick = currentTick;
 
 
-            update();
+            update(diffMillis);
             clearScreen();
             draw();
 
-
             try {
-                Thread.sleep(10);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
-    /*
-    private void update() {
-        // TODO NOCH UNTERSCHIEDE, vlt fehler
-        for (GameObject obj : gameObjects) {
-            if(obj instanceof MoveableObject){
-                if(obj instanceof InputSystem){
-                    ((InputSystem) obj).processInput();
-                }
-                ((MoveableObject) obj).update(diffSeconds);
-            }
-            obj.update();
-        }
-        KeyController.getInstance().updateKeyController();
-    }
-    */
 
 
-    private void update() {
-        player1.update();
-        player1.processInput();
-        player2.update();
-        player2.processInput();
-        sword1.update();
-        sword2.update();
+    private void update(long diffMillis)
+    {
+        for (GameObject obj : gameObjects)
+        {
 
-        KeyController.getInstance().updateKeyController();
+             if(obj instanceof InputSystem)
+             {
+                 ((InputSystem) obj).processInput();
+             }
 
-        for (GameObject obj : gameObjects) {
-            if(obj instanceof MoveableObject){
-                if(obj instanceof InputSystem){
-                    ((InputSystem) obj).processInput();
-                }
-                ((MoveableObject) obj).update(diffSeconds);
-            }
-            obj.update();
+            obj.update(diffMillis);
         }
 
+        KeyController.getInstance().updateKeyController();
     }
 
 

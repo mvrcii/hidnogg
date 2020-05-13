@@ -2,11 +2,11 @@ package sample.enums;
 
 
 public enum AnimationType {
-    PLAYER_IDLE_LOW(30),
-    PLAYER_IDLE_MEDIUM(20),
-    PLAYER_IDLE_HIGH(20),
-    PLAYER_IDLE_HOLD_UP(20),
-    SWORD(8);
+    PLAYER_IDLE_LOW(200),
+    PLAYER_IDLE_MEDIUM(200),
+    PLAYER_IDLE_HIGH(200),
+    PLAYER_IDLE_HOLD_UP(200),
+    SWORD(200);
 
     private int amount;
 

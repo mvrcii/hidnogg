@@ -8,6 +8,8 @@ import sample.controllers.DataController;
 import sample.enums.AnimationType;
 import sample.enums.Direction;
 
+import java.util.ArrayList;
+
 public class SwordObject extends GameObject{
 
     private Animation animation = DataController.getInstance().getAnimation(AnimationType.SWORD);
@@ -18,7 +20,6 @@ public class SwordObject extends GameObject{
     public SwordObject(int x, int y, Direction direction, PlayerObject playerObject) {
         super(x, y, direction);
         this.playerObject = playerObject;
-        animation.start();
         currentAngle = calculateRotationAngle();
     }
 
@@ -34,8 +35,7 @@ public class SwordObject extends GameObject{
 
     private int calculateRotationAngle(){
         FrameData frameData = playerObject.getAnimation().getCurrentFrame();
-        int angle = (int) frameData.getSwordStartPoint().angle(frameData.getSwordEndPoint());
-        return angle;
+        return (int) frameData.getSwordStartPoint().angle(frameData.getSwordEndPoint());
     }
 
     private void updateAngle(){
@@ -49,14 +49,13 @@ public class SwordObject extends GameObject{
             }else{
                 animation = DataController.getInstance().getAnimation(animation.getType(), currentAngle);
             }
-            animation.start();
         }
     }
 
     @Override
-    public void update() {
+    public void update(long diffSeconds) {
         updateAngle();
-        animation.update();
+        animation.update(diffSeconds);
         calculateCoordinates();
     }
 
@@ -75,5 +74,13 @@ public class SwordObject extends GameObject{
 
     public PlayerObject getPlayerObject() {
         return playerObject;
+    }
+
+
+    public ArrayList<Point2D> getSwordSpike(){
+        // TODO || Returns the points of the sword which are the closest to the enemy player
+        ArrayList<Point2D> tmp = new ArrayList<>();
+        tmp.add(new Point2D(0,0));
+        return tmp;
     }
 }
