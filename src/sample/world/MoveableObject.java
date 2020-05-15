@@ -9,6 +9,6 @@ public abstract class MoveableObject extends GameObject {
 
     public MoveableObject(int x, int y, Direction direction) {
         super(x, y, direction);
-        this.speed = 1;
+        this.speed = 2;
     }
 }

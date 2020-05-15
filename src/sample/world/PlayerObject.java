@@ -18,7 +18,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private final PlayerType playerNumber;
     private SwordObject swordObject;
-
+    boolean canAccelerate;
 
     private Animation animation = DataController.getInstance().getAnimation(PLAYER_IDLE_LOW);
 
@@ -32,6 +32,16 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     @Override
     public void update(long diffMillis) {
         animation.update(diffMillis);
+
+        y -= vy * diffMillis / 100;
+        if (y < 100){
+            vy -= (2*diffMillis/10);    //gravity
+        }else{
+            vy = 0;
+            y=100;
+        }
+
+
     }
 
 
@@ -78,13 +88,24 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 animation = animationController.getAnimation(PLAYER_IDLE_HOLD_UP);
             }
             if (keyController.isKeyPressed(KeyCode.SPACE)){
-
+                if (y == 100) {
+                    vy=20;
+                    canAccelerate = true;
+                }else {
+                    if (vy > 30){
+                        canAccelerate = false;
+                    }
+                    if(canAccelerate){
+                        vy += (3 * diffMillis / 10);
+                    }
+                }
+                /*
                 if(animation.getAnimationType() == PLAYER_JUMP){
 
                 }else{
 
                 }
-
+                */
 
             }
         } else if (playerNumber == PlayerType.PLAYER_TWO) {
