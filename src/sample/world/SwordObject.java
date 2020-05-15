@@ -18,6 +18,11 @@ public class SwordObject extends GameObject{
 
     private int currentAngle;
 
+    int swordOffSetXRight;
+    int swordOffSetYRight;
+    int playerOffSetXRight;
+    int playerOffSetYRight;
+
     public SwordObject(int x, int y, Direction direction, PlayerObject playerObject) {
         super(x, y, direction);
         this.playerObject = playerObject;
@@ -28,15 +33,15 @@ public class SwordObject extends GameObject{
     }
 
 
-    private void calculateCoordinates() {
+    private void updateCoordinates() {
         int swordOffSetXLeft = animation.getCurrentFrame().getBufferedImage().getWidth() - (int) animation.getCurrentFrame().getSwordStartPoint().getX();
         int swordOffSetYLeft = animation.getCurrentFrame().getBufferedImage().getWidth() - (int) animation.getCurrentFrame().getSwordStartPoint().getY();
 
 
-        int swordOffSetXRight = (int) animation.getCurrentFrame().getSwordStartPoint().getX();
-        int swordOffSetYRight = (int) animation.getCurrentFrame().getSwordStartPoint().getY();
-        int playerOffSetXRight = (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getX();
-        int playerOffSetYRight = (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getY();
+        swordOffSetXRight = (int) animation.getCurrentFrame().getSwordStartPoint().getX();
+        swordOffSetYRight = (int) animation.getCurrentFrame().getSwordStartPoint().getY();
+        playerOffSetXRight = (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getX();
+        playerOffSetYRight = (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getY();
 
         System.out.println("Sword Offset LEFT("+swordOffSetXLeft+"|"+swordOffSetYLeft+")");
         System.out.println("Sword Offset RIGHT("+swordOffSetXRight+"|"+swordOffSetYRight+")");
@@ -89,19 +94,26 @@ public class SwordObject extends GameObject{
         updateAngle();
         this.direction = playerObject.getDirection();
         animation.update(diffSeconds);
-        calculateCoordinates();
+        updateCoordinates();
     }
 
     @Override
     public void draw(GraphicsContext gc) {
         switch (direction) {
-            case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), x, y);
-            case RIGHT -> gc.drawImage(animation.getCurrentSprite(), x, y);
+            case LEFT -> {
+                FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), x, y);
+                gc.setLineWidth(1);
+                gc.setStroke(Color.GREEN);
+                gc.strokeLine(0,0, x, y);
+            }
+            case RIGHT -> {
+                gc.drawImage(animation.getCurrentSprite(), x, y);
+                gc.setLineWidth(1);
+                gc.setStroke(Color.GREEN);
+                gc.strokeLine(0,0, x+swordOffSetXRight, y+swordOffSetYRight);
+            }
         }
-        gc.setLineWidth(1);
-        gc.setStroke(Color.GREEN);
-        gc.strokeLine(0,0, x,y);
-        //gc.drawImage(animation.getSprite(), x, y);
+
     }
 
     public Animation getAnimation() {

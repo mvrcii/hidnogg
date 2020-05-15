@@ -73,10 +73,18 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 } else if (animation.getAnimationType() == PLAYER_IDLE_MEDIUM) {
                     animation = animationController.getAnimation(PLAYER_IDLE_HIGH);
                 }
-
             }
             if (keyController.isKeyPressed(KeyCode.F)) {
                 animation = animationController.getAnimation(PLAYER_IDLE_HOLD_UP);
+            }
+            if (keyController.isKeyPressed(KeyCode.SPACE)){
+
+                if(animation.getAnimationType() == PLAYER_JUMP){
+
+                }else{
+
+                }
+
 
             }
         } else if (playerNumber == PlayerType.PLAYER_TWO) {
