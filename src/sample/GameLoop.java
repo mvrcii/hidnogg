@@ -2,15 +2,11 @@ package sample;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import sample.controllers.DataController;
-import sample.controllers.KeyController;
+import sample.controllers.*;
 import sample.enums.Direction;
 import sample.enums.PlayerType;
-import sample.world.GameObject;
+import sample.world.*;
 import sample.interfaces.InputSystem;
-import sample.world.MoveableObject;
-import sample.world.PlayerObject;
-import sample.world.SwordObject;
 
 import java.util.ArrayList;
 
@@ -21,7 +17,9 @@ public class GameLoop extends Thread implements Runnable {
     private Canvas canvas;
     private GraphicsContext gc;
 
-    public static ArrayList<GameObject> gameObjects;
+    public static ArrayList<GameObject> gameObjects = new ArrayList<>();
+    public static ArrayList<Controller> gameControllers = new ArrayList<>();
+
 
     private PlayerObject player1;
     private PlayerObject player2;
@@ -36,11 +34,15 @@ public class GameLoop extends Thread implements Runnable {
 
 
     private void initialize() {
-        KeyController.getInstance();
-        DataController.getInstance();
+        gameControllers.add(KeyController.getInstance());
+        gameControllers.add(DataController.getInstance());
+        gameControllers.add(DirectionController.getInstance());
 
         gc = canvas.getGraphicsContext2D();
-        gameObjects = new ArrayList<GameObject>();
+
+        FPSObject fpsObject = new FPSObject();
+        fpsObject.setPrintMode(false);
+        gameObjects.add(fpsObject);
 
         player1 = new PlayerObject(100,100, PlayerType.PLAYER_ONE, Direction.RIGHT);
         gameObjects.add(player1);
@@ -74,7 +76,7 @@ public class GameLoop extends Thread implements Runnable {
             draw();
 
             try {
-                Thread.sleep(100);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -90,13 +92,16 @@ public class GameLoop extends Thread implements Runnable {
 
              if(obj instanceof InputSystem)
              {
-                 ((InputSystem) obj).processInput();
+                 ((InputSystem) obj).processInput(diffMillis);
              }
 
             obj.update(diffMillis);
         }
 
-        KeyController.getInstance().updateKeyController();
+        for(Controller con : gameControllers){
+            con.update(diffMillis);
+        }
+
     }
 
 
@@ -110,4 +115,6 @@ public class GameLoop extends Thread implements Runnable {
     {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
+
+
 }

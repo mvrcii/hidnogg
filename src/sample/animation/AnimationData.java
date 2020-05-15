@@ -2,6 +2,8 @@ package sample.animation;
 
 
 import javafx.geometry.Point2D;
+import sample.enums.Direction;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -142,7 +144,6 @@ public class AnimationData {
     private boolean isTransparent(int pixel){
         return ((pixel>>24) == 0x00);
     }
-
 
     /**
      * Getter Methods

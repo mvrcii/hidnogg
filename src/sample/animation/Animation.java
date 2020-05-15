@@ -2,29 +2,22 @@ package sample.animation;
 
 import javafx.scene.image.Image;
 import sample.enums.AnimationType;
-import java.util.ArrayList;
-
 
 public class Animation {
 
     private final AnimationType animationType;
-    private final ArrayList<FrameData> frames;
+    private final AnimationData animationData;
 
-
-
-
-    private int currentFrame;               // animations current frame
-    private final int totalFrames;                // total amount of frames for your animation
-
-
+    private int currentFrame;
+    private final int totalFrames;
     private double animationTimer;
 
     public Animation(AnimationType type, AnimationData animationData) {
         this.animationType = type;
-        this.frames = animationData.getFrames();
+        this.animationData = animationData;
 
         this.currentFrame = 0;
-        this.totalFrames = this.frames.size();
+        this.totalFrames = animationData.getFrames().size();
 
         this.animationTimer = 0;
     }
@@ -37,14 +30,12 @@ public class Animation {
 
     public void update(long diffMillis)
     {
-        System.out.println(diffMillis);
-
         animationTimer += diffMillis;
 
 
         while (animationTimer >= animationType.getDuration())
         {
-            animationTimer -= (double) animationType.getDuration();
+            animationTimer -= animationType.getDuration();
 
             if (currentFrame == totalFrames -1)
             {
@@ -59,16 +50,14 @@ public class Animation {
 
 
 
-
-
-    public AnimationType getType() {
+    public AnimationType getAnimationType() {
         return animationType;
     }
 
-    public Image getSprite() {
-        return frames.get(currentFrame).getImage();
+    public Image getCurrentSprite() {
+        return animationData.getFrames().get(currentFrame).getImage();
     }
 
-    public FrameData getCurrentFrame(){ return frames.get(currentFrame);}
+    public FrameData getCurrentFrame(){ return animationData.getFrames().get(currentFrame);}
 
 }

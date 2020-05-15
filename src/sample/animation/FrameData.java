@@ -2,6 +2,7 @@ package sample.animation;
 
 
 import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
@@ -40,6 +41,12 @@ public class FrameData {
             }
         }
         return new ImageView(wr).getImage();
+    }
+
+    public static void drawHorizontallyFlipped(GraphicsContext gc, Image image, int x, int y){
+        double width = image.getWidth();
+        double height = image.getHeight();
+        gc.drawImage(image, x+(width/2),y, -width, height);
     }
 
 

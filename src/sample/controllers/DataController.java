@@ -3,15 +3,11 @@ package sample.controllers;
 
 import sample.animation.Animation;
 import sample.animation.AnimationData;
-import sample.animation.FrameData;
 import sample.enums.AnimationType;
 
-
-import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DataController {
+public class DataController extends Controller {
 
     private static DataController instance;
     private final HashMap<AnimationType, AnimationData> basicAnimationData = new HashMap<>();
@@ -21,6 +17,7 @@ public class DataController {
     {
         if(instance == null)
         {
+            System.out.println("Data Controller instantiated");
             instance = new DataController();
         }
         return instance;
@@ -41,9 +38,14 @@ public class DataController {
         }
 
         // TESTING
-        ArrayList<FrameData> f = basicAnimationData.get(AnimationType.PLAYER_IDLE_HOLD_UP).getFrames();
-        System.out.println(f.size());
+        //ArrayList<FrameData> f = basicAnimationData.get(AnimationType.PLAYER_IDLE_HOLD_UP).getFrames();
+        //System.out.println(f.size());
         // TESTING
+    }
+
+    @Override
+    public void update(long diffMillis) {
+
     }
 
 

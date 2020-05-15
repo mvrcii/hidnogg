@@ -8,7 +8,7 @@ import sample.Main;
 
 import java.util.ArrayList;
 
-public class KeyController {
+public class KeyController extends Controller {
 
     private KeyObject keyObject, previousKeyObject;
     private Canvas canvas;
@@ -17,6 +17,7 @@ public class KeyController {
 
     public static KeyController getInstance() {
         if (instance == null) {
+            System.out.println("Key Controller instantiated");
             instance = new KeyController();
         }
         return instance;
@@ -47,7 +48,8 @@ public class KeyController {
         });
     }
 
-    public void updateKeyController() {
+    @Override
+    public void update(long diffMillis) {
         previousKeyObject = keyObject;
         keyObject = new KeyObject();
         keyObject.getKeys().addAll(previousKeyObject.getKeys());
