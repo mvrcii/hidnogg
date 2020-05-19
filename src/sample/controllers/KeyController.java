@@ -7,13 +7,14 @@ import javafx.scene.input.KeyEvent;
 import sample.Main;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class KeyController extends Controller {
 
     private KeyObject keyObject, previousKeyObject;
     private Canvas canvas;
 
-    long time;
+    private long time;
 
     private static KeyController instance;
 
@@ -37,7 +38,13 @@ public class KeyController extends Controller {
                 if (!keyObject.keys.containsKey(keyEvent.getCode())) {
                     keyObject.keys.put(keyEvent.getCode(), 0L);
                 }else{
-                    keyObject.keys.replace(keyEvent.getCode(), keyObject.keys.get(keyEvent.getCode())+time);
+                    keyObject.keys.compute(keyEvent.getCode(), (key, oldValue) -> {
+                        if(keyEvent.getCode() != null){
+                            return oldValue+time;
+                        }else{
+                            return 0L;
+                        }
+                    });
                 }
             }
         });
@@ -53,18 +60,9 @@ public class KeyController extends Controller {
     @Override
     public void update(long diffMillis) {
         time = diffMillis;
-        //keyObject.print();
 
         previousKeyObject = keyObject;          // Derzeitiges KeyObject abspeichern
         keyObject = new KeyObject();            // Neues KeyObject erzeugen
-
-        /*HashMap<KeyCode, Long> hashMap = previousKeyObject.getKeyHashMap();
-        hashMap.forEach((key, value) ->
-        {
-            //System.out.println("Value vorher " + value);
-            value =  value + diffMillis;
-            //System.out.println("Key: "+key+" Value danach: "+value);
-        });*/
 
         keyObject.getKeyHashMap().putAll(previousKeyObject.getKeyHashMap());    // Alle vorherigen Keys in das neue KeyObject kopieren
     }
@@ -86,31 +84,39 @@ public class KeyController extends Controller {
     // Keys which are only allowed to activate once per press
     private boolean isSinglePressKey(KeyCode keyCode) {
         return switch (keyCode) {
-            case W, S, UP, DOWN, F -> true;
+            case W, S, UP, DOWN -> true;
             default -> false;
         };
     }
 
     public static class KeyObject {
 
-        private final HashMap<KeyCode, Long> keys;
+        private final ConcurrentHashMap<KeyCode, Long> keys;
 
         public KeyObject() {
-            keys = new HashMap<>();
+            keys = new ConcurrentHashMap<>();
         }
 
-        public HashMap<KeyCode, Long> getKeyHashMap() {
+        public ConcurrentHashMap<KeyCode, Long> getKeyHashMap() {
             return keys;
         }
 
         public void print(){
-            keys.forEach((key, value) -> System.out.println("Key: "+key+" Value: "+value));
+           keys.forEach((key, value) -> System.out.println("Key: "+key+" Value: "+value));
         }
 
     }
 
+    public boolean isKeyReleased(KeyCode keyCode){
+        return !keyObject.getKeyHashMap().containsKey(keyCode) && previousKeyObject.getKeyHashMap().containsKey(keyCode);
+    }
+
     public long getKeyPressedTime(KeyCode keyCode){
-        return keyObject.getKeyHashMap().get(keyCode);
+        if(keyObject.getKeyHashMap().containsKey(keyCode)){
+            return keyObject.getKeyHashMap().get(keyCode);
+        }
+        return 0;
+
     }
 
 }

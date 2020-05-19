@@ -19,7 +19,7 @@ public class AnimationData {
     private ArrayList<FrameData> frames = new ArrayList<>();
 
     private static final int TILE_SIZE = 64;
-    private static final String SPRITE_SHEET_PATH = "src/spritesheet.png";
+    private static final String SPRITE_SHEET_PATH = "src/test.png";
 
     private final int black = new Color(0,0,0).getRGB();
     private final int white = new Color(255,255,255).getRGB();
@@ -39,12 +39,18 @@ public class AnimationData {
 
                 if (!imageTransparent) {
                     FrameData frame = calcFrameData(bf);
+
                     if(frame.getSwordStartPoint() == null || frame.getSwordEndPoint() == null){
+
+                        //System.out.println("No sword start/end point found, row: "+row);
                         break;
                     }
+
                     frames.add(frame);
                     i++;
                 }
+
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -92,7 +98,7 @@ public class AnimationData {
                 int pixel = bf.getRGB(x, y);
                 if (!isTransparent(pixel)) {
                     imageTransparent = false;
-                    //System.out.println(new Point(x,y).toString());
+
                     if (pixel == red) {
                         if (checkDirectNeighbours(bf, x, y)) {
                             hitBox.add(new Point2D(x, y));
@@ -100,6 +106,7 @@ public class AnimationData {
                         }
                     } else if (pixel == green){
                         frameData.setSwordStartPoint(new Point2D(x, y));
+                        frameData.setSwordStartPointInverted(new Point2D(bf.getWidth() - x, y));
                     } else if (pixel == blue) {
                         frameData.setSwordEndPoint(new Point2D(x, y));
                     }
@@ -149,7 +156,12 @@ public class AnimationData {
      * Getter Methods
      */
     public ArrayList<FrameData> getFrames() {
-        return frames;
+        if(frames.size() > 0){
+            return frames;
+        }
+        else{
+            throw new IllegalArgumentException("There are no frames in the frameData Arraylist.");
+        }
     }
 
 }

@@ -2,7 +2,6 @@ package sample.world;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import sample.animation.Animation;
 import sample.animation.FrameData;
 import sample.controllers.DataController;
@@ -18,10 +17,6 @@ public class SwordObject extends GameObject{
 
     private int currentAngle;
 
-    int swordOffSetXRight;
-    int swordOffSetYRight;
-    int playerOffSetXRight;
-    int playerOffSetYRight;
 
     public SwordObject(int x, int y, Direction direction, PlayerObject playerObject) {
         super(x, y, direction);
@@ -34,38 +29,22 @@ public class SwordObject extends GameObject{
 
 
     private void updateCoordinates() {
-        int swordOffSetXLeft = animation.getCurrentFrame().getBufferedImage().getWidth() - (int) animation.getCurrentFrame().getSwordStartPoint().getX();
-        int swordOffSetYLeft = animation.getCurrentFrame().getBufferedImage().getWidth() - (int) animation.getCurrentFrame().getSwordStartPoint().getY();
-
-
-        swordOffSetXRight = (int) animation.getCurrentFrame().getSwordStartPoint().getX();
-        swordOffSetYRight = (int) animation.getCurrentFrame().getSwordStartPoint().getY();
-        playerOffSetXRight = (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getX();
-        playerOffSetYRight = (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getY();
-
-        //System.out.println("Sword Offset LEFT("+swordOffSetXLeft+"|"+swordOffSetYLeft+")");
-        //System.out.println("Sword Offset RIGHT("+swordOffSetXRight+"|"+swordOffSetYRight+")");
-        //System.out.println("Sword Offset RIGHT("+(swordOffSetXRight+swordOffSetXLeft)+"|"+(swordOffSetYRight+swordOffSetYLeft)+")\n");
-
         switch (direction){
-            case RIGHT ->
-                    {
-                        this.x = playerObject.x + playerOffSetXRight - swordOffSetXRight;
-                        this.y = playerObject.y + playerOffSetYRight - swordOffSetYRight;
-                    }
             case LEFT ->
                     {
-                        this.x = playerObject.x +
-                                (playerObject.getAnimation().getCurrentFrame().getBufferedImage().getWidth() -
-                                        (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getX());
-
-                        this.y = playerObject.y -
-                                (playerObject.getAnimation().getCurrentFrame().getBufferedImage().getHeight() -
-                                        (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getY());
-
+                        this.x = playerObject.x + (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPointInverted().getX()
+                        - (int) animation.getCurrentFrame().getSwordStartPointInverted().getX();
+                        this.y = playerObject.y + (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPointInverted().getY()
+                                - (int) animation.getCurrentFrame().getSwordStartPointInverted().getY();
                     }
-        };
-
+            case RIGHT ->
+                    {
+                        this.x = playerObject.x + (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getX()
+                        - (int) animation.getCurrentFrame().getSwordStartPoint().getX();
+                        this.y = playerObject.y + (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getY()
+                        - (int) animation.getCurrentFrame().getSwordStartPoint().getY();
+                    }
+        }
     }
 
     private int calculateRotationAngle(){
@@ -79,7 +58,6 @@ public class SwordObject extends GameObject{
                 f.getSwordEndPoint().getY()-f.getSwordStartPoint().getY());
         if(currentAngle != newAngle){
             currentAngle = newAngle;
-            //System.out.println("Angle changed to: "+currentAngle);
             if(currentAngle == 0){
                 animation = DataController.getInstance().getAnimation(animation.getAnimationType());
             }else{
@@ -100,20 +78,9 @@ public class SwordObject extends GameObject{
     @Override
     public void draw(GraphicsContext gc) {
         switch (direction) {
-            case LEFT -> {
-                FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), x, y);
-                gc.setLineWidth(1);
-                gc.setStroke(Color.GREEN);
-                gc.strokeLine(0,0, x, y);
-            }
-            case RIGHT -> {
-                gc.drawImage(animation.getCurrentSprite(), x, y);
-                gc.setLineWidth(1);
-                gc.setStroke(Color.GREEN);
-                gc.strokeLine(0,0, x+swordOffSetXRight, y+swordOffSetYRight);
-            }
+            case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), x, y);
+            case RIGHT -> gc.drawImage(animation.getCurrentSprite(), x, y);
         }
-
     }
 
     public Animation getAnimation() {

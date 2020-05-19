@@ -3,8 +3,10 @@ package sample.controllers;
 
 import sample.animation.Animation;
 import sample.animation.AnimationData;
+import sample.animation.FrameData;
 import sample.enums.AnimationType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DataController extends Controller {
@@ -30,6 +32,7 @@ public class DataController extends Controller {
         basicAnimationData.put(AnimationType.PLAYER_IDLE_MEDIUM, new AnimationData(6));
         basicAnimationData.put(AnimationType.PLAYER_IDLE_HIGH, new AnimationData(7));
         basicAnimationData.put(AnimationType.PLAYER_IDLE_HOLD_UP, new AnimationData(8));
+        basicAnimationData.put(AnimationType.PLAYER_JUMP_PEAK, new AnimationData(4));
 
         basicAnimationData.put(AnimationType.SWORD, new AnimationData(0));
 
@@ -38,8 +41,8 @@ public class DataController extends Controller {
         }
 
         // TESTING
-        //ArrayList<FrameData> f = basicAnimationData.get(AnimationType.PLAYER_IDLE_HOLD_UP).getFrames();
-        //System.out.println(f.size());
+        ArrayList<FrameData> f = basicAnimationData.get(AnimationType.PLAYER_JUMP_PEAK).getFrames();
+        System.out.println(f.size());
         // TESTING
     }
 

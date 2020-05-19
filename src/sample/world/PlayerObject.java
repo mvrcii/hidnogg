@@ -1,7 +1,7 @@
 package sample.world;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
+import sample.GameLoop;
 import sample.animation.Animation;
 import sample.animation.FrameData;
 import sample.controllers.DataController;
@@ -16,14 +16,16 @@ import static sample.enums.AnimationType.*;
 
 public class PlayerObject extends MoveableObject implements InputSystem {
 
+    private final KeySet keySet;
     private final PlayerType playerNumber;
     private SwordObject swordObject;
     boolean canAccelerate;
 
     private Animation animation = DataController.getInstance().getAnimation(PLAYER_IDLE_LOW);
 
-    public PlayerObject(int x, int y, PlayerType playerNumber, Direction direction) {
+    public PlayerObject(int x, int y, PlayerType playerNumber, Direction direction, KeySet keySet) {
         super(x, y, direction);
+        this.keySet = keySet;
         this.playerNumber = playerNumber;
         this.swordObject = null;
     }
@@ -32,16 +34,13 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     @Override
     public void update(long diffMillis) {
         animation.update(diffMillis);
-
         y -= vy * diffMillis / 100;
         if (y < 100){
             vy -= (2*diffMillis/10);    //gravity
         }else{
             vy = 0;
-            y=100;
+            y= 100;
         }
-
-
     }
 
 
@@ -56,82 +55,64 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     @Override
     public void processInput(long diffMillis) {
-        KeyController keyController = KeyController.getInstance();
-        DataController animationController = DataController.getInstance();
+        KeyController keyCon = KeyController.getInstance();
+        DataController animCon = DataController.getInstance();
 
-
-        if (playerNumber == PlayerType.PLAYER_ONE) {
-            if (keyController.isKeyPressed(KeyCode.D)) {
-                x += speed * diffMillis / 10;
-            }
-            if (keyController.isKeyPressed(KeyCode.A)) {
-                x -= speed * diffMillis / 10;
-            }
-            if (keyController.isKeyPressed(KeyCode.S)) {
-                if (animation.getAnimationType() == PLAYER_IDLE_MEDIUM) {
-                    animation = animationController.getAnimation(PLAYER_IDLE_LOW);
-                } else if (animation.getAnimationType() == PLAYER_IDLE_HIGH) {
-                    animation = animationController.getAnimation(PLAYER_IDLE_MEDIUM);
-                } else if (animation.getAnimationType() == PLAYER_IDLE_HOLD_UP) {
-                    animation = animationController.getAnimation(PLAYER_IDLE_HIGH);
-                }
-            }
-
-            if (keyController.isKeyPressed(KeyCode.W)) {
-                if (animation.getAnimationType() == PLAYER_IDLE_LOW) {
-                    animation = animationController.getAnimation(PLAYER_IDLE_MEDIUM);
-                } else if (animation.getAnimationType() == PLAYER_IDLE_MEDIUM) {
-                    animation = animationController.getAnimation(PLAYER_IDLE_HIGH);
-                }
-            }
-            if (keyController.isKeyPressed(KeyCode.F)) {
-                System.out.println(keyController.getKeyPressedTime(KeyCode.D));
-                animation = animationController.getAnimation(PLAYER_IDLE_HOLD_UP);
-            }
-            if (keyController.isKeyPressed(KeyCode.SPACE)){
-                if (y == 100) {
-                    vy=20;
-                    canAccelerate = true;
-                }else {
-                    if (vy > 30){
-                        canAccelerate = false;
-                    }
-                    if(canAccelerate){
-                        vy += (3 * diffMillis / 10);
-                    }
-                }
-                /*
-                if(animation.getAnimationType() == PLAYER_JUMP){
-
-                }else{
-
-                }
-                */
-
-            }
-        } else if (playerNumber == PlayerType.PLAYER_TWO) {
-            if (keyController.isKeyPressed(KeyCode.RIGHT)) {
-                x += speed * diffMillis / 10;
-            }
-            if (keyController.isKeyPressed(KeyCode.LEFT)) {
-                x -= speed * diffMillis / 10;
-            }
-            if (keyController.isKeyPressed(KeyCode.UP)) {
-                if (animation.getAnimationType() == PLAYER_IDLE_LOW) {
-                    animation = animationController.getAnimation(PLAYER_IDLE_MEDIUM);
-                } else if (animation.getAnimationType() == PLAYER_IDLE_MEDIUM) {
-                    animation = animationController.getAnimation(PLAYER_IDLE_HIGH);
-                }
-            }
-            if (keyController.isKeyPressed(KeyCode.DOWN)) {
-                if (animation.getAnimationType() == PLAYER_IDLE_MEDIUM) {
-                    animation = animationController.getAnimation(PLAYER_IDLE_LOW);
-                } else if (animation.getAnimationType() == PLAYER_IDLE_HIGH) {
-                    animation = animationController.getAnimation(PLAYER_IDLE_MEDIUM);
-                }
-            }
-
+        // MOVE RIGHT
+        if(keyCon.isKeyPressed(keySet.getMoveRightKey())){
+            x += speed * diffMillis / 10;
         }
+        // MOVE LEFT
+        if(keyCon.isKeyPressed(keySet.getMoveLeftKey())){
+            x -= speed * diffMillis / 10;
+        }
+        // CROUCH & CHANGE SWORD POSITION
+        if(keyCon.isKeyPressed(keySet.getCrouchKey())){
+            if (animation.getAnimationType() == PLAYER_IDLE_MEDIUM) {
+                animation = animCon.getAnimation(PLAYER_IDLE_LOW);
+            } else if (animation.getAnimationType() == PLAYER_IDLE_HIGH) {
+                animation = animCon.getAnimation(PLAYER_IDLE_MEDIUM);
+            } else if (animation.getAnimationType() == PLAYER_IDLE_HOLD_UP) {
+                animation = animCon.getAnimation(PLAYER_IDLE_HIGH);
+            }
+        }
+        // HOLD UP THE SWORD TO THROW
+        if(keyCon.isKeyPressed(keySet.getHoldUpKey())){
+            animation = animCon.getAnimation(PLAYER_IDLE_HOLD_UP);
+        }
+        if(keyCon.isKeyReleased(keySet.getHoldUpKey())){
+            animation = animCon.getAnimation(PLAYER_IDLE_LOW);
+        }
+        // CHANGE SWORD POSITION (LOW-HIGH)
+        if(keyCon.isKeyPressed(keySet.getUpKey())){
+            if (animation.getAnimationType() == PLAYER_IDLE_LOW) {
+                animation = animCon.getAnimation(PLAYER_IDLE_MEDIUM);
+            } else if (animation.getAnimationType() == PLAYER_IDLE_MEDIUM) {
+                animation = animCon.getAnimation(PLAYER_IDLE_HIGH);
+            }
+        }
+        // JUMP
+        if(keyCon.isKeyPressed(keySet.getJumpKey())){
+            if(!(animation.getAnimationType() == PLAYER_JUMP_PEAK)){
+                animation = animCon.getAnimation(PLAYER_JUMP_PEAK);
+            }
+            if (y == GameLoop.groundLevel) {
+                vy=20;
+                canAccelerate = true;
+            }else {
+                if (vy > 30){
+                    canAccelerate = false;
+                }
+                if (canAccelerate){
+                    vy += (3 * diffMillis / 10);
+                }
+            }
+        }
+        if(keyCon.isKeyReleased(keySet.getJumpKey())){
+            System.out.println("released");
+            animation = animCon.getAnimation(PLAYER_IDLE_LOW);
+        }
+
     }
 
     public Animation getAnimation() {

@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import sample.enums.Direction;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class FrameData {
     private ArrayList<Point2D> hitBox;
     private ArrayList<Point2D> hitBoxInverted;
     private Point2D swordStartPoint, swordEndPoint;
+    private Point2D swordStartPointInverted;
     private int angle = 0;
 
     public FrameData(BufferedImage bufferedImage){
@@ -79,7 +81,7 @@ public class FrameData {
         this.hitBoxInverted = hitBoxInverted;
     }
 
-    public Point2D getSwordStartPoint() {
+    public Point2D getSwordStartPoint(){
         return swordStartPoint;
     }
 
@@ -101,6 +103,14 @@ public class FrameData {
 
     public void setAngle(int angle) {
         this.angle = angle;
+    }
+
+    public Point2D getSwordStartPointInverted() {
+        return swordStartPointInverted;
+    }
+
+    public void setSwordStartPointInverted(Point2D swordStartPointInverted) {
+        this.swordStartPointInverted = swordStartPointInverted;
     }
 
     public String toString(){
