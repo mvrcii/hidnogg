@@ -85,6 +85,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 }
             }
             if (keyController.isKeyPressed(KeyCode.F)) {
+                System.out.println(keyController.getKeyPressedTime(KeyCode.D));
                 animation = animationController.getAnimation(PLAYER_IDLE_HOLD_UP);
             }
             if (keyController.isKeyPressed(KeyCode.SPACE)){

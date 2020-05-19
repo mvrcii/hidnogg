@@ -43,9 +43,9 @@ public class SwordObject extends GameObject{
         playerOffSetXRight = (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getX();
         playerOffSetYRight = (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getY();
 
-        System.out.println("Sword Offset LEFT("+swordOffSetXLeft+"|"+swordOffSetYLeft+")");
-        System.out.println("Sword Offset RIGHT("+swordOffSetXRight+"|"+swordOffSetYRight+")");
-        System.out.println("Sword Offset RIGHT("+(swordOffSetXRight+swordOffSetXLeft)+"|"+(swordOffSetYRight+swordOffSetYLeft)+")\n");
+        //System.out.println("Sword Offset LEFT("+swordOffSetXLeft+"|"+swordOffSetYLeft+")");
+        //System.out.println("Sword Offset RIGHT("+swordOffSetXRight+"|"+swordOffSetYRight+")");
+        //System.out.println("Sword Offset RIGHT("+(swordOffSetXRight+swordOffSetXLeft)+"|"+(swordOffSetYRight+swordOffSetYLeft)+")\n");
 
         switch (direction){
             case RIGHT ->

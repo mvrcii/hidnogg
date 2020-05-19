@@ -6,12 +6,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import sample.Main;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class KeyController extends Controller {
 
     private KeyObject keyObject, previousKeyObject;
     private Canvas canvas;
+
+    long time;
 
     private static KeyController instance;
 
@@ -32,8 +34,10 @@ public class KeyController extends Controller {
         canvas.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                if (!keyObject.keys.contains(keyEvent.getCode())) {
-                    keyObject.keys.add(keyEvent.getCode());
+                if (!keyObject.keys.containsKey(keyEvent.getCode())) {
+                    keyObject.keys.put(keyEvent.getCode(), 0L);
+                }else{
+                    keyObject.keys.replace(keyEvent.getCode(), keyObject.keys.get(keyEvent.getCode())+time);
                 }
             }
         });
@@ -41,75 +45,72 @@ public class KeyController extends Controller {
         canvas.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                if (keyObject.keys.contains(keyEvent.getCode())) {
-                    keyObject.keys.remove(keyEvent.getCode());
-                }
+                keyObject.keys.remove(keyEvent.getCode());
             }
         });
     }
 
     @Override
     public void update(long diffMillis) {
-        previousKeyObject = keyObject;
-        keyObject = new KeyObject();
-        keyObject.getKeys().addAll(previousKeyObject.getKeys());
+        time = diffMillis;
+        //keyObject.print();
+
+        previousKeyObject = keyObject;          // Derzeitiges KeyObject abspeichern
+        keyObject = new KeyObject();            // Neues KeyObject erzeugen
+
+        /*HashMap<KeyCode, Long> hashMap = previousKeyObject.getKeyHashMap();
+        hashMap.forEach((key, value) ->
+        {
+            //System.out.println("Value vorher " + value);
+            value =  value + diffMillis;
+            //System.out.println("Key: "+key+" Value danach: "+value);
+        });*/
+
+        keyObject.getKeyHashMap().putAll(previousKeyObject.getKeyHashMap());    // Alle vorherigen Keys in das neue KeyObject kopieren
     }
 
     public boolean isKeyPressed(KeyCode keyCode)
     {
-        if (!keyObject.getKeys().contains(keyCode))
+        if (!keyObject.getKeyHashMap().containsKey(keyCode))
         {
             return false;
         }
 
         if (isSinglePressKey(keyCode))
         {
-            if(!previousKeyObject.getKeys().contains(keyCode))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return !previousKeyObject.getKeyHashMap().containsKey(keyCode);
         }
         return true;
     }
 
     // Keys which are only allowed to activate once per press
     private boolean isSinglePressKey(KeyCode keyCode) {
-        switch (keyCode) {
-            case W:
-                return true;
-            case S:
-                return true;
-            case UP:
-                return true;
-            case DOWN:
-                return true;
-            case F:
-                return true;
-            default:
-                return false;
-        }
+        return switch (keyCode) {
+            case W, S, UP, DOWN, F -> true;
+            default -> false;
+        };
     }
 
     public static class KeyObject {
 
-        private ArrayList<KeyCode> keys;
+        private final HashMap<KeyCode, Long> keys;
 
         public KeyObject() {
-            keys = new ArrayList<>();
+            keys = new HashMap<>();
         }
 
-        public ArrayList<KeyCode> getKeys() {
+        public HashMap<KeyCode, Long> getKeyHashMap() {
             return keys;
+        }
+
+        public void print(){
+            keys.forEach((key, value) -> System.out.println("Key: "+key+" Value: "+value));
         }
 
     }
 
-    public KeyObject getKeyObject() {
-        return keyObject;
+    public long getKeyPressedTime(KeyCode keyCode){
+        return keyObject.getKeyHashMap().get(keyCode);
     }
 
 }

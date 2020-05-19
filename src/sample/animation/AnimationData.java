@@ -19,7 +19,7 @@ public class AnimationData {
     private ArrayList<FrameData> frames = new ArrayList<>();
 
     private static final int TILE_SIZE = 64;
-    private static final String SPRITE_SHEET_PATH = "src/unbenannt.png";
+    private static final String SPRITE_SHEET_PATH = "src/spritesheet.png";
 
     private final int black = new Color(0,0,0).getRGB();
     private final int white = new Color(255,255,255).getRGB();
