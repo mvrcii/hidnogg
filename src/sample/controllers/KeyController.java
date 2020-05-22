@@ -60,7 +60,6 @@ public class KeyController extends Controller {
     @Override
     public void update(long diffMillis) {
         time = diffMillis;
-
         previousKeyObject = keyObject;          // Derzeitiges KeyObject abspeichern
         keyObject = new KeyObject();            // Neues KeyObject erzeugen
 

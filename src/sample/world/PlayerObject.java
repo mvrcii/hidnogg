@@ -33,6 +33,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     @Override
     public void update(long diffMillis) {
+
         animation.update(diffMillis);
         y -= vy * diffMillis / 100;
         if (y < 100){
