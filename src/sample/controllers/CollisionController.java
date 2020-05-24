@@ -29,7 +29,7 @@ public class CollisionController {
     private final ArrayList<RectangleObstacle> obstacles = new ArrayList<>();
 
     // Rectangle-HitBoxes for obstacle collisions
-    private final Point2D[] rectHitBoxP1_P2 = new Point2D[4]; // Contains upper left X,Y and bottom right X,Y of both players
+    public final Point2D[] rectHitBoxP1_P2 = new Point2D[4]; // Contains upper left X,Y and bottom right X,Y of both players
     private final int[] playersWidthHeight = new int[4]; // Contains Width and Height of both players
 
     private CollisionController() {
@@ -68,7 +68,7 @@ public class CollisionController {
     /**
      * returns true if the swords hit each other (are on the same level) // TODO :: Should be called in the KeyControl since it depends on previous sword positions (?)
      */
-    private boolean checkCollisionSwordSword() {
+    public boolean checkCollisionSwordSword() {
         Point2D swordTip_player1 = new Point2D(0,0); // TODO --- Need sword tip (x, y) position --> player1.getSwordObject().getSwordSpike()
         Point2D swordTip_player2 = new Point2D(0,0); // TODO --- Need sword tip (x, y) position --> player2.getSwordObject().getSwordSpike()
 

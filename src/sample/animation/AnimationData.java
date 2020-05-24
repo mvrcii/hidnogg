@@ -91,8 +91,7 @@ public class AnimationData {
         FrameData frameData = new FrameData(bufferedImage);
         ArrayList<Point2D> hitBox = new ArrayList<>();
         ArrayList<Point2D> hitBoxInverted = new ArrayList<>();
-
-        boolean foundRed = false;
+        imageTransparent = true;
 
         for (int row = 0; row < bufferedImage.getHeight(); row++) { // TODO :: Deal with red pixels
 
@@ -105,6 +104,8 @@ public class AnimationData {
 
                 if (isTransparent(currentRGB))
                     continue;
+
+                imageTransparent = false;
 
                 if (currentRGB == black) {
                     lastBlackPixel_x = col;
