@@ -99,7 +99,7 @@ public class AnimationData {
                 int currentRGB = bufferedImage.getRGB(col, row);
                 int lastBlackPixel_x = 0;
 
-                if (isTransparent(currentRGB))
+                if ((currentRGB >> 24) == 0x00)
                     continue;
 
                 imageTransparent = false;
@@ -135,61 +135,6 @@ public class AnimationData {
         frameData.setHitBox(hitBox);
         frameData.setHitBoxInverted(hitBoxInverted);
         return frameData;
-
-        /* Previous definition
-
-        FrameData frameData = new FrameData(bf);
-        ArrayList<Point2D> hitBox = new ArrayList<>();
-        ArrayList<Point2D> hitBoxInverted = new ArrayList<>();
-        imageTransparent = true;
-
-        for (int y = 0; y < bf.getWidth(); y++) {
-            for (int x = 0; x < bf.getHeight(); x++) {
-                int pixel = bf.getRGB(x, y);
-                if (!isTransparent(pixel)) {
-                    imageTransparent = false;
-
-                    if (pixel == red) {
-                        if (checkDirectNeighbours(bf, x, y)) {
-                            hitBox.add(new Point2D(x, y));
-                            hitBoxInverted.add(new Point2D(bf.getWidth() - x, bf.getHeight() - y));
-                        }
-                    } else if (pixel == green){
-                        frameData.setSwordStartPoint(new Point2D(x, y));
-                        frameData.setSwordStartPointInverted(new Point2D(bf.getWidth() - x, y));
-                    } else if (pixel == blue) {
-                        frameData.setSwordEndPoint(new Point2D(x, y));
-                    }
-                }
-            }
-        }
-        frameData.setHitBox(hitBox);
-        frameData.setHitBoxInverted(hitBoxInverted);
-        return frameData; */
-    }
-
-
-    /**
-     * Help Methods
-     */
-    private boolean checkDirectNeighbours(BufferedImage image, int x, int y) {
-        if (x > 0) {
-            return isTransparent(image.getRGB(x - 1, y));
-        }
-        if (y > 0) {
-            return isTransparent(image.getRGB(x, y - 1));
-        }
-        if (x <= image.getWidth()) {
-            return isTransparent(image.getRGB(x + 1, y));
-        }
-        if (y <= image.getHeight()) {
-            return isTransparent(image.getRGB(x, y + 1));
-        }
-        return false;
-    }
-
-    private boolean isTransparent(int pixel) {
-        return ((pixel >> 24) == 0x00);
     }
 
     /**
