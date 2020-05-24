@@ -48,7 +48,6 @@ public class AnimationData {
                     }
                     */
 
-
                     frames.add(frame);
                     i++;
                 }else if(imageTransparent){
