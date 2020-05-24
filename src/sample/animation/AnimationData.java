@@ -84,7 +84,6 @@ public class AnimationData {
         return rotated;
     }
 
-
     private FrameData calcFrameData(BufferedImage bufferedImage) {
         FrameData frameData = new FrameData(bufferedImage);
         ArrayList<Point2D> hitBox = new ArrayList<>();
@@ -94,14 +93,20 @@ public class AnimationData {
         for (int row = 0; row < bufferedImage.getHeight(); row++) { // TODO :: Deal with red pixels
 
             boolean foundBlackLeft = false;
+            int lastBlackPixel_x = -1;
 
             // Left hitBox pixels ++ green and blue pixels
             for (int col = 0; col < bufferedImage.getWidth(); col++) {
                 int currentRGB = bufferedImage.getRGB(col, row);
-                int lastBlackPixel_x = 0;
 
-                if ((currentRGB >> 24) == 0x00)
+                if (col == bufferedImage.getWidth() - 1 && lastBlackPixel_x != -1) {
+                    hitBox.add(new Point2D(lastBlackPixel_x, row));
+                    hitBoxInverted.add(new Point2D(bufferedImage.getWidth() - lastBlackPixel_x, row));
+                }
+
+                if ((currentRGB >> 24) == 0x00) {
                     continue;
+                }
 
                 imageTransparent = false;
 
@@ -124,11 +129,6 @@ public class AnimationData {
                 } else if (currentRGB == red) { // TODO :: Calculate sword tip by getting the red pixel with the highest / lowest x-coordinate
                     continue;
 
-                }
-
-                if (col == bufferedImage.getWidth() - 1) {
-                    hitBox.add(new Point2D(lastBlackPixel_x, row));
-                    hitBoxInverted.add(new Point2D(bufferedImage.getWidth() - lastBlackPixel_x, row));
                 }
             }
         }
