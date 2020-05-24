@@ -1,6 +1,7 @@
 package sample.animation;
 
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -26,29 +27,19 @@ public class FrameData {
     private Point2D swordStartPointInverted;
     private int angle = 0;
 
-    public FrameData(BufferedImage bufferedImage){
+    public FrameData(BufferedImage bufferedImage) {
         this.image = convertToFxImage(bufferedImage);
         this.bufferedImage = bufferedImage;
     }
 
     public static Image convertToFxImage(BufferedImage image) {
-        WritableImage wr = null;
-        if (image != null) {
-            wr = new WritableImage(image.getWidth(), image.getHeight());
-            PixelWriter pw = wr.getPixelWriter();
-            for (int x = 0; x < image.getWidth(); x++) {
-                for (int y = 0; y < image.getHeight(); y++) {
-                    pw.setArgb(x, y, image.getRGB(x, y));
-                }
-            }
-        }
-        return new ImageView(wr).getImage();
+        return SwingFXUtils.toFXImage(image, null);
     }
 
-    public static void drawHorizontallyFlipped(GraphicsContext gc, Image image, int x, int y){
+    public static void drawHorizontallyFlipped(GraphicsContext gc, Image image, int x, int y) {
         double width = image.getWidth();
         double height = image.getHeight();
-        gc.drawImage(image, x+(width/2),y, -width, height);
+        gc.drawImage(image, x + (width / 2), y, -width, height);
     }
 
 
@@ -81,7 +72,7 @@ public class FrameData {
         this.hitBoxInverted = hitBoxInverted;
     }
 
-    public Point2D getSwordStartPoint(){
+    public Point2D getSwordStartPoint() {
         return swordStartPoint;
     }
 
@@ -113,13 +104,13 @@ public class FrameData {
         this.swordStartPointInverted = swordStartPointInverted;
     }
 
-    public String toString(){
-        return "Image exists: "+!(image==null)+"\n" +
-                "BufferedImage exists: "+!(bufferedImage==null)+"\n" +
-                "HitBox size: "+hitBox.size()+"\n" +
-                "HitBox Inverted size: "+hitBoxInverted.size()+"\n" +
-                "Anker Start exists: "+!(swordStartPoint==null)+"\n" +
-                "Anker End exists: "+!(swordEndPoint==null)+"\n" +
-                "Sprite Angle: "+angle+"\n\n";
+    public String toString() {
+        return "Image exists: " + !(image == null) + "\n" +
+                "BufferedImage exists: " + !(bufferedImage == null) + "\n" +
+                "HitBox size: " + hitBox.size() + "\n" +
+                "HitBox Inverted size: " + hitBoxInverted.size() + "\n" +
+                "Anker Start exists: " + !(swordStartPoint == null) + "\n" +
+                "Anker End exists: " + !(swordEndPoint == null) + "\n" +
+                "Sprite Angle: " + angle + "\n\n";
     }
 }
