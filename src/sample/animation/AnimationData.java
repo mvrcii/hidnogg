@@ -34,14 +34,14 @@ public class AnimationData {
     public AnimationData(int row) {
         try {
             BufferedImage spriteSheet = ImageIO.read(new File(SPRITE_SHEET_PATH));
-            for (int i = 0; (i * TILE_SIZE) < spriteSheet.getWidth(); ) {
+            int i;
+            for (i = 0; (i * TILE_SIZE) < spriteSheet.getWidth(); ) {
                 BufferedImage bf = spriteSheet.getSubimage(i * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
                 if (!imageTransparent) {
                     FrameData frame = calcFrameData(bf);
 
                     if (imageTransparent) {
-                        System.out.println("Row "+row+" with "+i+" Sprites fully loaded.");
                         break;
                     }
 
@@ -49,6 +49,8 @@ public class AnimationData {
                     i++;
                 }
             }
+            System.out.println("Row "+row+" with "+i+" Sprites fully loaded.");
+
         } catch (IOException e) {
             e.printStackTrace();
         }

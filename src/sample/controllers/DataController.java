@@ -28,21 +28,21 @@ public class DataController extends Controller {
 
     private DataController()
     {
+        basicAnimationData.put(AnimationType.SWORD, new AnimationData(0));
+        basicAnimationData.put(AnimationType.PLAYER_JUMP_PEAK, new AnimationData(4));
         basicAnimationData.put(AnimationType.PLAYER_IDLE_LOW, new AnimationData(5));
         basicAnimationData.put(AnimationType.PLAYER_IDLE_MEDIUM, new AnimationData(6));
         basicAnimationData.put(AnimationType.PLAYER_IDLE_HIGH, new AnimationData(7));
         basicAnimationData.put(AnimationType.PLAYER_IDLE_HOLD_UP, new AnimationData(8));
-        basicAnimationData.put(AnimationType.PLAYER_JUMP_PEAK, new AnimationData(4));
 
-        basicAnimationData.put(AnimationType.SWORD, new AnimationData(0));
 
         for (int i = 1; i <= 360; i+=1) {
             swordAngleData.put(i, basicAnimationData.get(AnimationType.SWORD).rotate(i));
         }
 
         // TESTING
-        ArrayList<FrameData> f = basicAnimationData.get(AnimationType.PLAYER_JUMP_PEAK).getFrames();
-        System.out.println(f.size());
+        //ArrayList<FrameData> f = basicAnimationData.get(AnimationType.PLAYER_JUMP_PEAK).getFrames();
+        //System.out.println(f.size());
         // TESTING
     }
 
