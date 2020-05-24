@@ -106,12 +106,14 @@ public class AnimationData {
                 if (isTransparent(currentRGB))
                     continue;
 
-                if (!foundBlackLeft && currentRGB == black) {
-                    foundBlackLeft = true;
+                if (currentRGB == black) {
                     lastBlackPixel_x = col;
 
-                    hitBox.add(new Point2D(col, row));
-                    hitBoxInverted.add(new Point2D(bufferedImage.getWidth() - col, row));
+                    if(!foundBlackLeft) {
+                        foundBlackLeft = true;
+                        hitBox.add(new Point2D(col, row));
+                        hitBoxInverted.add(new Point2D(bufferedImage.getWidth() - col, row));
+                    }
 
                 } else if (currentRGB == green) {
                     frameData.setSwordStartPoint(new Point2D(col, row));
