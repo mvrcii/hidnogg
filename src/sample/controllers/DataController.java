@@ -3,10 +3,7 @@ package sample.controllers;
 
 import sample.animation.Animation;
 import sample.animation.AnimationData;
-import sample.animation.FrameData;
 import sample.enums.AnimationType;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DataController extends Controller {
@@ -37,7 +34,7 @@ public class DataController extends Controller {
 
 
         for (int i = 1; i <= 360; i+=1) {
-            swordAngleData.put(i, basicAnimationData.get(AnimationType.SWORD).rotate(i));
+            swordAngleData.put(i, basicAnimationData.get(AnimationType.SWORD).rotateAnimDataByDegree(i));
         }
 
         // TESTING
