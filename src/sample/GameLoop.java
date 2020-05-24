@@ -58,7 +58,6 @@ public class GameLoop extends Thread implements Runnable {
 
         player1.setSwordObject(sword1);
         player2.setSwordObject(sword2);
-
     }
 
     public void run() {
