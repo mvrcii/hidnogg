@@ -35,16 +35,9 @@ public class KeyController extends Controller {
         canvas.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
+
                 if (!keyObject.keys.containsKey(keyEvent.getCode())) {
                     keyObject.keys.put(keyEvent.getCode(), 0L);
-                }else{
-                    keyObject.keys.compute(keyEvent.getCode(), (key, oldValue) -> {
-                        if(keyEvent.getCode() != null){
-                            return oldValue+time;
-                        }else{
-                            return 0L;
-                        }
-                    });
                 }
             }
         });
@@ -60,21 +53,24 @@ public class KeyController extends Controller {
     @Override
     public void update(long diffMillis) {
         time = diffMillis;
+        System.out.println(keyObject.getKeyHashMap());
         previousKeyObject = keyObject;          // Derzeitiges KeyObject abspeichern
         keyObject = new KeyObject();            // Neues KeyObject erzeugen
 
         keyObject.getKeyHashMap().putAll(previousKeyObject.getKeyHashMap());    // Alle vorherigen Keys in das neue KeyObject kopieren
+
+        for (KeyCode keyCode : keyObject.keys.keySet()){
+            keyObject.keys.put(keyCode, keyObject.keys.get(keyCode)+diffMillis);
+        }
+
     }
 
-    public boolean isKeyPressed(KeyCode keyCode)
-    {
-        if (!keyObject.getKeyHashMap().containsKey(keyCode))
-        {
+    public boolean isKeyPressed(KeyCode keyCode) {
+        if (!keyObject.getKeyHashMap().containsKey(keyCode)) {
             return false;
         }
 
-        if (isSinglePressKey(keyCode))
-        {
+        if (isSinglePressKey(keyCode)) {
             return !previousKeyObject.getKeyHashMap().containsKey(keyCode);
         }
         return true;
@@ -83,7 +79,7 @@ public class KeyController extends Controller {
     // Keys which are only allowed to activate once per press
     private boolean isSinglePressKey(KeyCode keyCode) {
         return switch (keyCode) {
-            case W, S, UP, DOWN -> true;
+            case S, UP, DOWN -> true;
             default -> false;
         };
     }
