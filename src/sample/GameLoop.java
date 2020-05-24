@@ -45,6 +45,7 @@ public class GameLoop extends Thread implements Runnable {
         gameControllers.add(KeyController.getInstance());
         gameControllers.add(DataController.getInstance());
         gameControllers.add(DirectionController.getInstance());
+        gameControllers.add(CameraController.getInstance());
 
         gc = canvas.getGraphicsContext2D();
 
