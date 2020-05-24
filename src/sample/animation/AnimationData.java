@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class AnimationData {
 
-    private boolean imageTransparent;
+    private boolean imageTransparent = false;
     private ArrayList<FrameData> frames = new ArrayList<>();
 
     private static final int TILE_SIZE = 64;
@@ -40,21 +40,14 @@ public class AnimationData {
                 if (!imageTransparent) {
                     FrameData frame = calcFrameData(bf);
 
-                    /*
-                    if (frame.getSwordStartPoint() == null || frame.getSwordEndPoint() == null) {
-
-                        //System.out.println("No sword start/end point found, row: "+row);
+                    if (imageTransparent) {
+                        System.out.println("Row "+row+" with "+i+" Sprites fully loaded.");
                         break;
                     }
-                    */
 
                     frames.add(frame);
                     i++;
-                }else if(imageTransparent){
-                    break;
                 }
-
-
             }
         } catch (IOException e) {
             e.printStackTrace();
