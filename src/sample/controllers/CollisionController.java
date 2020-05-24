@@ -179,7 +179,7 @@ public class CollisionController {
 
 
     // ----------------------------------------------------------------------------------------------------
-    // --- Inner Class HitTypes
+    // --- calcRectHitBox
 
     private void fillPlayerRectangleHitBox() {
         int x_min = Integer.MAX_VALUE, x_max = Integer.MIN_VALUE, y_min = Integer.MAX_VALUE, y_max = Integer.MIN_VALUE;
