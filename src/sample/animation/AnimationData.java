@@ -80,6 +80,7 @@ public class AnimationData {
         AffineTransformOp affineTransformOp = new AffineTransformOp(affineTransform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
         BufferedImage rotated = new BufferedImage(bf.getWidth(), bf.getHeight(), bf.getType());
         rotated = affineTransformOp.filter(bf, rotated);
+
         return rotated;
     }
 
@@ -99,7 +100,7 @@ public class AnimationData {
                 int currentRGB = bufferedImage.getRGB(col, row);
                 int lastBlackPixel_x = 0;
 
-                if (isTransparent(currentRGB))
+                if ((currentRGB >> 24) == 0x00)
                     continue;
 
                 imageTransparent = false;
