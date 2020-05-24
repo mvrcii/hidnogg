@@ -40,14 +40,19 @@ public class AnimationData {
                 if (!imageTransparent) {
                     FrameData frame = calcFrameData(bf);
 
+                    /*
                     if (frame.getSwordStartPoint() == null || frame.getSwordEndPoint() == null) {
 
                         //System.out.println("No sword start/end point found, row: "+row);
                         break;
                     }
+                    */
+
 
                     frames.add(frame);
                     i++;
+                }else if(imageTransparent){
+                    break;
                 }
 
 
