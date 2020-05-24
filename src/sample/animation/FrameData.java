@@ -21,8 +21,8 @@ public class FrameData {
 
     private Image image;
     private BufferedImage bufferedImage;
-    private ArrayList<Point2D> hitBox;
-    private ArrayList<Point2D> hitBoxInverted;
+    private ArrayList<Point2D> hitBox;                  // Left and Right outline of the player
+    private ArrayList<Point2D> hitBoxInverted;          // Same as hitBox but inverted
     private Point2D swordStartPoint, swordEndPoint;
     private Point2D swordStartPointInverted;
     private int angle = 0;
