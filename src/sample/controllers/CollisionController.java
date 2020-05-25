@@ -10,7 +10,7 @@ import sample.world.RectangleObstacle;
 
 import java.util.ArrayList;
 
-public class CollisionController {
+public class CollisionController extends Controller {
 
     // ----------------------------------------------------------------------------------------------------
     // --- Instance & Constructor
@@ -19,6 +19,7 @@ public class CollisionController {
 
     public static CollisionController getInstance() {
         if (instance == null) {
+            System.out.println("Collision Controller instantiated");
             instance = new CollisionController();
         }
         return instance;
@@ -27,9 +28,10 @@ public class CollisionController {
     // Player and Obstacle GameObjects
     private final ArrayList<PlayerObject> players = new ArrayList<>();
     private final ArrayList<RectangleObstacle> obstacles = new ArrayList<>();
+    private static int swordLength = 0; // swordLength for sword-tip-calculation
 
     // Rectangle-HitBoxes for obstacle collisions
-    public final Point2D[] rectHitBoxP1_P2 = new Point2D[2]; // Contains upper left X,Y and bottom right X,Y of both players
+    private final Point2D[] rectHitBoxP1_P2 = new Point2D[2]; // Contains upper left X,Y and bottom right X,Y of both players
     private final int[] playersWidthHeight = new int[2]; // Contains Width and Height of both players
 
     private CollisionController() {
@@ -53,7 +55,7 @@ public class CollisionController {
     public ArrayList<HitType> getAttackCollisionTypes() {
         ArrayList<HitType> detectedHitTypes = new ArrayList<>();
 
-        // TODO: Return point of collision, null for now (? - must be x,y position of sword tip --- players.get(0).getSwordObject().getSwordSpike() )
+        // TODO: Return point of collision, null for now (? - must be x,y position of sword tip --- players.get(0).getSwordObject().getSwordTip() )
         // Check Sword-Avatar collisions
         if (collisionSwordAvatar(players.get(0), players.get(1)))
             detectedHitTypes.add(new HitType(null, players.get(0), players.get(1), CollisionType.PLAYER1_HIT_PLAYER2));
@@ -69,11 +71,16 @@ public class CollisionController {
      * returns true if the swords hit each other (are on the same level) // TODO :: Should be called in the KeyControl since it depends on previous sword positions (?)
      */
     public boolean checkCollisionSwordSword() {
-        Point2D swordTip_player1 = new Point2D(0, 0); // TODO --- Need sword tip (x, y) position --> player1.getSwordObject().getSwordSpike()
-        Point2D swordTip_player2 = new Point2D(0, 0); // TODO --- Need sword tip (x, y) position --> player2.getSwordObject().getSwordSpike()
+        Point2D swordTip_player1 = new Point2D(0, 0); // TODO --- Need sword tip (x, y) position --> player1.getSwordObject().getSwordTip()
+
+        Point2D swordStart_player2 = new Point2D(0, 0); // TODO --- Need sword end (x, y) position --> player2.getSwordObject().getSwordStart()
+        Point2D swordTip_player2 = new Point2D(0, 0); // TODO --- Need sword tip (x, y) position --> player2.getSwordObject().getSwordTip()
 
         // Offset of 2 pixels in each direction, assuming that the sword is 2-5 pixels wide
-        return (swordTip_player1.getY() - 2 <= swordTip_player2.getY() && swordTip_player2.getY() <= swordTip_player1.getY() + 2);
+        boolean onSameY = (swordTip_player1.getY() - 2 <= swordTip_player2.getY() && swordTip_player2.getY() <= swordTip_player1.getY() + 2);
+        boolean onSameXInterval = (swordTip_player1.getX() - swordTip_player2.getX()) * (swordTip_player1.getX() - swordStart_player2.getX()) <= 0;
+
+        return onSameY && onSameXInterval;
     }
 
 
@@ -205,5 +212,25 @@ public class CollisionController {
         // Player 1
         playersWidthHeight[0] = (int) rectHitBoxP1_P2[1].getX() - (int) rectHitBoxP1_P2[0].getY();
         playersWidthHeight[1] = (int) rectHitBoxP1_P2[1].getY() - (int) rectHitBoxP1_P2[0].getY();
+    }
+
+    public static void setSwordLength(int length) { // static to allow call before Instance is constructed
+        swordLength = length;
+    }
+
+    public int getSwordLength(){
+        return swordLength;
+    }
+
+    public Point2D[] getRectHitBoxP1_P2(){
+        return rectHitBoxP1_P2;
+    }
+
+    public int[] getPlayersWidthHeight() {
+        return playersWidthHeight;
+    }
+
+    @Override
+    public void update(long diffMillis) {
     }
 }

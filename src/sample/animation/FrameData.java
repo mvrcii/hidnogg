@@ -104,6 +104,7 @@ public class FrameData {
         this.swordStartPointInverted = swordStartPointInverted;
     }
 
+/* (causes NullPointerExceptions with every constructor call)
     public String toString() {
         return "Image exists: " + !(image == null) + "\n" +
                 "BufferedImage exists: " + !(bufferedImage == null) + "\n" +
@@ -113,4 +114,5 @@ public class FrameData {
                 "Anker End exists: " + !(swordEndPoint == null) + "\n" +
                 "Sprite Angle: " + angle + "\n\n";
     }
+ */
 }

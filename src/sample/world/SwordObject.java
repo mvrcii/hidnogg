@@ -17,7 +17,6 @@ public class SwordObject extends GameObject{
 
     private int currentAngle;
 
-
     public SwordObject(int x, int y, Direction direction, PlayerObject playerObject) {
         super(x, y, direction);
         this.playerObject = playerObject;
@@ -93,13 +92,5 @@ public class SwordObject extends GameObject{
 
     public PlayerObject getPlayerObject() {
         return playerObject;
-    }
-
-
-    public ArrayList<Point2D> getSwordSpike(){
-        // TODO || Returns the points of the sword which are the closest to the enemy player
-        ArrayList<Point2D> tmp = new ArrayList<>();
-        tmp.add(new Point2D(0,0));
-        return tmp;
     }
 }

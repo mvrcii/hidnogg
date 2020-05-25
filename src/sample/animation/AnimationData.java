@@ -2,6 +2,7 @@ package sample.animation;
 
 
 import javafx.geometry.Point2D;
+import sample.controllers.CollisionController;
 import sample.enums.Direction;
 
 import javax.imageio.ImageIO;
@@ -21,11 +22,10 @@ public class AnimationData {
     private static final int TILE_SIZE = 64;
     private static final String SPRITE_SHEET_PATH = "src/test.png";
 
-    private final int black = new Color(0, 0, 0).getRGB();
-    private final int white = new Color(255, 255, 255).getRGB();
-    private final int green = new Color(0, 255, 0).getRGB();
-    private final int blue = new Color(0, 0, 255).getRGB();
-    private final int red = new Color(255, 0, 0).getRGB();
+    private static final int black = new Color(0, 0, 0).getRGB();
+    private static final int red = new Color(254, 0, 0).getRGB(); // RGB value in test.png is not 255-red
+    private static final int green = new Color(0, 255, 0).getRGB();
+    private static final int blue = new Color(0, 0, 255).getRGB();
 
     public AnimationData() {
 
@@ -49,7 +49,7 @@ public class AnimationData {
                     i++;
                 }
             }
-            System.out.println("Row "+row+" with "+i+" Sprites fully loaded.");
+            System.out.println("Row " + row + " with " + i + " Sprites fully loaded.");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -84,51 +84,56 @@ public class AnimationData {
         return rotated;
     }
 
+    private static int previousGreen = 0; // prevent multiple calculations of sword length
+
     private FrameData calcFrameData(BufferedImage bufferedImage) {
+        // Data that has to be calculated
         FrameData frameData = new FrameData(bufferedImage);
         ArrayList<Point2D> hitBox = new ArrayList<>();
         ArrayList<Point2D> hitBoxInverted = new ArrayList<>();
+
+        // For frame picking
         imageTransparent = true;
 
-        for (int row = 0; row < bufferedImage.getHeight(); row++) { // TODO :: Deal with red pixels
+        for (int row = 0; row < bufferedImage.getHeight(); row++) { // y-coordinates
 
-            boolean foundBlackLeft = false;
-            int lastBlackPixel_x = -1;
+            boolean foundBlackLeft = false; // only calculate outer left-hitBox pixels
+            int lastBlackPixel_x = -1; // for outer right hitBox pixels
 
             // Left hitBox pixels ++ green and blue pixels
-            for (int col = 0; col < bufferedImage.getWidth(); col++) {
+            for (int col = 0; col < bufferedImage.getWidth(); col++) { // x-coordinates
                 int currentRGB = bufferedImage.getRGB(col, row);
 
-                if (col == bufferedImage.getWidth() - 1 && lastBlackPixel_x != -1) {
+                if (col == bufferedImage.getWidth() - 1 && lastBlackPixel_x != -1) { // Add outer right hitBox pixel, if it exists
                     hitBox.add(new Point2D(lastBlackPixel_x, row));
                     hitBoxInverted.add(new Point2D(bufferedImage.getWidth() - lastBlackPixel_x, row));
                 }
 
-                if ((currentRGB >> 24) == 0x00) {
+                if ((currentRGB >> 24) == 0x00) // transparent pixel
                     continue;
-                }
 
-                imageTransparent = false;
+                imageTransparent = false; // non-transparent image
 
-                if (currentRGB == black) {
+                if (currentRGB == black) { // player pixel
                     lastBlackPixel_x = col;
 
-                    if(!foundBlackLeft) {
+                    if (!foundBlackLeft) {
                         foundBlackLeft = true;
                         hitBox.add(new Point2D(col, row));
                         hitBoxInverted.add(new Point2D(bufferedImage.getWidth() - col, row));
                     }
 
-                } else if (currentRGB == green) {
+                } else if (currentRGB == green) { // start-mountPoint
                     frameData.setSwordStartPoint(new Point2D(col, row));
                     frameData.setSwordStartPointInverted(new Point2D(bufferedImage.getWidth() - col, row));
+                    previousGreen++; // for swordLength calculation
 
-                } else if (currentRGB == blue) {
+                } else if (currentRGB == blue) { // end mountPoint
                     frameData.setSwordEndPoint(new Point2D(col, row));
 
-                } else if (currentRGB == red) { // TODO :: Calculate sword tip by getting the red pixel with the highest / lowest x-coordinate
-                    continue;
-
+                } else if (currentRGB == red && previousGreen == 1) {
+                    calculateSwordLength(col, row, bufferedImage);
+                    previousGreen++;
                 }
             }
         }
@@ -138,12 +143,13 @@ public class AnimationData {
         return frameData;
     }
 
-
-    /**
-     * Help Methods
-     */
-    private boolean isTransparent(int pixel) {
-        return ((pixel >> 24) == 0x00);
+    private void calculateSwordLength(int col, int row, BufferedImage bufferedImage) { // only called once in calcFrameData
+        int swordLength = 1;
+        while (bufferedImage.getRGB(col, row) >> 24 != 0x00) {
+            swordLength++;
+            col++;
+        }
+        CollisionController.setSwordLength(swordLength); // static access, instance cannot be created at this stage
     }
 
     /**

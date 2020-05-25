@@ -27,11 +27,11 @@ public class GameLoop extends Thread implements Runnable {
     private final KeySet keySet1 = new KeySet(KeyCode.A, KeyCode.D, KeyCode.S, KeyCode.W, KeyCode.F, KeyCode.SPACE);
     private final KeySet keySet2 = new KeySet(KeyCode.LEFT, KeyCode.RIGHT, KeyCode.DOWN, KeyCode.UP, KeyCode.CONTROL, KeyCode.SHIFT);
 
-    private final PlayerObject player1 = new PlayerObject(100,groundLevel, PlayerType.PLAYER_ONE, Direction.RIGHT, keySet1);
+    private final PlayerObject player1 = new PlayerObject(100, groundLevel, PlayerType.PLAYER_ONE, Direction.RIGHT, keySet1);
     private final PlayerObject player2 = new PlayerObject(300, groundLevel, PlayerType.PLAYER_TWO, Direction.RIGHT, keySet2);
 
-    private SwordObject sword1 = new SwordObject(400,400, Direction.RIGHT, player1);
-    private SwordObject sword2 = new SwordObject(400,400, Direction.RIGHT, player2);
+    private SwordObject sword1 = new SwordObject(400, 400, Direction.RIGHT, player1);
+    private SwordObject sword2 = new SwordObject(400, 400, Direction.RIGHT, player2);
 
     private final FPSObject fpsObject = new FPSObject();
 
@@ -59,7 +59,11 @@ public class GameLoop extends Thread implements Runnable {
 
         player1.setSwordObject(sword1);
         player2.setSwordObject(sword2);
+
+        gameControllers.add(CollisionController.getInstance());
     }
+
+    private final float interval = 1000.0f / 60;
 
     public void run() {
 
@@ -76,31 +80,38 @@ public class GameLoop extends Thread implements Runnable {
             update(diffMillis);
             clearScreen();
             draw();
-
+/*
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+ */
+            // Adjust timing if necessary
+            currentTick = System.currentTimeMillis() - currentTick;
+            if (currentTick < interval) {
+                try {
+                    Thread.sleep((long) (interval - currentTick));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
 
+    private void update(long diffMillis) {
+        for (GameObject obj : gameObjects) {
 
-    private void update(long diffMillis)
-    {
-        for (GameObject obj : gameObjects)
-        {
-
-             if(obj instanceof InputSystem)
-             {
-                 ((InputSystem) obj).processInput(diffMillis);
-             }
+            if (obj instanceof InputSystem) {
+                ((InputSystem) obj).processInput(diffMillis);
+            }
 
             obj.update(diffMillis);
         }
 
-        for(Controller con : gameControllers){
+        for (Controller con : gameControllers) {
             con.update(diffMillis);
         }
 
@@ -113,8 +124,7 @@ public class GameLoop extends Thread implements Runnable {
         }
     }
 
-    private void clearScreen()
-    {
+    private void clearScreen() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
