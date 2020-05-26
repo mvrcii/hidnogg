@@ -47,7 +47,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             vy -= (2 * diffMillis / 10);    //gravity
         } else {
             vy = 0;
-            y = GameLoop.groundLevel;
+            y = GameLoop.groundLevel - + CollisionController.getInstance().getPlayersWidthHeight()[1];
         }
     }
 
