@@ -22,8 +22,7 @@ public class GameLoop extends Thread implements Runnable {
     public static ArrayList<GameObject> gameObjects = new ArrayList<>();
     public static ArrayList<Controller> gameControllers = new ArrayList<>();
 
-
-    public static final int groundLevel = 164;
+    public static final int groundLevel = (int) Main.canvas.getWidth() - 175;
 
     // KeySet(MOVE_LEFT, MOVE_RIGHT, DOWN, UP, HIT, JUMP)
     private final KeySet keySet1 = new KeySet(KeyCode.A,    KeyCode.D,      KeyCode.S,      KeyCode.W,  KeyCode.F,  KeyCode.G);
@@ -35,7 +34,7 @@ public class GameLoop extends Thread implements Runnable {
     private SwordObject sword1 = new SwordObject(400, 400, Direction.RIGHT, player1);
     private SwordObject sword2 = new SwordObject(400, 400, Direction.RIGHT, player2);
 
-    private RectangleObstacle ground = new RectangleObstacle(0, groundLevel, 500,20, Color.GREEN);
+    private RectangleObstacle ground = new RectangleObstacle(0, groundLevel, (int) Main.canvas.getWidth(),(int) Main.canvas.getWidth() - groundLevel, Color.GREEN);
 
     private final FPSObject fpsObject = new FPSObject();
 
