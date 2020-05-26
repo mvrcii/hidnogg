@@ -19,6 +19,7 @@ public class FrameData {
      * Container which holds all the relevant information of a SINGLE frame
      */
 
+    private int frameNumber;
     private Image image;
     private BufferedImage bufferedImage;
     private ArrayList<Point2D> hitBox;                  // Left and Right outline of the player
@@ -73,7 +74,10 @@ public class FrameData {
     }
 
     public Point2D getSwordStartPoint() {
-        return swordStartPoint;
+        if(swordStartPoint != null){
+            return swordStartPoint;
+        }
+        throw new IllegalArgumentException("There is no swordEndPoint in Frame "+frameNumber+"! Possible Issues: wrong color code / missing green dot in sprite");
     }
 
     public void setSwordStartPoint(Point2D swordStartPoint) {
@@ -81,7 +85,10 @@ public class FrameData {
     }
 
     public Point2D getSwordEndPoint() {
-        return swordEndPoint;
+        if(swordEndPoint != null){
+            return swordEndPoint;
+        }
+        throw new IllegalArgumentException("There is no swordEndPoint in Frame "+frameNumber+"! Possible Issues: wrong color code / missing blue dot in sprite");
     }
 
     public void setSwordEndPoint(Point2D swordEndPoint) {
@@ -97,14 +104,25 @@ public class FrameData {
     }
 
     public Point2D getSwordStartPointInverted() {
-        return swordStartPointInverted;
+        if(swordStartPointInverted != null){
+            return swordStartPointInverted;
+        }
+        throw new IllegalArgumentException("There is no swordStartPointInverted in Frame "+frameNumber+"!");
     }
 
     public void setSwordStartPointInverted(Point2D swordStartPointInverted) {
         this.swordStartPointInverted = swordStartPointInverted;
     }
 
-/* (causes NullPointerExceptions with every constructor call)
+    public void setFrameNumber(int frameNumber) {
+        this.frameNumber = frameNumber;
+    }
+
+    public int getFrameNumber() {
+        return frameNumber;
+    }
+
+    /* (causes NullPointerExceptions with every constructor call)
     public String toString() {
         return "Image exists: " + !(image == null) + "\n" +
                 "BufferedImage exists: " + !(bufferedImage == null) + "\n" +

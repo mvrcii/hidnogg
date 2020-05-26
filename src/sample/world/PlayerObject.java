@@ -88,10 +88,21 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         // MOVE RIGHT
         if (keyCon.isKeyPressed(keySet.getMoveRightKey())) {
             x += speed * diffMillis / 10;
+            if(animation.getAnimationType() != PLAYER_WALK){
+                animation = animCon.getAnimation(PLAYER_WALK);
+            }
+
         }
         // MOVE LEFT
         if (keyCon.isKeyPressed(keySet.getMoveLeftKey())) {
             x -= speed * diffMillis / 10;
+            if(animation.getAnimationType() != PLAYER_WALK){
+                animation = animCon.getAnimation(PLAYER_WALK);
+            }
+        }
+
+        if(keyCon.isKeyReleased(keySet.getMoveLeftKey()) || keyCon.isKeyReleased(keySet.getMoveRightKey())){
+            animation = animCon.getAnimation(PLAYER_IDLE_LOW);
         }
     }
 
@@ -130,7 +141,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     }
 
     /**
-     * Controls upKey
+     * Controls downKey
      * @param t_crouch = fixed delta time (ms) for crouching
      *        t_pressed = = pressed time in ms
      *
