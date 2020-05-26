@@ -103,11 +103,12 @@ public class FrameData {
         this.angle = angle;
     }
 
-    public Point2D getSwordStartPointInverted() {
+    public Point2D getSwordStartPointInverted(){
         if(swordStartPointInverted != null){
             return swordStartPointInverted;
         }
-        throw new IllegalArgumentException("There is no swordStartPointInverted in Frame "+frameNumber+"!");
+        return new Point2D(0,0);
+        //throw IllegalArgumentException("There is no swordEndPointInverted in Frame "+frameNumber+"!");
     }
 
     public void setSwordStartPointInverted(Point2D swordStartPointInverted) {

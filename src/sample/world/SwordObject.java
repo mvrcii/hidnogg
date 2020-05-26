@@ -28,6 +28,7 @@ public class SwordObject extends GameObject{
 
 
     private void updateCoordinates() {
+
         switch (direction){
             case LEFT ->
                     {
@@ -53,7 +54,8 @@ public class SwordObject extends GameObject{
 
     private void updateAngle(){
         FrameData f = playerObject.getAnimation().getCurrentFrame();
-        System.out.println(f.getFrameNumber()+" "+f.getSwordStartPoint()+" "+f.getSwordEndPoint()+" "+f.getSwordStartPointInverted());
+
+        //System.out.println(f.getFrameNumber()+" "+f.getSwordStartPoint()+" "+f.getSwordEndPoint()+" "+f.getSwordStartPointInverted());
         int newAngle = (int) new Point2D(1,0).angle(f.getSwordEndPoint().getX()-f.getSwordStartPoint().getX(),
                 f.getSwordEndPoint().getY()-f.getSwordStartPoint().getY());
         if(currentAngle != newAngle){
@@ -64,6 +66,7 @@ public class SwordObject extends GameObject{
                 animation = DataController.getInstance().getAnimation(animation.getAnimationType(), currentAngle);
             }
         }
+
     }
 
 
