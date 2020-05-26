@@ -4,6 +4,7 @@ import javafx.geometry.Point2D;
 import sample.GameLoop;
 import sample.enums.CollisionType;
 import sample.enums.Direction;
+import sample.enums.PlayerType;
 import sample.world.GameObject;
 import sample.world.PlayerObject;
 import sample.world.RectangleObstacle;
@@ -28,6 +29,9 @@ public class CollisionController extends Controller {
     // Player and Obstacle GameObjects
     private final ArrayList<PlayerObject> players = new ArrayList<>();
     private final ArrayList<RectangleObstacle> obstacles = new ArrayList<>();
+
+    private boolean player1_onGround = false;
+    private boolean player2_onGround = false;
     private static int swordLength = 0; // swordLength for sword-tip-calculation
 
     // Rectangle-HitBoxes for obstacle collisions
@@ -39,8 +43,9 @@ public class CollisionController extends Controller {
             if (obj instanceof PlayerObject)
                 players.add((PlayerObject) obj);
 
-            if (obj instanceof RectangleObstacle) // Collect RectangleObjects
+            if (obj instanceof RectangleObstacle) { // Collect RectangleObjects
                 obstacles.add((RectangleObstacle) obj);
+            }
         }
 
         fillPlayerRectangleHitBox();
@@ -218,11 +223,11 @@ public class CollisionController extends Controller {
         swordLength = length;
     }
 
-    public int getSwordLength(){
+    public int getSwordLength() {
         return swordLength;
     }
 
-    public Point2D[] getRectHitBoxP1_P2(){
+    public Point2D[] getRectHitBoxP1_P2() {
         return rectHitBoxP1_P2;
     }
 
@@ -230,7 +235,13 @@ public class CollisionController extends Controller {
         return playersWidthHeight;
     }
 
+    public boolean getPlayerOnGround(PlayerType type) {
+        return ((type == PlayerType.PLAYER_ONE) ? player1_onGround : player2_onGround);
+    }
+
     @Override
     public void update(long diffMillis) {
+        player1_onGround = getObstacleCollisionsPlayer1().size() > 0;
+        player2_onGround = getObstacleCollisionsPlayer2().size() > 0;
     }
 }

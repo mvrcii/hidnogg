@@ -13,6 +13,7 @@ public class RectangleObstacle extends GameObject {
     protected int width;
     protected int height;
     protected Color color; // Default color
+    protected boolean isGround;
 
     /*
      * vx, vy 0 on default (immovable object)
@@ -36,7 +37,7 @@ public class RectangleObstacle extends GameObject {
     @Override
     public void draw(GraphicsContext gc) {
         gc.setFill(this.color);
-        gc.fillRect(this.x, this.y, this.width, this.height);
+        gc.fillRect(this.x, this.y + 3, this.width, this.height);
     }
 
     // ----------------------------------------------------------------------------------------------------
