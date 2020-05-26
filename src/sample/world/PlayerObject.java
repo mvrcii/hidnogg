@@ -40,14 +40,16 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     @Override
     public void update(long diffMillis) {
+        int playerOffset = CollisionController.getInstance().getPlayersWidthHeight()[1];
 
         animation.update(diffMillis);
+
         y -= vy * diffMillis / 100;
-        if (!CollisionController.getInstance().getPlayerOnGround(this.playerNumber)) {
+        if (y < GameLoop.groundLevel - playerOffset) {
             vy -= (2 * diffMillis / 10);    //gravity
         } else {
             vy = 0;
-            y = GameLoop.groundLevel - + CollisionController.getInstance().getPlayersWidthHeight()[1];
+            y = GameLoop.groundLevel - playerOffset;
         }
     }
 
@@ -77,10 +79,10 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private void handleStabKey() {
         // TODO: Stab animation missing. Needs still implementation!
         if (keyCon.isKeyPressed(keySet.getStabKey())) {
-            animation = animCon.getAnimation(PLAYER_IDLE_HOLD_UP);
+
         }
         if (keyCon.isKeyReleased(keySet.getStabKey())) {
-            animation = animCon.getAnimation(PLAYER_IDLE_LOW);
+
         }
     }
 
@@ -90,8 +92,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if (keyCon.isKeyPressed(keySet.getMoveRightKey())) {
             x += speed * diffMillis / 10;
 
-            System.out.println(CollisionController.getInstance().getPlayerOnGround(this.playerNumber));
-            if(animation.getAnimationType() != PLAYER_WALK ){
+            if(animation.getAnimationType() != PLAYER_WALK && onGround){
                 animation = animCon.getAnimation(PLAYER_WALK);
             }
 
@@ -99,9 +100,13 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         // MOVE LEFT
         if (keyCon.isKeyPressed(keySet.getMoveLeftKey())) {
             x -= speed * diffMillis / 10;
-            if(animation.getAnimationType() != PLAYER_WALK ){
+
+            /*
+            if(animation.getAnimationType() != PLAYER_WALK && onGround){
                 animation = animCon.getAnimation(PLAYER_WALK);
             }
+            */
+
         }
 
         if(keyCon.isKeyReleased(keySet.getMoveLeftKey()) || keyCon.isKeyReleased(keySet.getMoveRightKey())){
@@ -195,6 +200,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         if (keyCon.isKeyPressed(keySet.getJumpKey())) {
 
+            System.out.println(onGround);
             if (onGround) {
                 animation = animCon.getAnimation(PLAYER_JUMP_START);
                 vy = 20;
