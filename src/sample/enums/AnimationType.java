@@ -9,7 +9,7 @@ public enum AnimationType {
     PLAYER_JUMP_START(60),
     PLAYER_JUMP_PEAK(60),
     PLAYER_JUMP_END(60),
-    PLAYER_WALK(20),
+    PLAYER_WALK(30),
     SWORD(150);
 
     private int amount;
