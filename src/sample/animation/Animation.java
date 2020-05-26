@@ -48,7 +48,9 @@ public class Animation {
         }
     }
 
-
+    public int getCurrentFrameNumber(){
+        return currentFrame;
+    }
 
     public AnimationType getAnimationType() {
         return animationType;

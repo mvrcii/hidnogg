@@ -44,7 +44,7 @@ public class AnimationData {
                     if (imageTransparent) {
                         break;
                     }
-
+                    frame.setFrameNumber(i);
                     frames.add(frame);
                     i++;
                 }
@@ -137,6 +137,7 @@ public class AnimationData {
                 }
             }
         }
+
 
         frameData.setHitBox(hitBox);
         frameData.setHitBoxInverted(hitBoxInverted);
