@@ -43,7 +43,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         animation.update(diffMillis);
         y -= vy * diffMillis / 100;
-        if (y < 100) {
+        if (!CollisionController.getInstance().getPlayerOnGround(this.playerNumber)) {
             vy -= (2 * diffMillis / 10);    //gravity
         } else {
             vy = 0;
@@ -91,7 +91,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             x += speed * diffMillis / 10;
 
             System.out.println(CollisionController.getInstance().getPlayerOnGround(this.playerNumber));
-            if(animation.getAnimationType() != PLAYER_WALK && onGround){
+            if(animation.getAnimationType() != PLAYER_WALK ){
                 animation = animCon.getAnimation(PLAYER_WALK);
             }
 
@@ -99,7 +99,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         // MOVE LEFT
         if (keyCon.isKeyPressed(keySet.getMoveLeftKey())) {
             x -= speed * diffMillis / 10;
-            if(animation.getAnimationType() != PLAYER_WALK && onGround){
+            if(animation.getAnimationType() != PLAYER_WALK ){
                 animation = animCon.getAnimation(PLAYER_WALK);
             }
         }
@@ -195,8 +195,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         if (keyCon.isKeyPressed(keySet.getJumpKey())) {
 
-            System.out.println(vy);
-            if (y == GameLoop.groundLevel) {
+            if (onGround) {
                 animation = animCon.getAnimation(PLAYER_JUMP_START);
                 vy = 20;
                 canAccelerate = true;
@@ -216,7 +215,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if(!canAccelerate && animation.getAnimationType() == PLAYER_JUMP_PEAK && vy == -10){
             animation = animCon.getAnimation(PLAYER_JUMP_END);
         }
-        if(!canAccelerate && animation.getAnimationType() == PLAYER_JUMP_END){
+        if(animation.getAnimationType() == PLAYER_JUMP_END && onGround){
             animation = animCon.getAnimation(PLAYER_IDLE_LOW);
         }
 
