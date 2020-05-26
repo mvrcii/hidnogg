@@ -107,6 +107,7 @@ public class FrameData {
         if(swordStartPointInverted != null){
             return swordStartPointInverted;
         }
+        System.out.println(frameNumber);
         return new Point2D(0,0);
         //throw IllegalArgumentException("There is no swordEndPointInverted in Frame "+frameNumber+"!");
     }

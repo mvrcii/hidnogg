@@ -25,7 +25,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private SwordObject swordObject;
 
     private boolean canAccelerate;
-
+    private boolean onGround;
 
     private Animation animation = DataController.getInstance().getAnimation(PLAYER_IDLE_LOW);
 
@@ -34,6 +34,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         this.keySet = keySet;
         this.playerNumber = playerNumber;
         this.swordObject = null;
+        this.onGround = true;
     }
 
 
@@ -62,7 +63,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     @Override
     public void processInput(long diffMillis) {
-
+        onGround = CollisionController.getInstance().getPlayerOnGround(this.playerNumber);
         double t_holdUp = 200;
         double t_crouch = 200;
 
@@ -88,7 +89,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         // MOVE RIGHT
         if (keyCon.isKeyPressed(keySet.getMoveRightKey())) {
             x += speed * diffMillis / 10;
-            if(animation.getAnimationType() != PLAYER_WALK){
+
+            System.out.println(CollisionController.getInstance().getPlayerOnGround(this.playerNumber));
+            if(animation.getAnimationType() != PLAYER_WALK && onGround){
                 animation = animCon.getAnimation(PLAYER_WALK);
             }
 
@@ -96,7 +99,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         // MOVE LEFT
         if (keyCon.isKeyPressed(keySet.getMoveLeftKey())) {
             x -= speed * diffMillis / 10;
-            if(animation.getAnimationType() != PLAYER_WALK){
+            if(animation.getAnimationType() != PLAYER_WALK && onGround){
                 animation = animCon.getAnimation(PLAYER_WALK);
             }
         }
