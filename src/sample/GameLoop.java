@@ -35,7 +35,7 @@ public class GameLoop extends Thread implements Runnable {
     private SwordObject sword1 = new SwordObject(400, 400, Direction.RIGHT, player1);
     private SwordObject sword2 = new SwordObject(400, 400, Direction.RIGHT, player2);
 
-    private RectangleObstacle ground = new RectangleObstacle(0, groundLevel+64, 500,1, Color.BLACK);
+    private RectangleObstacle ground = new RectangleObstacle(0, groundLevel+64, 500,20, Color.GREEN);
 
     private final FPSObject fpsObject = new FPSObject();
 
