@@ -53,7 +53,7 @@ public class KeyController extends Controller {
     @Override
     public void update(long diffMillis) {
         time = diffMillis;
-        System.out.println(keyObject.getKeyHashMap());
+        //System.out.println(keyObject.getKeyHashMap());
         previousKeyObject = keyObject;          // Derzeitiges KeyObject abspeichern
         keyObject = new KeyObject();            // Neues KeyObject erzeugen
 

@@ -3,19 +3,20 @@ package sample;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import sample.animation.AnimationData;
 import sample.controllers.*;
 import sample.enums.Direction;
 import sample.enums.PlayerType;
 import sample.world.*;
 import sample.interfaces.InputSystem;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 
 public class GameLoop extends Thread implements Runnable {
 
-
-    private Canvas canvas;
     private GraphicsContext gc;
 
     public static ArrayList<GameObject> gameObjects = new ArrayList<>();
@@ -24,8 +25,9 @@ public class GameLoop extends Thread implements Runnable {
 
     public static final int groundLevel = 100;
 
-    private final KeySet keySet1 = new KeySet(KeyCode.A, KeyCode.D, KeyCode.S, KeyCode.W, KeyCode.F, KeyCode.SPACE);
-    private final KeySet keySet2 = new KeySet(KeyCode.LEFT, KeyCode.RIGHT, KeyCode.DOWN, KeyCode.UP, KeyCode.CONTROL, KeyCode.SHIFT);
+    // KeySet(MOVE_LEFT, MOVE_RIGHT, DOWN, UP, HIT, JUMP)
+    private final KeySet keySet1 = new KeySet(KeyCode.A,    KeyCode.D,      KeyCode.S,      KeyCode.W,  KeyCode.F,  KeyCode.G);
+    private final KeySet keySet2 = new KeySet(KeyCode.LEFT, KeyCode.RIGHT,  KeyCode.DOWN,   KeyCode.UP, KeyCode.N,  KeyCode.M);
 
     private final PlayerObject player1 = new PlayerObject(100, groundLevel, PlayerType.PLAYER_ONE, Direction.RIGHT, keySet1);
     private final PlayerObject player2 = new PlayerObject(300, groundLevel, PlayerType.PLAYER_TWO, Direction.RIGHT, keySet2);
@@ -33,10 +35,11 @@ public class GameLoop extends Thread implements Runnable {
     private SwordObject sword1 = new SwordObject(400, 400, Direction.RIGHT, player1);
     private SwordObject sword2 = new SwordObject(400, 400, Direction.RIGHT, player2);
 
+    private RectangleObstacle ground = new RectangleObstacle(0, groundLevel+64, 500,1, Color.BLACK);
+
     private final FPSObject fpsObject = new FPSObject();
 
     public GameLoop() {
-        this.canvas = Main.canvas;
         initialize();
     }
 
@@ -47,10 +50,12 @@ public class GameLoop extends Thread implements Runnable {
         gameControllers.add(DirectionController.getInstance());
         gameControllers.add(CameraController.getInstance());
 
-        gc = canvas.getGraphicsContext2D();
+        gc = Main.canvas.getGraphicsContext2D();
 
         fpsObject.setPrintMode(false);
         gameObjects.add(fpsObject);
+        gameObjects.add(ground);
+
         gameObjects.add(player1);
         gameObjects.add(player2);
 
@@ -125,7 +130,7 @@ public class GameLoop extends Thread implements Runnable {
     }
 
     private void clearScreen() {
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gc.clearRect(0, 0, Main.canvas.getWidth(), Main.canvas.getHeight());
     }
 
 

@@ -19,8 +19,8 @@ public class AnimationData {
     private boolean imageTransparent = false;
     private ArrayList<FrameData> frames = new ArrayList<>();
 
-    private static final int TILE_SIZE = 64;
-    private static final String SPRITE_SHEET_PATH = "src/test.png";
+    public static final int TILE_SIZE = 64;
+    private static final String SPRITE_SHEET_PATH = "src/spritesheet.png";
 
     private static final int black = new Color(0, 0, 0).getRGB();
     private static final int red = new Color(254, 0, 0).getRGB(); // RGB value in test.png is not 255-red
@@ -49,7 +49,7 @@ public class AnimationData {
                     i++;
                 }
             }
-            System.out.println("Row " + row + " with " + i + " Sprites fully loaded.");
+            System.out.println("Row " + row + " with " + i + " Sprites successfully loaded.");
 
         } catch (IOException e) {
             e.printStackTrace();
