@@ -3,7 +3,6 @@ package sample.animation;
 
 import javafx.geometry.Point2D;
 import sample.controllers.CollisionController;
-import sample.enums.Direction;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -23,7 +22,7 @@ public class AnimationData {
     private static final String SPRITE_SHEET_PATH = "src/spritesheet.png";
 
     private static final int black = new Color(0, 0, 0).getRGB();
-    private static final int red = new Color(254, 0, 0).getRGB(); // RGB value in test.png is not 255-red
+    private static final int red = new Color(254, 0, 0).getRGB(); // RGB value in spritesheet.png is not 255-red
     private static final int green = new Color(0, 255, 0).getRGB();
     private static final int blue = new Color(0, 0, 255).getRGB();
 
