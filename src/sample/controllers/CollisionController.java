@@ -80,14 +80,13 @@ public class CollisionController extends Controller {
         Point2D swordTip;
         ArrayList<Point2D> hitBox_Player2;
         int offsetHitBox = 0; // TODO :: has to be updated, if playerRotation-implementation is changed
-        int offsetSword = 4; // TODO :: has to be updated, if playerRotation-implementation is changed
 
         // Get relevant hitBox of player2 and swordTip-position of player1
         if (player2.getDirection() == Direction.RIGHT) { // --> player1 direction must be Direction.LEFT
             hitBox_Player2 = player2.getAnimation().getCurrentFrame().getHitBox();
 
             Point2D swordStartPoint = player1.getAnimation().getCurrentFrame().getSwordStartPointInverted();
-            swordTip = new Point2D(player1.getX() + swordStartPoint.getX() - 2 * swordLength + offsetSword, player1.getY() + swordStartPoint.getY());
+            swordTip = new Point2D(player1.getX() + swordStartPoint.getX() - playersWidthHeight[0] - swordLength, player1.getY() + swordStartPoint.getY());
 
         } else { // --> player1 direction must be Direction.RIGHT
             hitBox_Player2 = player2.getAnimation().getCurrentFrame().getHitBoxInverted();
@@ -243,5 +242,9 @@ public class CollisionController extends Controller {
 
     public boolean getSwordsHitting() {
         return swordsHitting;
+    }
+
+    public int getSwordLength(){
+        return swordLength;
     }
 }
