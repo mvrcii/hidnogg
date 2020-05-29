@@ -42,7 +42,7 @@ public class CollisionController extends Controller {
     private boolean swordsHitting = false;
 
     private CollisionController() {
-        for (GameObject obj : GameLoop.gameObjects) { // Collect PlayerObjects
+        for (GameObject obj : GameLoop.currentLevel.getGameObjects()) { // Collect PlayerObjects
             if (obj instanceof PlayerObject)
                 players.add((PlayerObject) obj);
 

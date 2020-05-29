@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
 import sample.animation.AnimationData;
 import sample.controllers.*;
 import sample.enums.Direction;
+import sample.enums.LevelType;
 import sample.enums.PlayerType;
 import sample.world.*;
 import sample.interfaces.InputSystem;
@@ -17,57 +18,25 @@ import java.util.ArrayList;
 
 public class GameLoop extends Thread implements Runnable {
 
-    private GraphicsContext gc;
-
-    public static ArrayList<GameObject> gameObjects = new ArrayList<>();
-    public static ArrayList<Controller> gameControllers = new ArrayList<>();
+    private final GraphicsContext gc = Main.canvas.getGraphicsContext2D();
+    private final ArrayList<Controller> gameControllers = new ArrayList<>();
 
 
-    public static final int groundLevel = (int) (Main.canvas.getHeight()/2);
-    // public static final int groundLevel = (int) Main.canvas.getWidth() - 175;
-
-    // KeySet(MOVE_LEFT, MOVE_RIGHT, DOWN, UP, HIT, JUMP)
-    private final KeySet keySet1 = new KeySet(KeyCode.A,    KeyCode.D,      KeyCode.S,      KeyCode.W,  KeyCode.F,  KeyCode.G);
-    private final KeySet keySet2 = new KeySet(KeyCode.LEFT, KeyCode.RIGHT,  KeyCode.DOWN,   KeyCode.UP, KeyCode.N,  KeyCode.M);
-
-    private final PlayerObject player1 = new PlayerObject(500, groundLevel, PlayerType.PLAYER_ONE, Direction.RIGHT, keySet1);
-    private final PlayerObject player2 = new PlayerObject(700, groundLevel, PlayerType.PLAYER_TWO, Direction.RIGHT, keySet2);
-
-    private SwordObject sword1 = new SwordObject(400, 400, Direction.RIGHT, player1);
-    private SwordObject sword2 = new SwordObject(400, 400, Direction.RIGHT, player2);
-
-    private RectangleObstacle ground = new RectangleObstacle(0, groundLevel, (int) Main.canvas.getWidth(),20, Color.GREEN);
-    //private RectangleObstacle ground = new RectangleObstacle(0, groundLevel, (int) Main.canvas.getWidth(),(int) Main.canvas.getHeight() - groundLevel, Color.GREEN);
-    private final FPSObject fpsObject = new FPSObject();
+    public static WorldObject currentLevel;
+    private Config cfg;
 
     public GameLoop() {
-        initialize();
-    }
-
-
-    private void initialize() {
         gameControllers.add(KeyController.getInstance());
         gameControllers.add(DataController.getInstance());
         gameControllers.add(DirectionController.getInstance());
         gameControllers.add(CameraController.getInstance());
 
-        gc = Main.canvas.getGraphicsContext2D();
-
-        fpsObject.setPrintMode(false);
-        gameObjects.add(fpsObject);
-        gameObjects.add(ground);
-
-        gameObjects.add(player1);
-        gameObjects.add(player2);
-
-        gameObjects.add(sword1);
-        gameObjects.add(sword2);
-
-        player1.setSwordObject(sword1);
-        player2.setSwordObject(sword2);
+        WorldObject level1 = new WorldObject(LevelType.LEVEL_ONE);
+        currentLevel = level1;
 
         gameControllers.add(CollisionController.getInstance());
     }
+
 
     private final float interval = 1000.0f / 60;
 
@@ -86,14 +55,7 @@ public class GameLoop extends Thread implements Runnable {
             update(diffMillis);
             clearScreen();
             draw();
-/*
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
- */
             // Adjust timing if necessary
             currentTick = System.currentTimeMillis() - currentTick;
             if (currentTick < interval) {
@@ -108,7 +70,7 @@ public class GameLoop extends Thread implements Runnable {
 
 
     private void update(long diffMillis) {
-        for (GameObject obj : gameObjects) {
+        for (GameObject obj : currentLevel.getGameObjects()) {
 
             if (obj instanceof InputSystem) {
                 ((InputSystem) obj).processInput(diffMillis);
@@ -125,7 +87,7 @@ public class GameLoop extends Thread implements Runnable {
 
 
     private void draw() {
-        for (GameObject obj : gameObjects) {
+        for (GameObject obj : currentLevel.getGameObjects()) {
             obj.draw(gc);
         }
     }

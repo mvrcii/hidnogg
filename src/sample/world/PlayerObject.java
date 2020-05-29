@@ -45,11 +45,11 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         animation.update(diffMillis);
 
         y -= vy * diffMillis / 100;
-        if (y < GameLoop.groundLevel - playerOffset) {
+        if (y < GameLoop.currentLevel.getGroundLevel() - playerOffset) {
             vy -= (2 * diffMillis / 10);    //gravity
         } else {
             vy = 0;
-            y = GameLoop.groundLevel - playerOffset;
+            y = GameLoop.currentLevel.getGroundLevel() - playerOffset;
         }
     }
 
@@ -245,21 +245,3 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     }
 }
 
-            /*
-            if (!(animation.getAnimationType() == PLAYER_JUMP_PEAK)) {
-                animation = animCon.getAnimation(PLAYER_JUMP_PEAK);
-            }
-
-            if (y == GameLoop.groundLevel) {
-                vy = 20;
-                canAccelerate = true;
-            } else {
-                if (vy > 30) {
-                    canAccelerate = false;
-                }
-                if (canAccelerate) {
-                    vy += (3 * diffMillis / 10);
-                }
-            }
-        }
-        */

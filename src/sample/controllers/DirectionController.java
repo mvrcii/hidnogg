@@ -37,10 +37,10 @@ public class DirectionController extends Controller{
 
 
     private void getPlayers(){
-        this.gameObjects = GameLoop.gameObjects;
+        this.gameObjects = GameLoop.currentLevel.getGameObjects();
         for (GameObject obj : gameObjects) {
             if(obj instanceof PlayerObject){
-                    playerObjects.add((PlayerObject) obj);
+                playerObjects.add((PlayerObject) obj);
             }
         }
 
