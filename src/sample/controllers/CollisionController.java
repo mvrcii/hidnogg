@@ -247,4 +247,8 @@ public class CollisionController extends Controller {
     public int getSwordLength(){
         return swordLength;
     }
+
+    public Point2D[] getRectHitBoxP1_P2(){
+        return rectHitBoxP1_P2;
+    }
 }
