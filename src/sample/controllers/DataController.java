@@ -46,12 +46,6 @@ public class DataController extends Controller {
         basicAnimationData.put(AnimationType.PLAYER_STAB_MEDIUM, new AnimationData(9));
         basicAnimationData.put(AnimationType.PLAYER_STAB_HIGH, new AnimationData(9));
 
-
-
-        // TESTING
-        //ArrayList<FrameData> f = basicAnimationData.get(AnimationType.PLAYER_JUMP_PEAK).getFrames();
-        //System.out.println(f.size());
-        // TESTING
     }
 
     @Override

@@ -37,7 +37,7 @@ public class Main extends Application {
 
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
-        System.out.println(bounds);
+        //System.out.println(bounds);
         canvas = new Canvas(bounds.getWidth(), bounds.getHeight());
         canvas.requestFocus();
         canvas.setFocusTraversable(true);

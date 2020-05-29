@@ -31,6 +31,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private boolean onGround;
 
     private Animation animation = DataController.getInstance().getAnimation(PLAYER_IDLE_LOW);
+    private Animation lastIdleAnimation = DataController.getInstance().getAnimation(PLAYER_IDLE_LOW);
 
     public PlayerObject(int x, int y, PlayerType playerNumber, Direction direction, KeySet keySet) {
         super(x, y, direction);
@@ -83,7 +84,11 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private void handleStabKey() {
         // TODO: Stab animation missing. Needs still implementation!
         if (keyCon.isKeyPressed(keySet.getStabKey())) {
-
+            switch(animation.getAnimationType()){
+                case PLAYER_IDLE_LOW -> animation = animCon.getAnimation(PLAYER_STAB_LOW);
+                case PLAYER_IDLE_MEDIUM -> animation = animCon.getAnimation(PLAYER_STAB_MEDIUM);
+                case PLAYER_IDLE_HIGH -> animation = animCon.getAnimation(PLAYER_STAB_HIGH);
+            }
         }
         if (keyCon.isKeyReleased(keySet.getStabKey())) {
 
@@ -97,6 +102,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             x += speed * diffMillis / 10;
 
             if(animation.getAnimationType() != PLAYER_WALK && onGround){
+                lastIdleAnimation = animation;
                 animation = animCon.getAnimation(PLAYER_WALK);
             }
 
@@ -114,9 +120,10 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         }
 
         if(keyCon.isKeyReleased(keySet.getMoveLeftKey()) || keyCon.isKeyReleased(keySet.getMoveRightKey())){
-            animation = animCon.getAnimation(PLAYER_IDLE_LOW);
+            animation = lastIdleAnimation;
         }
     }
+
 
     /**
      * Controls upKey
@@ -136,6 +143,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if (keyCon.isKeyPressed(keySet.getUpKey())) {
             double t_pressed = keyCon.getKeyPressedTime(keySet.getUpKey());
             if(t_pressed > t_holdUp){
+                if(animation.getAnimationType() != PLAYER_IDLE_HOLD_UP){
+                    lastIdleAnimation = animation;
+                }
                 animation = animCon.getAnimation(PLAYER_IDLE_HOLD_UP);
             }
         }
@@ -147,10 +157,12 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             } else if (animType == PLAYER_IDLE_MEDIUM) {
                 animation = animCon.getAnimation(PLAYER_IDLE_HIGH);
             } else if (animType == PLAYER_IDLE_HOLD_UP) {
-                animation = animCon.getAnimation(PLAYER_IDLE_LOW);
+                animation = lastIdleAnimation;
+                //animation = animCon.getAnimation(PLAYER_IDLE_LOW);
             }
         }
     }
+
 
     /**
      * Controls downKey
