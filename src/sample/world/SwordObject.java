@@ -4,6 +4,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import sample.animation.Animation;
 import sample.animation.FrameData;
+import sample.controllers.CameraController;
 import sample.controllers.DataController;
 import sample.enums.AnimationType;
 import sample.enums.Direction;
@@ -80,9 +81,10 @@ public class SwordObject extends GameObject{
 
     @Override
     public void draw(GraphicsContext gc) {
+        Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
         switch (direction) {
-            case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), x, y);
-            case RIGHT -> gc.drawImage(animation.getCurrentSprite(), x, y);
+            case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());
+            case RIGHT -> gc.drawImage(animation.getCurrentSprite(), drawPoint.getX(), drawPoint.getY());
         }
     }
 
