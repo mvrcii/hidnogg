@@ -22,20 +22,22 @@ public class GameLoop extends Thread implements Runnable {
     public static ArrayList<GameObject> gameObjects = new ArrayList<>();
     public static ArrayList<Controller> gameControllers = new ArrayList<>();
 
-    public static final int groundLevel = (int) Main.canvas.getWidth() - 175;
+
+    public static final int groundLevel = (int) (Main.canvas.getHeight()/2);
+    // public static final int groundLevel = (int) Main.canvas.getWidth() - 175;
 
     // KeySet(MOVE_LEFT, MOVE_RIGHT, DOWN, UP, HIT, JUMP)
     private final KeySet keySet1 = new KeySet(KeyCode.A,    KeyCode.D,      KeyCode.S,      KeyCode.W,  KeyCode.F,  KeyCode.G);
     private final KeySet keySet2 = new KeySet(KeyCode.LEFT, KeyCode.RIGHT,  KeyCode.DOWN,   KeyCode.UP, KeyCode.N,  KeyCode.M);
 
-    private final PlayerObject player1 = new PlayerObject(100, groundLevel, PlayerType.PLAYER_ONE, Direction.RIGHT, keySet1);
-    private final PlayerObject player2 = new PlayerObject(300, groundLevel, PlayerType.PLAYER_TWO, Direction.RIGHT, keySet2);
+    private final PlayerObject player1 = new PlayerObject(500, groundLevel, PlayerType.PLAYER_ONE, Direction.RIGHT, keySet1);
+    private final PlayerObject player2 = new PlayerObject(700, groundLevel, PlayerType.PLAYER_TWO, Direction.RIGHT, keySet2);
 
     private SwordObject sword1 = new SwordObject(400, 400, Direction.RIGHT, player1);
     private SwordObject sword2 = new SwordObject(400, 400, Direction.RIGHT, player2);
 
-    private RectangleObstacle ground = new RectangleObstacle(0, groundLevel, (int) Main.canvas.getWidth(),(int) Main.canvas.getHeight() - groundLevel, Color.GREEN);
-
+    private RectangleObstacle ground = new RectangleObstacle(0, groundLevel, (int) Main.canvas.getWidth(),20, Color.GREEN);
+    //private RectangleObstacle ground = new RectangleObstacle(0, groundLevel, (int) Main.canvas.getWidth(),(int) Main.canvas.getHeight() - groundLevel, Color.GREEN);
     private final FPSObject fpsObject = new FPSObject();
 
     public GameLoop() {
