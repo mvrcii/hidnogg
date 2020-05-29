@@ -42,7 +42,9 @@ public class DataController extends Controller {
         basicAnimationData.put(AnimationType.PLAYER_IDLE_MEDIUM, new AnimationData(6));
         basicAnimationData.put(AnimationType.PLAYER_IDLE_HIGH, new AnimationData(7));
         basicAnimationData.put(AnimationType.PLAYER_IDLE_HOLD_UP, new AnimationData(8));
-
+        basicAnimationData.put(AnimationType.PLAYER_STAB_LOW, new AnimationData(9));
+        basicAnimationData.put(AnimationType.PLAYER_STAB_MEDIUM, new AnimationData(9));
+        basicAnimationData.put(AnimationType.PLAYER_STAB_HIGH, new AnimationData(9));
 
 
 
