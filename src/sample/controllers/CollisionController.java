@@ -2,6 +2,7 @@ package sample.controllers;
 
 import javafx.geometry.Point2D;
 import sample.GameLoop;
+import sample.enums.AnimationType;
 import sample.enums.Direction;
 import sample.enums.PlayerType;
 import sample.world.GameObject;
@@ -77,6 +78,9 @@ public class CollisionController extends Controller {
      * Returns true, if there is a collision between the sword of player1 and the character of player2
      */
     private boolean collisionSwordAvatar(PlayerObject player1, PlayerObject player2) { // TODO :: Eventually update hitBoxCalc & swordTip
+        if(player1.getAnimation().getAnimationType() == AnimationType.PLAYER_WALK || player1.getAnimation().getAnimationType() == AnimationType.PLAYER_IDLE_HOLD_UP) // Prevent stabbing while sword is held up
+            return false;
+
         Point2D swordTip;
         ArrayList<Point2D> hitBox_Player2;
         int offsetHitBox = 0; // TODO :: has to be updated, if playerRotation-implementation is changed
@@ -246,5 +250,9 @@ public class CollisionController extends Controller {
 
     public int getSwordLength(){
         return swordLength;
+    }
+
+    public Point2D[] getRectHitBoxP1_P2(){
+        return rectHitBoxP1_P2;
     }
 }
