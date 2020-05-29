@@ -1,9 +1,11 @@
 package sample.world;
 
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import sample.GameLoop;
 import sample.animation.Animation;
 import sample.animation.FrameData;
+import sample.controllers.CameraController;
 import sample.controllers.CollisionController;
 import sample.controllers.DataController;
 import sample.controllers.KeyController;
@@ -11,6 +13,7 @@ import sample.enums.AnimationType;
 import sample.enums.Direction;
 import sample.enums.PlayerType;
 import sample.interfaces.InputSystem;
+
 
 
 import static sample.enums.AnimationType.*;
@@ -56,9 +59,10 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     @Override
     public void draw(GraphicsContext gc) {
+        Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
         switch (direction) {
-            case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), x, y);
-            case RIGHT -> gc.drawImage(animation.getCurrentSprite(), x, y);
+            case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());
+            case RIGHT -> gc.drawImage(animation.getCurrentSprite(), drawPoint.getX(), drawPoint.getY());
         }
     }
 
