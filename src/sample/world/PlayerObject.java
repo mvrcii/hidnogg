@@ -213,8 +213,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     vy += (3 * diffMillis / 10);
                 }
             }
+        }else{
+            canAccelerate = false;
         }
-
         if(animation.getAnimationType() == PLAYER_JUMP_START && vy >= 20){
             animation = animCon.getAnimation(PLAYER_JUMP_PEAK);
         }
