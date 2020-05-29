@@ -64,4 +64,24 @@ public class WorldObject {
     public LevelType getLevelType() {
         return levelType;
     }
+
+    public RectangleObstacle getGround() {
+        return ground;
+    }
+
+    public PlayerObject getPlayer1() {
+        return player1;
+    }
+
+    public PlayerObject getPlayer2() {
+        return player2;
+    }
+
+    public SwordObject getSword1() {
+        return sword1;
+    }
+
+    public SwordObject getSword2() {
+        return sword2;
+    }
 }
