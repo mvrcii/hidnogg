@@ -50,8 +50,6 @@ public class Main extends Application {
         primaryStage.show();
 
         new GameLoop().start();
-
-
     }
 
     public static void main(String[] args) {
