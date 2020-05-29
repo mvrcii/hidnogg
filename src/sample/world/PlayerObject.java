@@ -249,6 +249,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             if (!(animation.getAnimationType() == PLAYER_JUMP_PEAK)) {
                 animation = animCon.getAnimation(PLAYER_JUMP_PEAK);
             }
+
             if (y == GameLoop.groundLevel) {
                 vy = 20;
                 canAccelerate = true;
