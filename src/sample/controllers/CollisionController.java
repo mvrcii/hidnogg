@@ -35,7 +35,7 @@ public class CollisionController extends Controller {
     // --- --- Player Data
     private final ArrayList<PlayerObject> players = new ArrayList<>();
     // --- --- --- Attack related data
-    HashSet<AnimationType> nonStabAnimations = Stream.of(AnimationType.PLAYER_WALK, AnimationType.PLAYER_IDLE_HOLD_UP, AnimationType.PLAYER_JUMP_START, AnimationType.PLAYER_JUMP_PEAK, AnimationType.PLAYER_JUMP_END).collect(Collectors.toCollection(HashSet::new));
+    private HashSet<AnimationType> nonStabAnimations = Stream.of(AnimationType.PLAYER_WALK, AnimationType.PLAYER_IDLE_HOLD_UP, AnimationType.PLAYER_JUMP_START, AnimationType.PLAYER_JUMP_PEAK, AnimationType.PLAYER_JUMP_END).collect(Collectors.toCollection(HashSet::new));
     private static int swordLength = 0; // swordLength for sword-tip-calculation
     // --- --- --- Obstacle-Collision related data
     private final Point2D[] rectHitBoxP1_P2 = new Point2D[2]; // Contains upper left X,Y and bottom right X,Y of both players
