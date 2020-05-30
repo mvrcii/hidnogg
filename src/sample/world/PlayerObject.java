@@ -270,7 +270,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 }
                 if (CollisionController.getInstance().getSwordsHitting())
                     System.out.println("SWORDS COLLIDING");
-                if (CollisionController.getInstance().getPlayer1HitPlayer2() && this.playerNumber == PlayerType.PLAYER_ONE) // Testing player1_hit_player2
+                if (CollisionController.getInstance().getPlayerHitOtherPlayer(this.playerNumber) && this.playerNumber == PlayerType.PLAYER_ONE) // Testing player1_hit_player2
                     System.out.println("PLAYER1 HIT DETECTED");
                 gc.setFill(Color.GREEN); // SwordMount
                 gc.fillRect(this.x + gripX, this.y + gripY, 8, 8);
