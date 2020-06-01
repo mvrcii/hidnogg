@@ -13,7 +13,8 @@ import sample.enums.DirectionType;
 import sample.enums.PlayerType;
 import sample.interfaces.InputSystem;
 
-
+import javafx.scene.paint.Color;
+import java.util.ArrayList;
 
 import static sample.enums.AnimationType.*;
 
@@ -49,7 +50,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         y -= vy * diffMillis / 100;
         if (y < GameLoop.currentLevel.getGroundLevel() - playerOffset) {
-            vy -= (2 * diffMillis / 10);    //gravity
+            vy -= ((2 * (double) diffMillis) / 10);    //gravity
         } else {
             vy = 0;
             y = GameLoop.currentLevel.getGroundLevel() - playerOffset;
@@ -65,6 +66,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());
             case RIGHT -> gc.drawImage(animation.getCurrentSprite(), drawPoint.getX(), drawPoint.getY());
         }
+        //this.showHitBoxState(gc, 1);
+        //this.showHitBoxState(gc, 2);
+        //this.showHitBoxState(gc, 3);
     }
 
 
@@ -231,7 +235,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     canAccelerate = false;
                 }
                 if(canAccelerate){
-                    vy += (3 * diffMillis / 10);
+                    vy += ((3 * (double) diffMillis) / 10);
                 }
             }
         }else{
@@ -247,6 +251,69 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             animation = animCon.getAnimation(lastIdleAnimationType);
         }
 
+    }
+
+    /**
+     * Test method >> can be removed
+     */
+    private void showHitBoxState(GraphicsContext gc, int testId) {
+        int[] playerWidthHeight = CollisionController.getInstance().getPlayersWidthHeight();
+
+        switch (testId) {
+            // TESTING swordPoints ----------------------------------------------------------------------------------------------------
+            case 1 -> {
+                int gripX;
+                int gripY;
+                int swordLength = CollisionController.getInstance().getSwordLength();
+                if (this.direction == Direction.RIGHT) {
+                    gripX = (int) this.getAnimation().getCurrentFrame().getSwordStartPoint().getX();
+                    gripY = (int) this.getAnimation().getCurrentFrame().getSwordStartPoint().getY();
+                } else {
+                    gripX = (int) this.getAnimation().getCurrentFrame().getSwordStartPointInverted().getX() - CollisionController.getInstance().getPlayersWidthHeight()[0];
+                    gripY = (int) this.getAnimation().getCurrentFrame().getSwordStartPointInverted().getY();
+                    swordLength *= (-1);
+                }
+                if (CollisionController.getInstance().getSwordsHitting())
+                    System.out.println("SWORDS COLLIDING");
+                if (CollisionController.getInstance().getPlayerHitOtherPlayer(this.playerNumber) && this.playerNumber == PlayerType.PLAYER_ONE) // Testing player1_hit_player2
+                    System.out.println("PLAYER1 HIT DETECTED");
+                gc.setFill(Color.GREEN); // SwordMount
+                gc.fillRect(this.x + gripX, this.y + gripY, 8, 8);
+                gc.setFill(Color.PINK); // SwordTip
+                gc.fillRect(this.x + gripX + swordLength, this.y + gripY, 8, 8);
+            }
+            // TESTING rectangleHitBox ----------------------------------------------------------------------------------------------------
+            case 2 -> {
+                gc.setStroke(Color.GREEN);
+                boolean playerOnGround = CollisionController.getInstance().getPlayerOnGround(this.playerNumber);
+                boolean playerHitsWall = CollisionController.getInstance().getPlayerHitsWall(this.playerNumber);
+                if (playerOnGround && playerHitsWall)
+                    gc.setStroke(Color.BLACK);
+                else if (playerOnGround)
+                    gc.setStroke(Color.RED);
+                else if (playerHitsWall)
+                    gc.setStroke(Color.BLUE);
+                else
+                    gc.setStroke(Color.GREEN);
+                Point2D[] playerXY = CollisionController.getInstance().getRectHitBoxP1_P2();
+                gc.strokeRect(this.x + playerXY[0].getX(), this.y + playerXY[0].getY(), playerWidthHeight[0], playerWidthHeight[1]);
+            }
+            // TESTING outLineHitBox ----------------------------------------------------------------------------------------------------
+            case 3 -> {
+                gc.setFill(Color.ORANGE);
+                ArrayList<Point2D> hitBox;
+                int offset = 0;
+                if (this.direction == Direction.RIGHT) {
+                    hitBox = this.getAnimation().getCurrentFrame().getHitBox();
+                } else {
+                    hitBox = this.getAnimation().getCurrentFrame().getHitBoxInverted();
+                    offset = playerWidthHeight[0] + 2;
+                }
+                for (Point2D point : hitBox) {
+                    gc.fillRect(this.x + point.getX() - offset, this.y + point.getY(), 2, 2);
+                }
+            }
+        }
     }
 
 

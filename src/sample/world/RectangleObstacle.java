@@ -35,7 +35,7 @@ public class RectangleObstacle extends GameObject {
     @Override
     public void draw(GraphicsContext gc) {
         gc.setFill(this.color);
-        gc.fillRect(this.x, this.y + 1, this.width, this.height);
+        gc.fillRect(this.x, this.y, this.width, this.height);
     }
 
     // ----------------------------------------------------------------------------------------------------

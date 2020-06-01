@@ -10,6 +10,9 @@ import sample.world.PlayerObject;
 import sample.world.RectangleObstacle;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CollisionController extends Controller {
 
@@ -26,21 +29,30 @@ public class CollisionController extends Controller {
         return instance;
     }
 
-    // Player Data
+    // --- World Data
+    // --- --- Obstacle Data
+    private final ArrayList<RectangleObstacle> obstacles = new ArrayList<>();
+    // --- --- Player Data
     private final ArrayList<PlayerObject> players = new ArrayList<>();
+    // --- --- --- Attack related data
+    private final HashSet<AnimationType> nonStabAnimations = Stream.of(AnimationType.PLAYER_WALK, AnimationType.PLAYER_IDLE_HOLD_UP, AnimationType.PLAYER_JUMP_START, AnimationType.PLAYER_JUMP_PEAK, AnimationType.PLAYER_JUMP_END).collect(Collectors.toCollection(HashSet::new));
     private static int swordLength = 0; // swordLength for sword-tip-calculation
+    // --- --- --- Obstacle-Collision related data
     private final Point2D[] rectHitBoxP1_P2 = new Point2D[2]; // Contains upper left X,Y and bottom right X,Y of both players
     private final int[] playersWidthHeight = new int[2]; // Contains Width and Height of both players
+    // ----------------------------------------------------------------------------------------------------
 
-    // World Data
-    private final ArrayList<RectangleObstacle> obstacles = new ArrayList<>();
-
-    // Player states
+    // --- Player states
+    // --- --- Obstacle related states
     private boolean player1_onGround = false;
+    private boolean player1_hitsWall = false;
     private boolean player2_onGround = false;
+    private boolean player2_hitsWall = false;
+    // --- --- Attack related states
     private boolean player1_hit_player2 = false;
     private boolean player2_hit_player1 = false;
     private boolean swordsHitting = false;
+    // ----------------------------------------------------------------------------------------------------
 
     private CollisionController() {
         for (GameObject obj : GameLoop.currentLevel.getGameObjects()) { // Collect PlayerObjects
@@ -60,8 +72,8 @@ public class CollisionController extends Controller {
      */
     @Override
     public void update(long diffMillis) {
-        player1_onGround = getPlayerObstacleCollisions(players.get(0)).size() > 0;
-        player2_onGround = getPlayerObstacleCollisions(players.get(1)).size() > 0;
+        updatePlayerObstacleCollisions(players.get(0));
+        updatePlayerObstacleCollisions(players.get(1));
 
         player1_hit_player2 = collisionSwordAvatar(players.get(0), players.get(1));
         player2_hit_player1 = collisionSwordAvatar(players.get(1), players.get(0));
@@ -76,14 +88,15 @@ public class CollisionController extends Controller {
 
     /**
      * Returns true, if there is a collision between the sword of player1 and the character of player2
+     * Logic >> Detects, where the swordTip-point (player1) is between two points of the player2-hitBox on the same y-level
      */
     private boolean collisionSwordAvatar(PlayerObject player1, PlayerObject player2) { // TODO :: Eventually update hitBoxCalc & swordTip
-        if(player1.getAnimation().getAnimationType() == AnimationType.PLAYER_WALK || player1.getAnimation().getAnimationType() == AnimationType.PLAYER_IDLE_HOLD_UP) // Prevent stabbing while sword is held up
+        if (nonStabAnimations.contains(player1.getAnimation().getAnimationType())) // Prevent stabbing while sword is held up
             return false;
 
         Point2D swordTip;
         ArrayList<Point2D> hitBox_Player2;
-        int offsetHitBox = 0; // TODO :: has to be updated, if playerRotation-implementation is changed
+        int offsetHitBox = 0;
 
         // Get relevant hitBox of player2 and swordTip-position of player1
         if (player2.getDirectionType() == DirectionType.RIGHT) { // --> player1 direction must be Direction.LEFT
@@ -94,7 +107,7 @@ public class CollisionController extends Controller {
 
         } else { // --> player1 direction must be Direction.RIGHT
             hitBox_Player2 = player2.getAnimation().getCurrentFrame().getHitBoxInverted();
-            offsetHitBox = playersWidthHeight[0] + 2;
+            offsetHitBox = playersWidthHeight[0] + 2; // TODO :: has to be updated, if playerRotation-implementation is changed
 
             Point2D swordStartPoint = player1.getAnimation().getCurrentFrame().getSwordStartPoint();
             swordTip = new Point2D(player1.getX() + swordStartPoint.getX() + swordLength, player1.getY() + swordStartPoint.getY());
@@ -123,7 +136,7 @@ public class CollisionController extends Controller {
 
 
     /**
-     * returns true if the swords hit each other (are on the same level) // TODO :: Should be called in the KeyControl since it depends on previous sword positions (?)
+     * returns true if the swords collide // TODO :: Should be called in the KeyControl since it depends on previous sword positions (?)
      */
     private boolean checkCollisionSwordSword() {
         Point2D swordTip1, swordGrip2, swordTip2;
@@ -158,34 +171,47 @@ public class CollisionController extends Controller {
     // ----------------------------------------------------------------------------------------------------
     // --- Obstacle collisions:
 
-    /**
-     * Returns all the Obstacle-Objects that collide with the player
-     */
-    private ArrayList<RectangleObstacle> getPlayerObstacleCollisions(PlayerObject player) {
-        ArrayList<RectangleObstacle> retO_player = new ArrayList<>(); // Obstacles player collides with atm
+    private void updatePlayerObstacleCollisions(PlayerObject player) { // TODO :: Eventually add collisions on head, if necessary in the maps
+        boolean onGround = false;
+        boolean hitsWallRight = false;
+        boolean hitsWallLeft = false;
 
         // Check Avatar-Obstacle collisions
         for (RectangleObstacle obstacle : obstacles) {
-            if (collisionAvatarObstacle(player, obstacle))
-                retO_player.add(obstacle);
+            if (!collisionRectRect(player, obstacle, 0, 0, 0, 0)) // Rect-Rect collision
+                continue; // Obstacle not near the player >> irrelevant for collision detection
+
+            if (collisionRectRect(player, obstacle, 4, 4, playersWidthHeight[1], 0)) // Rect-Line collision >> Ground
+                onGround = true;
+
+            if (collisionRectRect(player, obstacle, playersWidthHeight[0], 0, 4, 4))  // Rect-Line collision >> Wall-right
+                hitsWallRight = true;
+            else if (collisionRectRect(player, obstacle, 0, playersWidthHeight[0], 4, 4)) // Rect-Line collision >> Wall-left
+                hitsWallLeft = true;
+
+            if ((hitsWallRight || hitsWallLeft) && onGround) // States have been set, no need to continue
+                break;
         }
 
-        return retO_player;
+        // Update states of player
+        if (player.getPlayerNumber() == PlayerType.PLAYER_ONE) {
+            player1_onGround = onGround;
+            player1_hitsWall = (hitsWallRight || hitsWallLeft); // TODO :: Differentiate, if necessary in player updates
+        } else {
+            player2_onGround = onGround;
+            player2_hitsWall = (hitsWallRight || hitsWallLeft); // TODO :: Differentiate, if necessary in player updates
+        }
     }
 
 
     /**
      * Returns true, if there is a collision between the player and the given obstacle
      */
-    private boolean collisionAvatarObstacle(PlayerObject player, RectangleObstacle obstacle) {
-
-        int playerWidth = playersWidthHeight[0];
-        int playerHeight = playersWidthHeight[1];
-
-        return (player.getX() <= obstacle.getX() + obstacle.getWidth() // Checks, that rect2 is close enough from the left side
-                && player.getX() + playerWidth >= obstacle.getX() // Checks, that rect2 is close enough from the right side
-                && player.getY() <= obstacle.getY() + obstacle.getHeight() // Checks, --*-- from above
-                && player.getY() + playerHeight >= obstacle.getY()); // Checks, --*-- from below
+    private boolean collisionRectRect(PlayerObject player, RectangleObstacle obstacle, int x1, int x2, int y1, int y2) {
+        return (player.getX() + x1 <= obstacle.getX() + obstacle.getWidth() // Checks, that rect2 is close enough from the left side
+                && player.getX() + playersWidthHeight[0] - x2 >= obstacle.getX() // Checks, that rect2 is close enough from the right side
+                && player.getY() + y1 <= obstacle.getY() + obstacle.getHeight() // Checks, --*-- from above
+                && player.getY() + playersWidthHeight[1] - y2 >= obstacle.getY()); // Checks, --*-- from below
     }
 
 
@@ -222,7 +248,7 @@ public class CollisionController extends Controller {
 
     // ----------------------------------------------------------------------------------------------------
     // ----------------------------------------------------------------------------------------------------
-    // --- Getter
+    // --- Getter / Setter
 
     public static void setSwordLength(int length) { // static to allow call before Instance is constructed
         swordLength = length;
@@ -236,23 +262,23 @@ public class CollisionController extends Controller {
         return ((type == PlayerType.PLAYER_ONE) ? player1_onGround : player2_onGround);
     }
 
-    public boolean getPlayer1HitPlayer2() {
-        return player1_hit_player2;
+    public boolean getPlayerHitsWall(PlayerType type) {
+        return ((type == PlayerType.PLAYER_ONE) ? player1_hitsWall : player2_hitsWall);
     }
 
-    public boolean getPlayer2HitPlayer1() {
-        return player2_hit_player1;
+    public boolean getPlayerHitOtherPlayer(PlayerType type) {
+        return ((type == PlayerType.PLAYER_ONE) ? player1_hit_player2 : player2_hit_player1);
     }
 
     public boolean getSwordsHitting() {
         return swordsHitting;
     }
 
-    public int getSwordLength(){
+    public int getSwordLength() {
         return swordLength;
     }
 
-    public Point2D[] getRectHitBoxP1_P2(){
+    public Point2D[] getRectHitBoxP1_P2() {
         return rectHitBoxP1_P2;
     }
 }

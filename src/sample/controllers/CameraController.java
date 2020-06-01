@@ -1,6 +1,7 @@
 package sample.controllers;
 
 import javafx.geometry.Point2D;
+import sample.GameLoop;
 import sample.Main;
 
 public class CameraController extends Controller{
@@ -8,7 +9,11 @@ public class CameraController extends Controller{
     private static CameraController instance;
 
     //camera position
-    private int camX,camY;
+    private double camX,camY;
+
+    //players start positions
+    Point2D player1StartPosition = null;
+    Point2D player2StartPosition = null;
 
     public static CameraController getInstance() {
         if (instance == null) {
@@ -22,13 +27,32 @@ public class CameraController extends Controller{
         //TODO: get references to player objects
         camX = 0;
         camY = 0;
+
     }
 
     @Override
     public void update(long diffMillis) {
-        //TODO: calculate camera position based on player positions
-        //TODO: implement offset that is calculated based on camera position for side scrolling
-        //     -> TODO: draw methods for other objects have to take offset into account
+
+        //get players start positions when available (should be first update)
+        //NOTE: this has to be in update method because currentlevel is not instantiated when cameracontroller is created
+        if (player1StartPosition == null || player2StartPosition == null) {
+            if (GameLoop.currentLevel != null) {
+                player1StartPosition = new Point2D(GameLoop.currentLevel.getPlayer1().getX(), GameLoop.currentLevel.getPlayer1().getY());
+                player2StartPosition = new Point2D(GameLoop.currentLevel.getPlayer2().getX(), GameLoop.currentLevel.getPlayer2().getY());
+            }
+            //also return here because positions to follow are not set yet
+            return;
+        }
+
+        //calculate differences to start positions
+        Point2D diffPlayer1 = new Point2D(GameLoop.currentLevel.getPlayer1().getX() - player1StartPosition.getX(), GameLoop.currentLevel.getPlayer1().getY() - player1StartPosition.getY());
+        Point2D diffPlayer2 = new Point2D(GameLoop.currentLevel.getPlayer2().getX() - player2StartPosition.getX(), GameLoop.currentLevel.getPlayer2().getY() - player2StartPosition.getY());
+
+        //TODO: add lerp to smooth camera movement
+        //TODO: uncomment to activate camera movement
+        //calculate center point for camera
+        //camX = (diffPlayer1.getX() + diffPlayer2.getX()) / 2;
+        //camY = (diffPlayer1.getY() + diffPlayer2.getY()) / 2;
     }
 
     public Point2D convertWorldToScreen(int x, int y) {
@@ -37,9 +61,12 @@ public class CameraController extends Controller{
         return new Point2D(newX,newY);
     }
 
-    public Point2D convertScreenToWorld(Point2D point) {
-        //TODO: implement
-        return new Point2D(0,0);
+    private Point2D lerp(Point2D a, Point2D b, double f) {
+        return new Point2D(lerp(a.getX(), b.getX(), f), lerp(a.getY(), b.getY(), f));
+    }
+
+    private double lerp(double a, double b, double f) {
+        return a + f * (b - a);
     }
 
 }
