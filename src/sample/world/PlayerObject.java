@@ -119,6 +119,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 directionType = DirectionType.RIGHT;
                 animation = animCon.getAnimation(PLAYER_WALK);
             }
+            System.out.println("case 1");
         }
 
         // LEFT
@@ -129,11 +130,19 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 directionType = DirectionType.LEFT;
                 animation = animCon.getAnimation(PLAYER_WALK);
             }
+            System.out.println("case 2");
+        }
+
+        if (keyCon.isKeyPressed(keySet.getMoveLeftKey()) && keyCon.isKeyPressed(keySet.getMoveRightKey())){
+            if(animation.getAnimationType() != lastIdleAnimationType){
+                animation = animCon.getAnimation(lastIdleAnimationType);
+            }
         }
 
         if (keyCon.isKeyReleased(keySet.getMoveLeftKey()) || keyCon.isKeyReleased(keySet.getMoveRightKey())) {
             DirectionController.getInstance().setManualControl(this, false);
             animation = animCon.getAnimation(lastIdleAnimationType);
+            System.out.println("case 3");
         }
     }
 
@@ -265,7 +274,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 int gripX;
                 int gripY;
                 int swordLength = CollisionController.getInstance().getSwordLength();
-                if (this.direction == Direction.RIGHT) {
+                if (this.directionType == DirectionType.RIGHT) {
                     gripX = (int) this.getAnimation().getCurrentFrame().getSwordStartPoint().getX();
                     gripY = (int) this.getAnimation().getCurrentFrame().getSwordStartPoint().getY();
                 } else {
@@ -303,7 +312,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 gc.setFill(Color.ORANGE);
                 ArrayList<Point2D> hitBox;
                 int offset = 0;
-                if (this.direction == Direction.RIGHT) {
+                if (this.directionType == DirectionType.RIGHT) {
                     hitBox = this.getAnimation().getCurrentFrame().getHitBox();
                 } else {
                     hitBox = this.getAnimation().getCurrentFrame().getHitBoxInverted();
