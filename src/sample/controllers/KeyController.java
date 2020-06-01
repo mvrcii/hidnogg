@@ -12,9 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class KeyController extends Controller {
 
     private KeyObject keyObject, previousKeyObject;
-    private Canvas canvas;
-
-    private long time;
 
     private static KeyController instance;
 
@@ -27,33 +24,21 @@ public class KeyController extends Controller {
     }
 
     private KeyController() {
-
         keyObject = new KeyObject();
         previousKeyObject = new KeyObject();
-        this.canvas = Main.canvas;
 
-        canvas.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-
-                if (!keyObject.keys.containsKey(keyEvent.getCode())) {
-                    keyObject.keys.put(keyEvent.getCode(), 0L);
-                }
+        Main.canvas.setOnKeyPressed(keyEvent -> {
+            if (!keyObject.keys.containsKey(keyEvent.getCode())) {
+                keyObject.keys.put(keyEvent.getCode(), 0L);
             }
         });
 
-        canvas.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                keyObject.keys.remove(keyEvent.getCode());
-            }
-        });
+        Main.canvas.setOnKeyReleased(keyEvent -> keyObject.keys.remove(keyEvent.getCode()));
     }
 
     @Override
     public void update(long diffMillis) {
-        time = diffMillis;
-        //System.out.println(keyObject.getKeyHashMap());
+
         previousKeyObject = keyObject;          // Derzeitiges KeyObject abspeichern
         keyObject = new KeyObject();            // Neues KeyObject erzeugen
 
@@ -96,10 +81,6 @@ public class KeyController extends Controller {
             return keys;
         }
 
-        public void print(){
-           keys.forEach((key, value) -> System.out.println("Key: "+key+" Value: "+value));
-        }
-
     }
 
     public boolean isKeyReleased(KeyCode keyCode){
@@ -111,7 +92,10 @@ public class KeyController extends Controller {
             return keyObject.getKeyHashMap().get(keyCode);
         }
         return 0;
+    }
 
+    public void removeKeyPress(KeyCode keycode){
+        keyObject.getKeyHashMap().remove(keycode);
     }
 
 }

@@ -2,8 +2,6 @@ package sample.world;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import sample.animation.FrameData;
-import sample.enums.Direction;
 
 public class RectangleObstacle extends GameObject {
 

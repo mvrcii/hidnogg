@@ -62,4 +62,7 @@ public class Animation {
 
     public FrameData getCurrentFrame(){ return animationData.getFrames().get(currentFrame);}
 
+    public boolean isLastFrame() {
+        return currentFrame == totalFrames-1;
+    }
 }

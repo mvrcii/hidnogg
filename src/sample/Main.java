@@ -33,12 +33,12 @@ public class Main extends Application {
 
         Group root = new Group();
         primaryStage.setScene(new Scene(root));
-        primaryStage.setFullScreen(true);
+        primaryStage.setFullScreen(false);
 
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
-        //System.out.println(bounds);
-        canvas = new Canvas(bounds.getWidth(), bounds.getHeight());
+        canvas = new Canvas(bounds.getWidth()/2, bounds.getHeight()/2);
+
         canvas.requestFocus();
         canvas.setFocusTraversable(true);
 

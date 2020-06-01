@@ -7,9 +7,7 @@ import sample.animation.FrameData;
 import sample.controllers.CameraController;
 import sample.controllers.DataController;
 import sample.enums.AnimationType;
-import sample.enums.Direction;
-
-import java.util.ArrayList;
+import sample.enums.DirectionType;
 
 public class SwordObject extends GameObject{
 
@@ -18,11 +16,11 @@ public class SwordObject extends GameObject{
 
     private int currentAngle;
 
-    public SwordObject(int x, int y, Direction direction, PlayerObject playerObject) {
-        super(x, y, direction);
+    public SwordObject(int x, int y, DirectionType directionType, PlayerObject playerObject) {
+        super(x, y, directionType);
         this.playerObject = playerObject;
         if(this.playerObject != null){
-            this.direction = playerObject.getDirection();
+            this.directionType = playerObject.getDirectionType();
         }
         this.currentAngle = calculateRotationAngle();
     }
@@ -30,7 +28,7 @@ public class SwordObject extends GameObject{
 
     private void updateCoordinates() {
 
-        switch (direction){
+        switch (directionType){
             case LEFT ->
                     {
                         this.x = playerObject.x + (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPointInverted().getX()
@@ -74,7 +72,7 @@ public class SwordObject extends GameObject{
     @Override
     public void update(long diffSeconds) {
         updateAngle();
-        this.direction = playerObject.getDirection();
+        this.directionType = playerObject.getDirectionType();
         animation.update(diffSeconds);
         updateCoordinates();
     }
@@ -82,7 +80,7 @@ public class SwordObject extends GameObject{
     @Override
     public void draw(GraphicsContext gc) {
         Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
-        switch (direction) {
+        switch (directionType) {
             case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());
             case RIGHT -> gc.drawImage(animation.getCurrentSprite(), drawPoint.getX(), drawPoint.getY());
         }

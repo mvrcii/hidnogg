@@ -2,7 +2,8 @@ package sample.controllers;
 
 
 import sample.GameLoop;
-import sample.enums.Direction;
+import sample.enums.DirectionType;
+import sample.enums.PlayerType;
 import sample.world.GameObject;
 import sample.world.PlayerObject;
 
@@ -12,6 +13,8 @@ public class DirectionController extends Controller{
 
     private ArrayList<GameObject> gameObjects;
     private ArrayList<PlayerObject> playerObjects = new ArrayList<>();
+
+    private boolean manDirConP1 = false, manDirConP2 = false;
 
     private static DirectionController instance;
 
@@ -51,24 +54,38 @@ public class DirectionController extends Controller{
             PlayerObject p1 = playerObjects.get(0);
             PlayerObject p2 = playerObjects.get(1);
             if (p1.getX() > p2.getX()){
-                if(p1.getDirection()!=Direction.LEFT || p2.getDirection()!=Direction.RIGHT){
-                    p1.setDirection(Direction.LEFT);
-                    p2.setDirection(Direction.RIGHT);
+                if(p1.getDirectionType()!= DirectionType.LEFT || p2.getDirectionType()!= DirectionType.RIGHT){
+                    if(!manDirConP1)
+                        p1.setDirectionType(DirectionType.LEFT);
+                    if(!manDirConP2)
+                        p2.setDirectionType(DirectionType.RIGHT);
                 }
             }else{
-                if(p1.getDirection()!=Direction.RIGHT || p2.getDirection()!=Direction.LEFT){
-                    p1.setDirection(Direction.RIGHT);
-                    p2.setDirection(Direction.LEFT);
+                if(p1.getDirectionType()!= DirectionType.RIGHT || p2.getDirectionType()!= DirectionType.LEFT){
+                    if(!manDirConP1)
+                        p1.setDirectionType(DirectionType.RIGHT);
+                    if(!manDirConP2)
+                        p2.setDirectionType(DirectionType.LEFT);
                 }
             }
-            //System.out.println(p1.getPlayerNumber()+"="+p1.getDirection()+" | SWORD="+p1.getSwordObject().getDirection());
-            //System.out.println(p2.getPlayerNumber()+"="+p2.getDirection()+" | SWORD="+p2.getSwordObject().getDirection());
 
         }else if(playerObjects.size()==0){
             getPlayers();
         }
         else {
             throw new IllegalArgumentException("More than 2 players! Direction not implemented yet");
+        }
+    }
+
+
+    private void setPlayerDirection(PlayerObject playerObject, DirectionType directionType){
+        playerObject.setDirectionType(directionType);
+    }
+
+    public void setManualControl(PlayerObject playerObject, boolean bool) {
+        switch (playerObject.getPlayerNumber()){
+            case PLAYER_ONE -> manDirConP1 = bool;
+            case PLAYER_TWO -> manDirConP2 = bool;
         }
     }
 

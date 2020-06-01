@@ -2,7 +2,7 @@ package sample.world;
 
 import javafx.scene.paint.Color;
 import sample.Main;
-import sample.enums.Direction;
+import sample.enums.DirectionType;
 import sample.enums.LevelType;
 import sample.enums.PlayerType;
 
@@ -29,11 +29,11 @@ public class WorldObject {
     }
 
     private void initObjects() {
-        player1 = new PlayerObject(500, groundLevel, PlayerType.PLAYER_ONE, Direction.RIGHT, Config.keySet1);
-        player2 = new PlayerObject(700, groundLevel, PlayerType.PLAYER_TWO, Direction.RIGHT, Config.keySet2);
+        player1 = new PlayerObject(500, groundLevel, PlayerType.PLAYER_ONE, DirectionType.RIGHT, Config.keySet1);
+        player2 = new PlayerObject(700, groundLevel, PlayerType.PLAYER_TWO, DirectionType.RIGHT, Config.keySet2);
 
-        sword1 = new SwordObject(400, 400, Direction.RIGHT, player1);
-        sword2 = new SwordObject(400, 400, Direction.RIGHT, player2);
+        sword1 = new SwordObject(400, 400, DirectionType.RIGHT, player1);
+        sword2 = new SwordObject(400, 400, DirectionType.RIGHT, player2);
 
         ground = new RectangleObstacle(0, groundLevel, (int) Main.canvas.getWidth(),20, Color.GREEN);
 

@@ -1,18 +1,11 @@
 package sample;
 
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-import sample.animation.AnimationData;
 import sample.controllers.*;
-import sample.enums.Direction;
 import sample.enums.LevelType;
-import sample.enums.PlayerType;
 import sample.world.*;
 import sample.interfaces.InputSystem;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 

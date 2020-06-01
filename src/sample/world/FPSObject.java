@@ -1,7 +1,7 @@
 package sample.world;
 
 import javafx.scene.canvas.GraphicsContext;
-import sample.enums.Direction;
+import sample.enums.DirectionType;
 
 
 public class FPSObject extends GameObject {
@@ -13,7 +13,7 @@ public class FPSObject extends GameObject {
 
 
     public FPSObject(){
-        super(0,0, Direction.RIGHT);
+        super(0,0, DirectionType.RIGHT);
         printMode = true;
     }
 

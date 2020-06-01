@@ -3,7 +3,7 @@ package sample.controllers;
 import javafx.geometry.Point2D;
 import sample.GameLoop;
 import sample.enums.AnimationType;
-import sample.enums.Direction;
+import sample.enums.DirectionType;
 import sample.enums.PlayerType;
 import sample.world.GameObject;
 import sample.world.PlayerObject;
@@ -86,7 +86,7 @@ public class CollisionController extends Controller {
         int offsetHitBox = 0; // TODO :: has to be updated, if playerRotation-implementation is changed
 
         // Get relevant hitBox of player2 and swordTip-position of player1
-        if (player2.getDirection() == Direction.RIGHT) { // --> player1 direction must be Direction.LEFT
+        if (player2.getDirectionType() == DirectionType.RIGHT) { // --> player1 direction must be Direction.LEFT
             hitBox_Player2 = player2.getAnimation().getCurrentFrame().getHitBox();
 
             Point2D swordStartPoint = player1.getAnimation().getCurrentFrame().getSwordStartPointInverted();
@@ -129,7 +129,7 @@ public class CollisionController extends Controller {
         Point2D swordTip1, swordGrip2, swordTip2;
         int offsetSword = 4; // TODO :: has to be updated, if playerRotation-implementation is changed
 
-        if (players.get(0).getDirection() == Direction.RIGHT) { // --> p2 LEFT
+        if (players.get(0).getDirectionType() == DirectionType.RIGHT) { // --> p2 LEFT
             Point2D swordStartPoint = players.get(0).getAnimation().getCurrentFrame().getSwordStartPoint();
             swordTip1 = new Point2D(players.get(0).getX() + swordStartPoint.getX() + swordLength, players.get(0).getY() + swordStartPoint.getY());
 

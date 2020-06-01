@@ -1,6 +1,6 @@
 package sample.enums;
 
-public enum Direction {
+public enum DirectionType {
     LEFT,
     RIGHT
 }

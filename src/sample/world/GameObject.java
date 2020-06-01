@@ -1,20 +1,20 @@
 package sample.world;
 
 import javafx.scene.canvas.GraphicsContext;
-import sample.enums.Direction;
+import sample.enums.DirectionType;
 
 public abstract class GameObject {
 
     protected int x,y;
     protected double vx, vy;
-    protected Direction direction;
+    protected DirectionType directionType;
 
-    public GameObject(int x, int y, Direction direction){
+    public GameObject(int x, int y, DirectionType directionType){
         this.x = x;
         this.y = y;
         this.vx = 0;
         this.vy = 0;
-        this.direction = direction;
+        this.directionType = directionType;
     }
 
     public abstract void update(long diffMillis);
@@ -37,12 +37,12 @@ public abstract class GameObject {
         this.y = y;
     }
 
-    public Direction getDirection() {
-        return direction;
+    public DirectionType getDirectionType() {
+        return directionType;
     }
 
-    public void setDirection(Direction direction) {
-        this.direction = direction;
+    public void setDirectionType(DirectionType directionType) {
+        this.directionType = directionType;
     }
 
     public double getVx() {
