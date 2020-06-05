@@ -1,17 +1,17 @@
 package sample.controllers;
 
-import javafx.event.EventHandler;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import sample.Main;
+import sample.world.Config;
 
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class KeyController extends Controller {
 
     private KeyObject keyObject, previousKeyObject;
+
+    private boolean keyPressBlockedP1 = false;
+    private boolean keyPressBlockedP2 = false;
 
     private static KeyController instance;
 
@@ -28,8 +28,18 @@ public class KeyController extends Controller {
         previousKeyObject = new KeyObject();
 
         Main.canvas.setOnKeyPressed(keyEvent -> {
-            if (!keyObject.keys.containsKey(keyEvent.getCode())) {
-                keyObject.keys.put(keyEvent.getCode(), 0L);
+            if(keyPressBlockedP1 && Config.keySet2.containsKeyCode(keyEvent.getCode())){
+                if (!keyObject.keys.containsKey(keyEvent.getCode())) {
+                    keyObject.keys.put(keyEvent.getCode(), 0L);
+                }
+            }else if(keyPressBlockedP2 && Config.keySet1.containsKeyCode(keyEvent.getCode())){
+                if (!keyObject.keys.containsKey(keyEvent.getCode())) {
+                    keyObject.keys.put(keyEvent.getCode(), 0L);
+                }
+            }else if(!keyPressBlockedP2 && !keyPressBlockedP1){
+                if (!keyObject.keys.containsKey(keyEvent.getCode())) {
+                    keyObject.keys.put(keyEvent.getCode(), 0L);
+                }
             }
         });
 
@@ -47,6 +57,7 @@ public class KeyController extends Controller {
         for (KeyCode keyCode : keyObject.keys.keySet()){
             keyObject.keys.put(keyCode, keyObject.keys.get(keyCode)+diffMillis);
         }
+        System.out.println(keyObject.getKeyHashMap().entrySet().toString());
 
     }
 
@@ -64,7 +75,7 @@ public class KeyController extends Controller {
     // Keys which are only allowed to activate once per press
     private boolean isSinglePressKey(KeyCode keyCode) {
         return switch (keyCode) {
-            case SPACE, ENTER, F,UP, DOWN -> true;
+            case SPACE, ENTER, F, N -> true;
             default -> false;
         };
     }
@@ -98,4 +109,19 @@ public class KeyController extends Controller {
         keyObject.getKeyHashMap().remove(keycode);
     }
 
+    public void removeAllKeyPress(){
+        keyObject.getKeyHashMap().clear();
+    }
+
+    public boolean isKeyPressBlockedP1() {
+        return keyPressBlockedP1;
+    }
+
+    public void setKeyPressBlockedP2(boolean keyPressBlockedP2) {
+        this.keyPressBlockedP2 = keyPressBlockedP2;
+    }
+
+    public void setKeyPressBlockedP1(boolean keyPressBlockedP1) {
+        this.keyPressBlockedP1 = keyPressBlockedP1;
+    }
 }

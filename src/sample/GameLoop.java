@@ -14,7 +14,6 @@ public class GameLoop extends Thread implements Runnable {
     private final GraphicsContext gc = Main.canvas.getGraphicsContext2D();
     private final ArrayList<Controller> gameControllers = new ArrayList<>();
 
-
     public static WorldObject currentLevel;
     private Config cfg;
 
@@ -24,8 +23,8 @@ public class GameLoop extends Thread implements Runnable {
         gameControllers.add(DirectionController.getInstance());
         gameControllers.add(CameraController.getInstance());
 
-        WorldObject level1 = new WorldObject(LevelType.LEVEL_ONE);
-        currentLevel = level1;
+        currentLevel = new WorldObject(LevelType.LEVEL_ONE);
+        currentLevel.initObjects();
 
         gameControllers.add(CollisionController.getInstance());
     }
@@ -63,6 +62,8 @@ public class GameLoop extends Thread implements Runnable {
 
 
     private void update(long diffMillis) {
+
+
         for (GameObject obj : currentLevel.getGameObjects()) {
 
             if (obj instanceof InputSystem) {
@@ -75,6 +76,8 @@ public class GameLoop extends Thread implements Runnable {
         for (Controller con : gameControllers) {
             con.update(diffMillis);
         }
+
+        currentLevel.refreshGameObjects();
 
     }
 

@@ -2,6 +2,7 @@ package sample.world;
 
 import javafx.scene.paint.Color;
 import sample.Main;
+import sample.controllers.KeyController;
 import sample.enums.DirectionType;
 import sample.enums.LevelType;
 import sample.enums.PlayerType;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 public class WorldObject {
 
     private final ArrayList<GameObject> gameObjects = new ArrayList<>();
+    private final ArrayList<GameObject> gameObjectsToAdd = new ArrayList<>();
+    private final ArrayList<SwordObject> swordObjects;
     private final LevelType levelType;
 
     private final int groundLevel = (int) (Main.canvas.getHeight()/2);
@@ -24,17 +27,13 @@ public class WorldObject {
 
     public WorldObject(LevelType levelType){
         this.levelType = levelType;
-
-        initObjects();
+        swordObjects = new ArrayList<>();
         fpsObject.setPrintMode(false);
     }
 
-    private void initObjects() {
+    public void initObjects() {
         player1 = new PlayerObject(500, groundLevel, PlayerType.PLAYER_ONE, DirectionType.RIGHT, Config.keySet1);
         player2 = new PlayerObject(700, groundLevel, PlayerType.PLAYER_TWO, DirectionType.RIGHT, Config.keySet2);
-
-        sword1 = new SwordObject(400, 400, DirectionType.RIGHT, player1);
-        sword2 = new SwordObject(400, 400, DirectionType.RIGHT, player2);
 
         ground = new RectangleObstacle(0, groundLevel, (int) Main.canvas.getWidth(),20, Color.GREEN);
 
@@ -43,14 +42,11 @@ public class WorldObject {
 
         gameObjects.add(player1);
         gameObjects.add(player2);
-        gameObjects.add(sword1);
-        gameObjects.add(sword2);
-
-        player1.setSwordObject(sword1);
-        player2.setSwordObject(sword2);
+        gameObjects.addAll(swordObjects);
     }
 
-    public void checkForSword(PlayerObject p){
+
+    public void takeSwordFromGround(PlayerObject p){
         int playerMiddle = p.x + 32;
 
         if(p.isOnGround()){
@@ -80,6 +76,22 @@ public class WorldObject {
         }else{
             //System.out.println("Player not on Ground");
         }
+    }
+
+    public void respawnPlayer(PlayerObject p){
+
+        switch (p.getPlayerNumber()){
+            case PLAYER_ONE -> {
+                p.x = (int) (Main.canvas.getWidth()*0.20);
+                KeyController.getInstance().setKeyPressBlockedP1(false);
+            }
+            case PLAYER_TWO -> {
+                p.x = (int) (Main.canvas.getWidth()*0.80);
+                KeyController.getInstance().setKeyPressBlockedP2(false);
+            }
+        }
+        p.y = groundLevel;
+        p.reset();
     }
 
     public ArrayList<GameObject> getGameObjects() {
@@ -116,5 +128,15 @@ public class WorldObject {
 
     public SwordObject getSword2() {
         return sword2;
+    }
+
+    public void addSword(SwordObject swordObject){
+        swordObjects.add(swordObject);
+        gameObjectsToAdd.add(swordObject);
+    }
+
+    public void refreshGameObjects(){
+        gameObjects.addAll(gameObjectsToAdd);
+        gameObjectsToAdd.clear();
     }
 }

@@ -12,7 +12,7 @@ import sample.enums.DirectionType;
 
 public class SwordObject extends GameObject {
 
-    private Animation animation = DataController.getInstance().getSwordAnimAngle(AnimationType.SWORD);
+    private Animation animation = DataController.getInstance().getAnimation(AnimationType.SWORD);
     private PlayerObject playerObject;
 
     private boolean falling;
@@ -106,7 +106,7 @@ public class SwordObject extends GameObject {
             double a = 0.5;
             double w = 3;
 
-            System.out.println(currentAngle);
+            //System.out.println(currentAngle);
             currentAngle = (int) Math.round(Math.exp(-a * (timePassed / 150)) * Math.cos(w * timePassed / 150) * bounceStartAngle);
 
             // If angle is negative, the sword needs to be shifted in y direction

@@ -7,9 +7,6 @@ import sample.animation.FrameData;
 import sample.enums.AnimationType;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class DataController extends Controller {
 
@@ -74,7 +71,7 @@ public class DataController extends Controller {
     }
 
 
-    public Animation getSwordAnimAngle(AnimationType animationType){
+    public Animation getAnimation(AnimationType animationType){
         return new Animation(animationType, basicAnimationData.get(animationType));
     }
 
@@ -92,7 +89,7 @@ public class DataController extends Controller {
 
     public Animation getSwordAnimAngle(int angle){
         if(angle == 0 || angle == 360){
-            return getSwordAnimAngle(AnimationType.SWORD);
+            return getAnimation(AnimationType.SWORD);
         }else if(angle < 0){
             return new Animation(AnimationType.SWORD, swordAngleData.get(360+angle));
         }else{

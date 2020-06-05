@@ -15,6 +15,7 @@ public class Config {
 
     public static final double T_HOLDUP = 200;
     public static final double T_CROUCH = 200;
+    public static final double T_RESPAWN = 1000;
 
     public Config(){
 
