@@ -81,10 +81,7 @@ public class FrameData {
     }
 
     public Point2D getSwordEndPoint() {
-        if(swordEndPoint != null){
-            return swordEndPoint;
-        }
-        throw new IllegalArgumentException("There is no swordEndPoint in Frame "+frameNumber+"! Possible Issues: wrong color code / missing blue dot in sprite");
+        return swordEndPoint;
     }
 
     public void setSwordEndPoint(Point2D swordEndPoint) {
@@ -119,7 +116,7 @@ public class FrameData {
     }
 
     public String toString(){
-        return frameNumber+"";
+        return "Frame="+frameNumber+", Angle="+angle;
     }
 
 }

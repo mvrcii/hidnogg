@@ -89,7 +89,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         onGround = colCon.getPlayerOnGround(this.playerNumber);
         boolean b = colCon.getPlayerHitOtherPlayer(this.playerNumber);
-        System.out.println(b);
+        //System.out.println(b);
     }
 
     private void handleDieing() {

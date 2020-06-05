@@ -3,6 +3,7 @@ package sample.controllers;
 
 import sample.animation.Animation;
 import sample.animation.AnimationData;
+import sample.animation.FrameData;
 import sample.enums.AnimationType;
 
 import java.util.HashMap;
@@ -26,24 +27,23 @@ public class DataController extends Controller {
         return instance;
     }
 
-
-    public final <S, T> List<S> getKeysForValue(final HashMap<S, T> hashMap, final T value) {
-        return hashMap.entrySet()
-                .stream()
-                .filter(entry -> entry.getValue().equals(value))
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
-    }
-
     private DataController()
     {
         // SWORD
         basicAnimationData.put(AnimationType.SWORD, new AnimationData(0));
-        System.out.println("[BASIC ANIMATION]:"+basicAnimationData.get(AnimationType.SWORD).getFrames().get(0).getHitBox().size());
-        for (int i = 1; i <= 360; i+=1) {
+        for (int i = 1; i < 360; i++) {
             swordAngleData.put(i, basicAnimationData.get(AnimationType.SWORD).rotateAnimDataByDegree(i));
 
-            System.out.println("["+i+"] "+swordAngleData.get(i).getFrames().get(0).getHitBox().size());
+            //System.out.println("["+i+"] "+swordAngleData.get(i).getFrames().get(0).getHitBox().size());
+
+            for (FrameData f : swordAngleData.get(i).getFrames()) {
+                if(f.getSwordEndPoint() == null){
+                    System.out.println(f.getAngle()+" -> "+f.getFrameNumber());
+                }
+            }
+            //System.out.println(swordAngleData.get(i).getFrames().toString());
+
+
         }
 
 
