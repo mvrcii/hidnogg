@@ -22,9 +22,11 @@ public class AnimationData {
     private static final String SPRITE_SHEET_PATH = "src/spritesheet.png";
 
     private static final int black = new Color(0, 0, 0).getRGB();
-    private static final int red = new Color(254, 0, 0).getRGB(); // RGB value in spritesheet.png is not 255-red
+    private static final int red = new Color(255, 0, 0).getRGB();
     private static final int green = new Color(0, 255, 0).getRGB();
     private static final int blue = new Color(0, 0, 255).getRGB();
+
+    private static int previousGreen = 0; // prevent multiple calculations of sword length
 
     public AnimationData() {
 
@@ -57,17 +59,31 @@ public class AnimationData {
     public AnimationData rotateAnimDataByDegree(int angle) {
         AnimationData newAnimData = new AnimationData();
         ArrayList<FrameData> newFrameList = new ArrayList<>();
+        int i = 0;
         for (FrameData oldFrame : frames) {
-            BufferedImage newBf = rotateBfImg(oldFrame.getBufferedImage(), angle, oldFrame.getSwordStartPoint());
-            FrameData newFrame = calcFrameData(newBf);
+            BufferedImage bf_ = rotateBfImg(oldFrame.getBufferedImage(), angle, oldFrame.getSwordStartPoint());
+            double width_ = bf_.getWidth();
+
+            FrameData newFrame = calcFrameData(bf_);
             newFrame.setAngle(angle);
-            newFrame.setBufferedImage(newBf);
+            newFrame.setFrameNumber(i);
+            newFrame.setBufferedImage(rotateBfImg(oldFrame.getBufferedImage(), angle, oldFrame.getSwordStartPoint()));
+
             // SwordStartPoint Normal and Inverted have to be set here, because there is a chance that the green color
             // value gets lost while rotating the sword
             newFrame.setSwordStartPoint(oldFrame.getSwordStartPoint());
-            newFrame.setSwordStartPointInverted(new Point2D(newFrame.getBufferedImage().getWidth() -
+            newFrame.setSwordStartPointInverted(new Point2D(width_ -
                     newFrame.getSwordStartPoint().getX(), newFrame.getSwordStartPoint().getY()));
+
+            // Calculating new SwordEndPoint
+            double x = oldFrame.getSwordEndPoint().getX();
+            double y = oldFrame.getSwordEndPoint().getY();
+            double x_ = x * Math.cos(angle) - y * Math.sin(angle);
+            double y_ = x * Math.sin(angle) - y * Math.cos(angle);
+            newFrame.setSwordEndPoint(new Point2D(x_, y_));
+
             newFrameList.add(newFrame);
+            i++;
         }
         newAnimData.frames = newFrameList;
         return newAnimData;
@@ -81,12 +97,10 @@ public class AnimationData {
 
         AffineTransformOp affineTransformOp = new AffineTransformOp(affineTransform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
         BufferedImage rotated = new BufferedImage(bf.getWidth(), bf.getHeight(), bf.getType());
-        rotated = affineTransformOp.filter(bf, rotated);
-
-        return rotated;
+        return affineTransformOp.filter(bf, rotated);
     }
 
-    private static int previousGreen = 0; // prevent multiple calculations of sword length
+
 
     private FrameData calcFrameData(BufferedImage bufferedImage) {
         // Data that has to be calculated

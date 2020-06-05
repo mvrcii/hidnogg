@@ -19,7 +19,7 @@ public class SwordObject extends GameObject {
     private boolean onGround;
 
     private int currentAngle;
-    private int bounceStartAngle;
+    private int bounceStartAngle = -1;
 
     private double diffSeconds = 0;
     private double timePassed = 0;
@@ -71,13 +71,18 @@ public class SwordObject extends GameObject {
                 vy = 0;
                 y = GameLoop.currentLevel.getGroundLevel() - swordOffset;
                 onGround = true;
-                bounceStartAngle = currentAngle;    // Angle from which the bouncing will start
+                /*
+                if (bounceStartAngle == -1) {
+                    bounceStartAngle = currentAngle;    // Angle from which the bouncing will start
+                    System.out.println("Bounce Start Angle: " + bounceStartAngle);
+                }
+
+                 */
                 playerObject = null;
                 animation.stop();
             }
 
         } else {
-
             if (playerObject != null) {
                 switch (directionType) {
                     case LEFT -> {
@@ -94,7 +99,6 @@ public class SwordObject extends GameObject {
                     }
                 }
             }
-
         }
 
     }
@@ -112,6 +116,19 @@ public class SwordObject extends GameObject {
             double w = 3;
 
             currentAngle = (int) Math.round(Math.exp(-a * (timePassed / 150)) * Math.cos(w * timePassed / 150) * bounceStartAngle);
+
+            // If angle is negative, the sword needs to be shifted in y direction
+            if (currentAngle < 0) {
+                //System.out.println(x+"|"+y);
+
+                Point2D p1 = animation.getCurrentFrame().getSwordStartPoint();
+                Point2D p2 = animation.getCurrentFrame().getSwordEndPoint();
+
+                System.out.println("Angle: "+(360+currentAngle)+" ("+currentAngle+")");
+                double offSet = Math.sin(360+currentAngle) * Math.sqrt(Math.pow(p2.getX() - p1.getX(), 2) + Math.pow(p2.getY() - p1.getY(), 2));
+                System.out.println("Offset: "+offSet);
+            }
+
             animation = DataController.getInstance().getSwordAnimAngle(currentAngle);
 
         } else {
@@ -121,7 +138,7 @@ public class SwordObject extends GameObject {
             double x_end = f.getSwordEndPoint().getX();
             double y_end = f.getSwordEndPoint().getY();
 
-            int nextAngle = (int) new Point2D(1, 0).angle(x_end - x_start,y_end - y_start);
+            int nextAngle = (int) new Point2D(1, 0).angle(x_end - x_start, y_end - y_start);
 
             if (currentAngle != nextAngle) {
                 currentAngle = nextAngle;
@@ -135,6 +152,7 @@ public class SwordObject extends GameObject {
     public void fallToGround() {
         falling = true;
         vy = -10;
+        bounceStartAngle = currentAngle;
     }
 
     public void setPlayerObject(PlayerObject playerObject) {
@@ -156,4 +174,5 @@ public class SwordObject extends GameObject {
     public boolean isOnGround() {
         return onGround;
     }
+
 }
