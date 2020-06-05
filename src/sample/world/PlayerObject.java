@@ -2,7 +2,7 @@ package sample.world;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 import sample.GameLoop;
 import sample.animation.Animation;
 import sample.animation.FrameData;
@@ -12,7 +12,6 @@ import sample.enums.DirectionType;
 import sample.enums.PlayerType;
 import sample.interfaces.InputSystem;
 
-import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
 import static sample.enums.AnimationType.*;
@@ -28,6 +27,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private boolean canAccelerate;
     private boolean onGround;
+    private boolean alive;
 
     private Animation animation = DataController.getInstance().getSwordAnimAngle(PLAYER_IDLE_LOW);
     private AnimationType lastIdleAnimationType = PLAYER_IDLE_LOW;
@@ -38,6 +38,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         this.playerNumber = playerNumber;
         this.swordObject = null;
         this.onGround = true;
+        this.alive = true;
     }
 
 
@@ -80,8 +81,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         handleDownKey();
         handleStabKey();
         handleJumpKey(diffMillis);
-
-        handleDieing(); // TEST
     }
 
     private void checkCollisions() {
@@ -89,30 +88,27 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         onGround = colCon.getPlayerOnGround(this.playerNumber);
 
-        boolean b = colCon.getPlayerHitOtherPlayer(this.playerNumber);
-    }
+        System.out.println(colCon.getPlayerHit(this.playerNumber));
 
-    private void handleDieing() {
-        KeyCode deathKey;
-        if(playerNumber == PlayerType.PLAYER_ONE){
-            deathKey = KeyCode.SPACE;
-        }else{
-            deathKey = KeyCode.ENTER;
-        }
-
-        if(keyCon.isKeyPressed(deathKey)){
-
-            if(swordObject != null){
-                swordObject.fallToGround();
-                this.swordObject = null;
-                animation = animCon.getSwordAnimAngle(PLAYER_DIEING);
-            }
+        if(colCon.getPlayerHit(this.playerNumber) && alive){
+            handleDieing();
         }
 
         if(animation.isLastFrame() && animation.getAnimationType() == PLAYER_DIEING){
             animation.stop();
         }
 
+
+    }
+
+    private void handleDieing() {
+
+        alive = false;
+        if (swordObject != null) {
+            swordObject.fallToGround();
+            this.swordObject = null;
+            animation = animCon.getSwordAnimAngle(PLAYER_DIEING);
+        }
     }
 
     private void handleStabKey() {
