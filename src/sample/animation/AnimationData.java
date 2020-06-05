@@ -25,6 +25,8 @@ public class AnimationData {
     private static final int red = new Color(255, 0, 0).getRGB();
     private static final int green = new Color(0, 255, 0).getRGB();
     private static final int blue = new Color(0, 0, 255).getRGB();
+    private static final int blueTest = new Color(47,47,255).getRGB(); // TODO :: solution for now, pixels should be changed
+    private static final int blueTest2 = new Color(35,35,234).getRGB();
 
     private static int previousGreen = 0; // prevent multiple calculations of sword length
 
@@ -130,16 +132,16 @@ public class AnimationData {
 
                 imageTransparent = false; // non-transparent image
 
-                if (new Color(currentRGB).getRed() > 50) {  // sword pixel
-                    //System.out.println("RED");
-                    lastBlackPixel_x = col;
-
-                    if(!foundBlackLeft){
-                        foundBlackLeft = true;
-                        hitBox.add(new Point2D(col, row));
-                        hitBoxInverted.add(new Point2D(bufferedImage.getWidth() - col, row));
-                    }
-                }
+//                if (new Color(currentRGB).getRed() > 50) {  // sword pixel
+//                    //System.out.println("RED");
+//                    lastBlackPixel_x = col;
+//
+//                    if(!foundBlackLeft){
+//                        foundBlackLeft = true;
+//                        hitBox.add(new Point2D(col, row));
+//                        hitBoxInverted.add(new Point2D(bufferedImage.getWidth() - col, row));
+//                    }
+//                }
 
                 if (currentRGB == black) { // player pixel
                     lastBlackPixel_x = col;
@@ -155,7 +157,7 @@ public class AnimationData {
                     frameData.setSwordStartPointInverted(new Point2D(bufferedImage.getWidth() - col, row));
                     previousGreen++; // for swordLength calculation
 
-                } else if (currentRGB == blue) { // end mountPoint
+                } else if (currentRGB == blue || currentRGB == blueTest || currentRGB == blueTest2) { // end mountPoint
                     frameData.setSwordEndPoint(new Point2D(col, row));
 
                 } else if (currentRGB == red && previousGreen == 1) {

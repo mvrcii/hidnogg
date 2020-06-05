@@ -270,6 +270,10 @@ public class CollisionController extends Controller {
         return ((type == PlayerType.PLAYER_ONE) ? player1_hit_player2 : player2_hit_player1);
     }
 
+    public boolean getPlayerHit(PlayerType type){
+        return ((type == PlayerType.PLAYER_ONE) ? player2_hit_player1 : player1_hit_player2);
+    }
+
     public boolean getSwordsHitting() {
         return swordsHitting;
     }
