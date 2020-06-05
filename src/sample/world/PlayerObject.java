@@ -2,7 +2,6 @@ package sample.world;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.skin.TextInputControlSkin;
 import javafx.scene.input.KeyCode;
 import sample.GameLoop;
 import sample.animation.Animation;
@@ -30,7 +29,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private boolean canAccelerate;
     private boolean onGround;
 
-    private Animation animation = DataController.getInstance().getAnimation(PLAYER_IDLE_LOW);
+    private Animation animation = DataController.getInstance().getSwordAnimAngle(PLAYER_IDLE_LOW);
     private AnimationType lastIdleAnimationType = PLAYER_IDLE_LOW;
 
     public PlayerObject(int x, int y, PlayerType playerNumber, DirectionType directionType, KeySet keySet) {
@@ -50,7 +49,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         y -= vy * diffMillis / 100;
         if (y < GameLoop.currentLevel.getGroundLevel() - playerOffset) {
-            vy -= ((2 * (double) diffMillis) / 10);    //gravity
+            vy -= (2 * (double) diffMillis) / 10;    //gravity
         } else {
             vy = 0;
             y = GameLoop.currentLevel.getGroundLevel() - playerOffset;
@@ -66,21 +65,54 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());
             case RIGHT -> gc.drawImage(animation.getCurrentSprite(), drawPoint.getX(), drawPoint.getY());
         }
-        //this.showHitBoxState(gc, 1);
-        //this.showHitBoxState(gc, 2);
-        //this.showHitBoxState(gc, 3);
+        this.showHitBoxState(gc, 1);
+        this.showHitBoxState(gc, 2);
+        this.showHitBoxState(gc, 3);
     }
 
 
     @Override
     public void processInput(long diffMillis) {
-        onGround = CollisionController.getInstance().getPlayerOnGround(this.playerNumber);
+        checkCollisions();
 
         handleMovementKeys(diffMillis);
         handleUpKey();
         handleDownKey();
         handleStabKey();
         handleJumpKey(diffMillis);
+
+        handleDieing(); // TEST
+    }
+
+    private void checkCollisions() {
+        CollisionController colCon = CollisionController.getInstance();
+
+        onGround = colCon.getPlayerOnGround(this.playerNumber);
+        boolean b = colCon.getPlayerHitOtherPlayer(this.playerNumber);
+        System.out.println(b);
+    }
+
+    private void handleDieing() {
+        KeyCode deathKey;
+        if(playerNumber == PlayerType.PLAYER_ONE){
+            deathKey = KeyCode.SPACE;
+        }else{
+            deathKey = KeyCode.ENTER;
+        }
+
+        if(keyCon.isKeyPressed(deathKey)){
+
+            if(swordObject != null){
+                swordObject.fallToGround();
+                this.swordObject = null;
+                animation = animCon.getSwordAnimAngle(PLAYER_DIEING);
+            }
+        }
+
+        if(animation.isLastFrame() && animation.getAnimationType() == PLAYER_DIEING){
+            animation.stop();
+        }
+
     }
 
     private void handleStabKey() {
@@ -101,7 +133,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         if (animation.isLastFrame()) {
             switch (animation.getAnimationType()) {
-                case PLAYER_STAB_LOW, PLAYER_STAB_HIGH, PLAYER_STAB_MEDIUM -> animation = animCon.getAnimation(lastIdleAnimationType);
+                case PLAYER_STAB_LOW, PLAYER_STAB_HIGH, PLAYER_STAB_MEDIUM -> animation = animCon.getSwordAnimAngle(lastIdleAnimationType);
             }
 
         }
@@ -117,9 +149,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
                 DirectionController.getInstance().setManualControl(this, true);
                 directionType = DirectionType.RIGHT;
-                animation = animCon.getAnimation(PLAYER_WALK);
+                animation = animCon.getSwordAnimAngle(PLAYER_WALK);
             }
-            System.out.println("case 1");
         }
 
         // LEFT
@@ -128,21 +159,19 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             if (animation.getAnimationType() != PLAYER_WALK && onGround) {
                 DirectionController.getInstance().setManualControl(this, true);
                 directionType = DirectionType.LEFT;
-                animation = animCon.getAnimation(PLAYER_WALK);
+                animation = animCon.getSwordAnimAngle(PLAYER_WALK);
             }
-            System.out.println("case 2");
         }
 
         if (keyCon.isKeyPressed(keySet.getMoveLeftKey()) && keyCon.isKeyPressed(keySet.getMoveRightKey())){
             if(animation.getAnimationType() != lastIdleAnimationType){
-                animation = animCon.getAnimation(lastIdleAnimationType);
+                animation = animCon.getSwordAnimAngle(lastIdleAnimationType);
             }
         }
 
         if (keyCon.isKeyReleased(keySet.getMoveLeftKey()) || keyCon.isKeyReleased(keySet.getMoveRightKey())) {
             DirectionController.getInstance().setManualControl(this, false);
-            animation = animCon.getAnimation(lastIdleAnimationType);
-            System.out.println("case 3");
+            animation = animCon.getSwordAnimAngle(lastIdleAnimationType);
         }
     }
 
@@ -165,20 +194,20 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if (keyCon.isKeyPressed(keySet.getUpKey())) {
             double t_pressed = keyCon.getKeyPressedTime(keySet.getUpKey());
             if(t_pressed > Config.T_HOLDUP){
-                animation = animCon.getAnimation(PLAYER_IDLE_HOLD_UP);
+                animation = animCon.getSwordAnimAngle(PLAYER_IDLE_HOLD_UP);
             }
         }
 
         if (keyCon.isKeyReleased(keySet.getUpKey())){
             AnimationType animType = animation.getAnimationType();
             if (animType == PLAYER_IDLE_LOW) {
-                animation = animCon.getAnimation(PLAYER_IDLE_MEDIUM);
+                animation = animCon.getSwordAnimAngle(PLAYER_IDLE_MEDIUM);
                 lastIdleAnimationType = animation.getAnimationType();
             } else if (animType == PLAYER_IDLE_MEDIUM) {
-                animation = animCon.getAnimation(PLAYER_IDLE_HIGH);
+                animation = animCon.getSwordAnimAngle(PLAYER_IDLE_HIGH);
                 lastIdleAnimationType = animation.getAnimationType();
             } else if (animType == PLAYER_IDLE_HOLD_UP) {
-                animation = animCon.getAnimation(lastIdleAnimationType);
+                animation = animCon.getSwordAnimAngle(lastIdleAnimationType);
             }
         }
     }
@@ -209,16 +238,19 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 }
                 animation = animCon.getAnimation(PLAYER_CROUCH);
                  */
+                if(swordObject == null){
+                    GameLoop.currentLevel.checkForSword(this);
+                }
             }
         }
 
         if(keyCon.isKeyReleased(keySet.getDownKey())){
             AnimationType animType = animation.getAnimationType();
             if (animType == PLAYER_IDLE_HIGH) {
-                animation = animCon.getAnimation(PLAYER_IDLE_MEDIUM);
+                animation = animCon.getSwordAnimAngle(PLAYER_IDLE_MEDIUM);
                 lastIdleAnimationType = animation.getAnimationType();
             } else if (animType == PLAYER_IDLE_MEDIUM) {
-                animation = animCon.getAnimation(PLAYER_IDLE_LOW);
+                animation = animCon.getSwordAnimAngle(PLAYER_IDLE_LOW);
                 lastIdleAnimationType = animation.getAnimationType();
             }
             /* // TODO: Activate as soon as PLAYER_CROUCH Animation is implemented
@@ -236,7 +268,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if (keyCon.isKeyPressed(keySet.getJumpKey())) {
 
             if (onGround) {
-                animation = animCon.getAnimation(PLAYER_JUMP_START);
+                animation = animCon.getSwordAnimAngle(PLAYER_JUMP_START);
                 vy = 20;
                 canAccelerate = true;
             } else {
@@ -251,13 +283,13 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             canAccelerate = false;
         }
         if(animation.getAnimationType() == PLAYER_JUMP_START && vy >= 20){
-            animation = animCon.getAnimation(PLAYER_JUMP_PEAK);
+            animation = animCon.getSwordAnimAngle(PLAYER_JUMP_PEAK);
         }
         if(animation.getAnimationType() == PLAYER_JUMP_PEAK && vy <= -15){
-            animation = animCon.getAnimation(PLAYER_JUMP_END);
+            animation = animCon.getSwordAnimAngle(PLAYER_JUMP_END);
         }
         if(animation.getAnimationType() == PLAYER_JUMP_END && vy <= 1 && vy >= -1){
-            animation = animCon.getAnimation(lastIdleAnimationType);
+            animation = animCon.getSwordAnimAngle(lastIdleAnimationType);
         }
 
     }
@@ -341,5 +373,11 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     public PlayerType getPlayerNumber() {
         return playerNumber;
     }
+
+    public boolean isOnGround() {
+        return onGround;
+    }
+
+
 }
 

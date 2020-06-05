@@ -11,6 +11,7 @@ public class Animation {
     private int currentFrame;
     private final int totalFrames;
     private double animationTimer;
+    private boolean stopped = false;
 
     public Animation(AnimationType type, AnimationData animationData) {
         this.animationType = type;
@@ -27,23 +28,26 @@ public class Animation {
         currentFrame = 0;
     }
 
+    public void stop(){
+        stopped = true;
+    }
 
-    public void update(long diffMillis)
-    {
+    public void run(){
+        stopped = false;
+    }
+
+    public void update(long diffMillis) {
         animationTimer += diffMillis;
 
-
-        while (animationTimer >= animationType.getDuration())
-        {
+        while (animationTimer >= animationType.getDuration()) {
             animationTimer -= animationType.getDuration();
 
-            if (currentFrame == totalFrames -1)
-            {
-                currentFrame = 0;
-            }
-            else
-            {
-                currentFrame++;
+            if (!stopped) {
+                if (currentFrame == totalFrames - 1) {
+                    currentFrame = 0;
+                } else {
+                    currentFrame++;
+                }
             }
         }
     }
@@ -64,5 +68,9 @@ public class Animation {
 
     public boolean isLastFrame() {
         return currentFrame == totalFrames-1;
+    }
+
+    public String toString(){
+        return animationType.toString();
     }
 }

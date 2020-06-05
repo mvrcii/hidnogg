@@ -103,9 +103,7 @@ public class FrameData {
         if(swordStartPointInverted != null){
             return swordStartPointInverted;
         }
-        System.out.println(frameNumber);
-        return new Point2D(0,0);
-        //throw IllegalArgumentException("There is no swordEndPointInverted in Frame "+frameNumber+"!");
+        throw new IllegalArgumentException("There is no swordStartPointInverted in Frame "+frameNumber+"!");
     }
 
     public void setSwordStartPointInverted(Point2D swordStartPointInverted) {
@@ -120,15 +118,8 @@ public class FrameData {
         return frameNumber;
     }
 
-    /* (causes NullPointerExceptions with every constructor call)
-    public String toString() {
-        return "Image exists: " + !(image == null) + "\n" +
-                "BufferedImage exists: " + !(bufferedImage == null) + "\n" +
-                "HitBox size: " + hitBox.size() + "\n" +
-                "HitBox Inverted size: " + hitBoxInverted.size() + "\n" +
-                "Anker Start exists: " + !(swordStartPoint == null) + "\n" +
-                "Anker End exists: " + !(swordEndPoint == null) + "\n" +
-                "Sprite Angle: " + angle + "\n\n";
+    public String toString(){
+        return frameNumber+"";
     }
- */
+
 }

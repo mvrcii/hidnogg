@@ -6,6 +6,7 @@ import sample.enums.DirectionType;
 import sample.enums.LevelType;
 import sample.enums.PlayerType;
 
+import java.time.temporal.ValueRange;
 import java.util.ArrayList;
 
 public class WorldObject {
@@ -47,6 +48,38 @@ public class WorldObject {
 
         player1.setSwordObject(sword1);
         player2.setSwordObject(sword2);
+    }
+
+    public void checkForSword(PlayerObject p){
+        int playerMiddle = p.x + 32;
+
+        if(p.isOnGround()){
+            if(ValueRange.of(playerMiddle-100, playerMiddle+100).isValidIntValue(sword1.getX()+32)){
+                if(sword1.isOnGround()){
+                    p.setSwordObject(sword1);
+                    sword1.setPlayerObject(p);
+                    sword1.setOnGround(false);
+                    sword1.setFalling(false);
+                    //System.out.println("### SUCCESS ### Sword 1 <--> Player "+p.getPlayerNumber());
+                }else{
+                    //System.out.println("Sword not on Ground");
+                }
+            }else if(ValueRange.of(playerMiddle-100, playerMiddle+100).isValidIntValue(sword2.getX()+32)){
+                if(sword2.isOnGround()){
+                    p.setSwordObject(sword2);
+                    sword2.setPlayerObject(p);
+                    sword2.setOnGround(false);
+                    sword2.setFalling(false);
+                    //System.out.println("### SUCCESS ### Sword 2 <--> Player "+p.getPlayerNumber());
+                }else{
+                    //System.out.println("Sword not on Ground");
+                }
+            }else{
+                //System.out.println("Player not in range of a sword");
+            }
+        }else{
+            //System.out.println("Player not on Ground");
+        }
     }
 
     public ArrayList<GameObject> getGameObjects() {

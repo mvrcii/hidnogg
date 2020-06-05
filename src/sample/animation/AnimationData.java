@@ -48,7 +48,6 @@ public class AnimationData {
                     i++;
                 }
             }
-            System.out.println("Row " + row + " with " + i + " Sprites successfully loaded.");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -63,7 +62,11 @@ public class AnimationData {
             FrameData newFrame = calcFrameData(newBf);
             newFrame.setAngle(angle);
             newFrame.setBufferedImage(newBf);
+            // SwordStartPoint Normal and Inverted have to be set here, because there is a chance that the green color
+            // value gets lost while rotating the sword
             newFrame.setSwordStartPoint(oldFrame.getSwordStartPoint());
+            newFrame.setSwordStartPointInverted(new Point2D(newFrame.getBufferedImage().getWidth() -
+                    newFrame.getSwordStartPoint().getX(), newFrame.getSwordStartPoint().getY()));
             newFrameList.add(newFrame);
         }
         newAnimData.frames = newFrameList;
@@ -112,6 +115,17 @@ public class AnimationData {
                     continue;
 
                 imageTransparent = false; // non-transparent image
+
+                if (new Color(currentRGB).getRed() > 50) {  // sword pixel
+                    //System.out.println("RED");
+                    lastBlackPixel_x = col;
+
+                    if(!foundBlackLeft){
+                        foundBlackLeft = true;
+                        hitBox.add(new Point2D(col, row));
+                        hitBoxInverted.add(new Point2D(bufferedImage.getWidth() - col, row));
+                    }
+                }
 
                 if (currentRGB == black) { // player pixel
                     lastBlackPixel_x = col;

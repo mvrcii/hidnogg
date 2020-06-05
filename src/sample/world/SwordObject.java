@@ -2,6 +2,7 @@ package sample.world;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import sample.GameLoop;
 import sample.animation.Animation;
 import sample.animation.FrameData;
 import sample.controllers.CameraController;
@@ -9,71 +10,42 @@ import sample.controllers.DataController;
 import sample.enums.AnimationType;
 import sample.enums.DirectionType;
 
-public class SwordObject extends GameObject{
+public class SwordObject extends GameObject {
 
-    private Animation animation = DataController.getInstance().getAnimation(AnimationType.SWORD);
+    private Animation animation = DataController.getInstance().getSwordAnimAngle(AnimationType.SWORD);
     private PlayerObject playerObject;
 
+    private boolean falling;
+    private boolean onGround;
+
     private int currentAngle;
+    private int bounceStartAngle;
+
+    private double diffSeconds = 0;
+    private double timePassed = 0;
 
     public SwordObject(int x, int y, DirectionType directionType, PlayerObject playerObject) {
         super(x, y, directionType);
+        this.falling = false;
+        this.onGround = false;
         this.playerObject = playerObject;
-        if(this.playerObject != null){
+
+        if (playerObject != null) {
             this.directionType = playerObject.getDirectionType();
         }
-        this.currentAngle = calculateRotationAngle();
-    }
-
-
-    private void updateCoordinates() {
-
-        switch (directionType){
-            case LEFT ->
-                    {
-                        this.x = playerObject.x + (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPointInverted().getX()
-                        - (int) animation.getCurrentFrame().getSwordStartPointInverted().getX();
-                        this.y = playerObject.y + (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPointInverted().getY()
-                                - (int) animation.getCurrentFrame().getSwordStartPointInverted().getY();
-                    }
-            case RIGHT ->
-                    {
-                        this.x = playerObject.x + (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getX()
-                        - (int) animation.getCurrentFrame().getSwordStartPoint().getX();
-                        this.y = playerObject.y + (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getY()
-                        - (int) animation.getCurrentFrame().getSwordStartPoint().getY();
-                    }
-        }
-    }
-
-    private int calculateRotationAngle(){
-        FrameData frameData = playerObject.getAnimation().getCurrentFrame();
-        return (int) frameData.getSwordStartPoint().angle(frameData.getSwordEndPoint());
-    }
-
-    private void updateAngle(){
-        FrameData f = playerObject.getAnimation().getCurrentFrame();
-
-        //System.out.println(f.getFrameNumber()+" "+f.getSwordStartPoint()+" "+f.getSwordEndPoint()+" "+f.getSwordStartPointInverted());
-        int newAngle = (int) new Point2D(1,0).angle(f.getSwordEndPoint().getX()-f.getSwordStartPoint().getX(),
-                f.getSwordEndPoint().getY()-f.getSwordStartPoint().getY());
-        if(currentAngle != newAngle){
-            currentAngle = newAngle;
-            if(currentAngle == 0){
-                animation = DataController.getInstance().getAnimation(animation.getAnimationType());
-            }else{
-                animation = DataController.getInstance().getAnimation(animation.getAnimationType(), currentAngle);
-            }
-        }
-
+        currentAngle = calculateRotationAngle();    // initial angle
     }
 
 
     @Override
     public void update(long diffSeconds) {
-        updateAngle();
-        this.directionType = playerObject.getDirectionType();
-        animation.update(diffSeconds);
+        this.diffSeconds = diffSeconds;
+
+        updateAngle();                                          // Updating Angle
+        if (!onGround) {
+            directionType = playerObject.getDirectionType();    // Updating Direction
+            animation.update(diffSeconds);                      // Updating Animation
+        }
         updateCoordinates();
     }
 
@@ -86,15 +58,102 @@ public class SwordObject extends GameObject{
         }
     }
 
-    public Animation getAnimation() {
-        return animation;
+
+    private void updateCoordinates() {
+
+        if (falling) {
+            int swordOffset = (int) animation.getCurrentFrame().getSwordStartPoint().getX() + 10;
+            y -= vy * diffSeconds / 100;
+
+            if (y < GameLoop.currentLevel.getGroundLevel() - swordOffset) {
+                vy -= (2 * diffSeconds) / 10;    //gravity
+            } else {
+                vy = 0;
+                y = GameLoop.currentLevel.getGroundLevel() - swordOffset;
+                onGround = true;
+                bounceStartAngle = currentAngle;    // Angle from which the bouncing will start
+                playerObject = null;
+                animation.stop();
+            }
+
+        } else {
+
+            if (playerObject != null) {
+                switch (directionType) {
+                    case LEFT -> {
+                        this.x = playerObject.x + (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPointInverted().getX()
+                                - (int) animation.getCurrentFrame().getSwordStartPointInverted().getX();
+                        this.y = playerObject.y + (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPointInverted().getY()
+                                - (int) animation.getCurrentFrame().getSwordStartPointInverted().getY();
+                    }
+                    case RIGHT -> {
+                        this.x = playerObject.x + (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getX()
+                                - (int) animation.getCurrentFrame().getSwordStartPoint().getX();
+                        this.y = playerObject.y + (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getY()
+                                - (int) animation.getCurrentFrame().getSwordStartPoint().getY();
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    private int calculateRotationAngle() {
+        FrameData frameData = playerObject.getAnimation().getCurrentFrame();
+        return (int) frameData.getSwordStartPoint().angle(frameData.getSwordEndPoint());
+    }
+
+    private void updateAngle() {
+
+        if (onGround) {
+            timePassed += diffSeconds;
+            double a = 0.5;
+            double w = 3;
+
+            currentAngle = (int) Math.round(Math.exp(-a * (timePassed / 150)) * Math.cos(w * timePassed / 150) * bounceStartAngle);
+            animation = DataController.getInstance().getSwordAnimAngle(currentAngle);
+
+        } else {
+            FrameData f = playerObject.getAnimation().getCurrentFrame();
+            double x_start = f.getSwordStartPoint().getX();
+            double y_start = f.getSwordStartPoint().getY();
+            double x_end = f.getSwordEndPoint().getX();
+            double y_end = f.getSwordEndPoint().getY();
+
+            int nextAngle = (int) new Point2D(1, 0).angle(x_end - x_start,y_end - y_start);
+
+            if (currentAngle != nextAngle) {
+                currentAngle = nextAngle;
+                animation = DataController.getInstance().getSwordAnimAngle(currentAngle);
+            }
+        }
+
+    }
+
+
+    public void fallToGround() {
+        falling = true;
+        vy = -10;
     }
 
     public void setPlayerObject(PlayerObject playerObject) {
         this.playerObject = playerObject;
     }
 
-    public PlayerObject getPlayerObject() {
-        return playerObject;
+    public void setFalling(boolean falling) {
+        this.falling = falling;
+    }
+
+    public void setOnGround(boolean onGround) {
+        this.onGround = onGround;
+    }
+
+    public boolean isFalling() {
+        return falling;
+    }
+
+    public boolean isOnGround() {
+        return onGround;
     }
 }

@@ -2,25 +2,19 @@ package sample;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.awt.*;
+import javax.swing.*;
 
 public class Main extends Application {
 
     public static Canvas canvas;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -49,7 +43,9 @@ public class Main extends Application {
 
         primaryStage.show();
 
+
         new GameLoop().start();
+
     }
 
     public static void main(String[] args) {

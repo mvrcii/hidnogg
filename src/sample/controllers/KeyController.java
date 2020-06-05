@@ -64,7 +64,7 @@ public class KeyController extends Controller {
     // Keys which are only allowed to activate once per press
     private boolean isSinglePressKey(KeyCode keyCode) {
         return switch (keyCode) {
-            case S, F,UP, DOWN -> true;
+            case SPACE, ENTER, F,UP, DOWN -> true;
             default -> false;
         };
     }
