@@ -113,7 +113,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
             animation = animCon.getAnimation(PLAYER_DIEING);
 
-            System.out.println("started player dieing animation");
+            //System.out.println("started player dieing animation");
         }
 
     }

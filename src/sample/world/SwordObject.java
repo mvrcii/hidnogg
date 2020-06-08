@@ -149,7 +149,7 @@ public class SwordObject extends GameObject {
         falling = true;
         vy = -10;
         bounceStartAngle = currentAngle;
-        System.out.println("bounce angle set to "+bounceStartAngle);
+        //System.out.println("bounce angle set to "+bounceStartAngle);
     }
 
     public void setPlayerObject(PlayerObject playerObject) {
