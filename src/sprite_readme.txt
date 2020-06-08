@@ -12,4 +12,8 @@ Row  |	Sprite
 9	Stab low
 10	Stab med
 11	Stab high
-12	Death		
+12	Death	
+13	Crouch / Pick up Weapon
+14	Idle no Sword
+15	Attack no Sword
+16	Jump Kick (replaces Jump down if attack in mid-air)
