@@ -35,7 +35,14 @@ public class CollisionController extends Controller {
     // --- --- Player Data
     private final ArrayList<PlayerObject> players = new ArrayList<>();
     // --- --- --- Attack related data
-    private final HashSet<AnimationType> nonStabAnimations = Stream.of(AnimationType.PLAYER_WALK, AnimationType.PLAYER_IDLE_HOLD_UP, AnimationType.PLAYER_JUMP_START, AnimationType.PLAYER_JUMP_PEAK, AnimationType.PLAYER_JUMP_END).collect(Collectors.toCollection(HashSet::new));
+    private final HashSet<AnimationType> nonStabAnimations = Stream.of(
+            AnimationType.PLAYER_WALK,
+            AnimationType.PLAYER_IDLE_HOLD_UP,
+            AnimationType.PLAYER_JUMP_START,
+            AnimationType.PLAYER_JUMP_PEAK,
+            AnimationType.PLAYER_JUMP_END,
+            AnimationType.PLAYER_DYING,
+            AnimationType.SWORD).collect(Collectors.toCollection(HashSet::new));
     private static int swordLength = 0; // swordLength for sword-tip-calculation
     // --- --- --- Obstacle-Collision related data
     private final Point2D[] rectHitBoxP1_P2 = new Point2D[2]; // Contains upper left X,Y and bottom right X,Y of both players
@@ -91,7 +98,7 @@ public class CollisionController extends Controller {
      * Logic >> Detects, where the swordTip-point (player1) is between two points of the player2-hitBox on the same y-level
      */
     private boolean collisionSwordAvatar(PlayerObject player1, PlayerObject player2) { // TODO :: Eventually update hitBoxCalc & swordTip
-        if (nonStabAnimations.contains(player1.getAnimation().getAnimationType())) // Prevent stabbing while sword is held up
+        if (nonStabAnimations.contains(player1.getAnimation().getAnimationType())) // Prevent horizontal stabbing in specific animations
             return false;
 
         Point2D swordTip;

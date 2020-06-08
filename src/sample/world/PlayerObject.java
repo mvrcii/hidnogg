@@ -111,7 +111,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 swordObject.fallToGround();
                 this.swordObject = null;
             }
-            animation = animCon.getAnimation(PLAYER_DIEING);
+            animation = animCon.getAnimation(PLAYER_DYING);
 
             //System.out.println("started player dieing animation");
         }
@@ -119,7 +119,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     }
 
     private void handleDeathAnimation(double diffMillis) {
-        if(animation.isLastFrame() && animation.getAnimationType() == PLAYER_DIEING){
+        if(animation.isLastFrame() && animation.getAnimationType() == PLAYER_DYING){
            animation.stop();
         }
         if(!alive){
@@ -395,6 +395,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         return onGround;
     }
 
-
+    public boolean getAlive() {
+        return this.alive;
+    }
 }
 

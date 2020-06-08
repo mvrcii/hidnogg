@@ -61,7 +61,7 @@ public class DataController extends Controller {
         basicAnimationData.put(AnimationType.PLAYER_STAB_LOW, new AnimationData(9));
         basicAnimationData.put(AnimationType.PLAYER_STAB_MEDIUM, new AnimationData(10));
         basicAnimationData.put(AnimationType.PLAYER_STAB_HIGH, new AnimationData(11));
-        basicAnimationData.put(AnimationType.PLAYER_DIEING, new AnimationData(12));
+        basicAnimationData.put(AnimationType.PLAYER_DYING, new AnimationData(12));
 
     }
 

@@ -15,7 +15,7 @@ public enum AnimationType {
     PLAYER_STAB_MEDIUM(60),
     PLAYER_STAB_HIGH(60),
 
-    PLAYER_DIEING(60),
+    PLAYER_DYING(60),
 
     PLAYER_WALK(30),
     SWORD(150);
