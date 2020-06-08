@@ -77,9 +77,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());
             case RIGHT -> gc.drawImage(animation.getCurrentSprite(), drawPoint.getX(), drawPoint.getY());
         }
-        this.showHitBoxState(gc, 1);
-        this.showHitBoxState(gc, 2);
-        this.showHitBoxState(gc, 3);
+        //this.showHitBoxState(gc, 1);
+        //this.showHitBoxState(gc, 2);
+        //this.showHitBoxState(gc, 3);
     }
 
 
@@ -107,18 +107,20 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             keyCon.setKeyPressBlockedP1(true);
             keyCon.removeAllKeyPress();
 
-            if(swordObject != null){
+            if(swordObject != null){    // only if PLAYER has a sword
                 swordObject.fallToGround();
                 this.swordObject = null;
             }
             animation = animCon.getAnimation(PLAYER_DIEING);
+
+            System.out.println("started player dieing animation");
         }
 
     }
 
     private void handleDeathAnimation(double diffMillis) {
         if(animation.isLastFrame() && animation.getAnimationType() == PLAYER_DIEING){
-            animation.stop();
+           animation.stop();
         }
         if(!alive){
             time_passed += diffMillis;

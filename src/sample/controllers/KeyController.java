@@ -57,7 +57,7 @@ public class KeyController extends Controller {
         for (KeyCode keyCode : keyObject.keys.keySet()){
             keyObject.keys.put(keyCode, keyObject.keys.get(keyCode)+diffMillis);
         }
-        System.out.println(keyObject.getKeyHashMap().entrySet().toString());
+        //System.out.println(keyObject.getKeyHashMap().entrySet().toString());
 
     }
 
