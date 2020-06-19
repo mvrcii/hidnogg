@@ -92,10 +92,12 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         handleDeathAnimation(diffMillis);
         handleMovementKeys(diffMillis);
         handleUpKey();
+        handleThrowing();
         handleDownKey();
         handleStabKey();
         handleJumpKey(diffMillis);
     }
+
 
     private void checkCollisions() {
 
@@ -129,7 +131,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 case LEFT -> this.x = x+10;
                 case RIGHT -> this.x = x-10;
             }
-
 
         }
 
@@ -258,6 +259,15 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 lastIdleAnimationType = animation.getAnimationType();
             } else if (animType == PLAYER_IDLE_HOLD_UP) {
                 animation = animCon.getAnimation(lastIdleAnimationType);
+            }
+        }
+    }
+
+
+    private void handleThrowing() {
+        if(animation.getAnimationType() == PLAYER_IDLE_HOLD_UP){
+            if(keyCon.isKeyPressed(keySet.getStabKey())){
+                swordObject.startThrowing();
             }
         }
     }
