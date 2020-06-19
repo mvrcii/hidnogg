@@ -45,6 +45,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         this.alive = true;
     }
 
+    /*
     public void reset(){
         onGround = true;
         alive = true;
@@ -52,6 +53,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         swordObject = new SwordObject(this.x, this.y, DirectionType.RIGHT, this);
         GameLoop.currentLevel.addSword(swordObject);
     }
+     */
 
     @Override
     public void update(long diffMillis) {
@@ -77,9 +79,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());
             case RIGHT -> gc.drawImage(animation.getCurrentSprite(), drawPoint.getX(), drawPoint.getY());
         }
-        //this.showHitBoxState(gc, 1);
-        //this.showHitBoxState(gc, 2);
-        //this.showHitBoxState(gc, 3);
+        this.showHitBoxState(gc, 1);
+        this.showHitBoxState(gc, 2);
+        this.showHitBoxState(gc, 3);
     }
 
 
@@ -87,7 +89,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     public void processInput(long diffMillis) {
         checkCollisions();
 
-        handleDeathAnimation(diffMillis);
+        //handleDeathAnimation(diffMillis);
         handleMovementKeys(diffMillis);
         handleUpKey();
         handleDownKey();
@@ -121,6 +123,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     }
 
+    /*
     private void handleDeathAnimation(double diffMillis) {
         if(animation.isLastFrame() && animation.getAnimationType() == PLAYER_DYING){
            animation.stop();
@@ -132,6 +135,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
         }
     }
+    */
+
 
     private void handleStabKey() {
 
@@ -283,7 +288,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
     private void handleJumpKey(long diffMillis) {
-
 
         if (keyCon.isKeyPressed(keySet.getJumpKey())) {
 
