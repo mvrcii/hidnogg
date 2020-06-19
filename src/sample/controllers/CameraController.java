@@ -63,7 +63,7 @@ public class CameraController extends Controller{
 
     public Point2D convertWorldToScreen(int x, int y) {
         double newX = x - camX;
-        double newY = y + camY; //+ to move camera up if y value is higher
+        double newY = y - camY; //+ to move camera up if y value is higher
         return new Point2D(newX,newY);
     }
 
