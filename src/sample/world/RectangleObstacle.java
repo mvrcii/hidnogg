@@ -1,7 +1,9 @@
 package sample.world;
 
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import sample.controllers.CameraController;
 
 public class RectangleObstacle extends GameObject {
 
@@ -34,8 +36,9 @@ public class RectangleObstacle extends GameObject {
 
     @Override
     public void draw(GraphicsContext gc) {
+        Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
         gc.setFill(this.color);
-        gc.fillRect(this.x, this.y, this.width, this.height);
+        gc.fillRect(drawPoint.getX(), drawPoint.getY(), this.width, this.height);
     }
 
     // ----------------------------------------------------------------------------------------------------
