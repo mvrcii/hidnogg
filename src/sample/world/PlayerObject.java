@@ -342,7 +342,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     System.out.println("SWORDS COLLIDING");
                 if (CollisionController.getInstance().getPlayerHitOtherPlayer(this.playerNumber) && this.playerNumber == PlayerType.PLAYER_ONE) // Testing player1_hit_player2
                     System.out.println("PLAYER1 HIT DETECTED");
-
+                //recalculate coordinates
                 Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
 
                 gc.setFill(Color.GREEN); // SwordMount

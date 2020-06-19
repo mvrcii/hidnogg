@@ -50,6 +50,7 @@ public class CameraController extends Controller{
         //calculate center point for camera
         camX = (diffPlayer1.getX() + diffPlayer2.getX()) / 2 + desiredOffset;
         camY = (diffPlayer1.getY() + diffPlayer2.getY()) / 2;
+
     }
 
     //this method has to be called in first update loop after startup or in new level
