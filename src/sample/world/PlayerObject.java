@@ -62,7 +62,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         animation.update(diffMillis);
 
         y -= vy * diffMillis / 100;
-        if (y < GameLoop.currentLevel.getGroundLevel() - playerOffset) {
+        if (!onGround) {
             vy -= (2 * (double) diffMillis) / 10;    //gravity
         } else {
             vy = 0;
