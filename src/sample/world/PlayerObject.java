@@ -98,11 +98,12 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     }
 
     private void checkCollisions() {
-        CollisionController colCon = CollisionController.getInstance();
 
+        CollisionController colCon = CollisionController.getInstance();
         onGround = colCon.getPlayerOnGround(this.playerNumber);
 
-        /*
+
+
         // Player getting hit by other player
         if(colCon.getPlayerHit(this.playerNumber) && alive){
             alive = false;
@@ -116,10 +117,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
             animation = animCon.getAnimation(PLAYER_DYING);
 
-            //System.out.println("started player dieing animation");
+            //System.out.println("Started player dieing animation");
         }
-        */
-
 
     }
 
