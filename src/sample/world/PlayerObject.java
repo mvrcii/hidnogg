@@ -37,6 +37,12 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private Animation animation = DataController.getInstance().getAnimation(PLAYER_IDLE_LOW);
     private AnimationType lastIdleAnimationType = PLAYER_IDLE_LOW;
 
+    // Gravity-Ground detection
+    private final HashSet<AnimationType> jumps = Stream.of(
+            AnimationType.PLAYER_JUMP_START,
+            AnimationType.PLAYER_JUMP_PEAK).collect(Collectors.toCollection(HashSet::new));
+    public RectangleObstacle currentObstacleStanding;
+
     public PlayerObject(int x, int y, PlayerType playerNumber, DirectionType directionType, KeySet keySet) {
         super(x, y, directionType);
         this.keySet = keySet;
@@ -57,10 +63,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         GameLoop.currentLevel.addSword(swordObject);
     }
 
-    // Testing
-    private final HashSet<AnimationType> jumps = Stream.of(
-            AnimationType.PLAYER_JUMP_START,
-            AnimationType.PLAYER_JUMP_PEAK).collect(Collectors.toCollection(HashSet::new));
 
     @Override
     public void update(long diffMillis) {
@@ -73,7 +75,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             vy -= (2 * (double) diffMillis) / 10;    //gravity
         } else {
             vy = 0;
-            y = GameLoop.currentLevel.getGroundLevel() - playerOffset;
+            y = currentObstacleStanding.getY() - playerOffset;
         }
     }
 

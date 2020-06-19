@@ -63,8 +63,10 @@ public class CollisionController extends Controller {
 
     private CollisionController() {
         for (GameObject obj : GameLoop.currentLevel.getGameObjects()) { // Collect PlayerObjects
-            if (obj instanceof PlayerObject)
+            if (obj instanceof PlayerObject) {
                 players.add((PlayerObject) obj);
+                ((PlayerObject) obj).currentObstacleStanding = GameLoop.currentLevel.getGround();
+            }
 
             if (obj instanceof RectangleObstacle) { // Collect RectangleObjects
                 obstacles.add((RectangleObstacle) obj);
@@ -188,8 +190,10 @@ public class CollisionController extends Controller {
             if (!collisionRectRect(player, obstacle, 0, 0, 0, 0)) // Rect-Rect collision
                 continue; // Obstacle not near the player >> irrelevant for collision detection
 
-            if (collisionRectRect(player, obstacle, 4, 4, playersWidthHeight[1], 0)) // Rect-Line collision >> Ground
+            if (collisionRectRect(player, obstacle, 4, 4, playersWidthHeight[1], 0)) {// Rect-Line collision >> Ground
                 onGround = true;
+                player.currentObstacleStanding = obstacle;
+            }
 
             if (collisionRectRect(player, obstacle, playersWidthHeight[0], 0, 4, 4))  // Rect-Line collision >> Wall-right
                 hitsWallRight = true;

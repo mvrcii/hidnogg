@@ -42,6 +42,8 @@ public class WorldObject {
 
         // Testobstacle
         gameObjects.add(new RectangleObstacle(60, groundLevel - 50, 80, 20, Color.GREY));
+        gameObjects.add(new RectangleObstacle(200, groundLevel - 100, 80, 20, Color.GREY));
+        gameObjects.add(new RectangleObstacle(340, groundLevel - 150, 80, 20, Color.GREY));
 
         gameObjects.add(player1);
         gameObjects.add(player2);
