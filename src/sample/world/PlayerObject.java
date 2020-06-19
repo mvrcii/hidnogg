@@ -100,6 +100,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         onGround = colCon.getPlayerOnGround(this.playerNumber);
 
+        /*
         // Player getting hit by other player
         if(colCon.getPlayerHit(this.playerNumber) && alive){
             alive = false;
@@ -115,6 +116,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
             //System.out.println("started player dieing animation");
         }
+        */
+
 
     }
 
@@ -136,6 +139,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             switch (animation.getAnimationType()) {
                 case PLAYER_IDLE_LOW, PLAYER_IDLE_MEDIUM, PLAYER_IDLE_HIGH -> animation = animCon.getStabAnim(lastIdleAnimationType);
                 case PLAYER_WALK -> {
+                    // Manual control is usually turned on while walking to the left / right
+                    // by setting it to false here, the player always stabs towards his enemy
                     DirectionController.getInstance().setManualControl(this, false);
                     animation = animCon.getStabAnim(lastIdleAnimationType);
                     switch (directionType) {
