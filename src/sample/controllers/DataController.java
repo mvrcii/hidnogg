@@ -63,6 +63,10 @@ public class DataController extends Controller {
         basicAnimationData.put(AnimationType.PLAYER_STAB_HIGH, new AnimationData(11));
         basicAnimationData.put(AnimationType.PLAYER_DYING, new AnimationData(12));
 
+        basicAnimationData.put(AnimationType.PLAYER_STEP_LOW, new AnimationData(10));
+        basicAnimationData.put(AnimationType.PLAYER_STEP_MEDIUM, new AnimationData(11));
+        basicAnimationData.put(AnimationType.PLAYER_STEP_HIGH, new AnimationData(12));
+
     }
 
     @Override
@@ -85,6 +89,18 @@ public class DataController extends Controller {
             default -> throw new IllegalArgumentException("Wrong usage of method getStabAnim(). Has to be called with an idle animation type!");
         }
         return new Animation(swordAnimType, basicAnimationData.get(swordAnimType));
+    }
+
+    // Get the corresponding stab animation to the last idle position
+    public Animation getStepAnim(AnimationType lastIdleAnimType){
+        AnimationType animType;
+        switch (lastIdleAnimType){
+            case PLAYER_IDLE_LOW -> animType = AnimationType.PLAYER_STEP_LOW;
+            case PLAYER_IDLE_MEDIUM -> animType = AnimationType.PLAYER_STEP_MEDIUM;
+            case PLAYER_IDLE_HIGH -> animType = AnimationType.PLAYER_STEP_HIGH;
+            default -> throw new IllegalArgumentException("Wrong usage of method getStepAnim(). Has to be called with an idle animation type!");
+        }
+        return new Animation(animType, basicAnimationData.get(animType));
     }
 
     public Animation getSwordAnimAngle(int angle){
