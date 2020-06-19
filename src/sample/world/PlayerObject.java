@@ -45,6 +45,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         this.alive = true;
     }
 
+    /*
     public void reset(){
         onGround = true;
         alive = true;
@@ -52,6 +53,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         swordObject = new SwordObject(this.x, this.y, DirectionType.RIGHT, this);
         GameLoop.currentLevel.addSword(swordObject);
     }
+     */
 
     @Override
     public void update(long diffMillis) {
@@ -87,7 +89,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     public void processInput(long diffMillis) {
         checkCollisions();
 
-        handleDeathAnimation(diffMillis);
+        //handleDeathAnimation(diffMillis);
         handleMovementKeys(diffMillis);
         handleUpKey();
         handleDownKey();
@@ -100,6 +102,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         onGround = colCon.getPlayerOnGround(this.playerNumber);
 
+        /*
         // Player getting hit by other player
         if(colCon.getPlayerHit(this.playerNumber) && alive){
             alive = false;
@@ -115,9 +118,12 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
             //System.out.println("started player dieing animation");
         }
+        */
+
 
     }
 
+    /*
     private void handleDeathAnimation(double diffMillis) {
         if(animation.isLastFrame() && animation.getAnimationType() == PLAYER_DYING){
            animation.stop();
@@ -129,6 +135,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
         }
     }
+    */
+
 
     private void handleStabKey() {
 
@@ -136,6 +144,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             switch (animation.getAnimationType()) {
                 case PLAYER_IDLE_LOW, PLAYER_IDLE_MEDIUM, PLAYER_IDLE_HIGH -> animation = animCon.getStabAnim(lastIdleAnimationType);
                 case PLAYER_WALK -> {
+                    // Manual control is usually turned on while walking to the left / right
+                    // by setting it to false here, the player always stabs towards his enemy
                     DirectionController.getInstance().setManualControl(this, false);
                     animation = animCon.getStabAnim(lastIdleAnimationType);
                     switch (directionType) {
@@ -278,7 +288,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
     private void handleJumpKey(long diffMillis) {
-
 
         if (keyCon.isKeyPressed(keySet.getJumpKey())) {
 

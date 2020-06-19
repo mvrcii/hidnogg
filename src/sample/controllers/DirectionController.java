@@ -82,6 +82,7 @@ public class DirectionController extends Controller{
         playerObject.setDirectionType(directionType);
     }
 
+    // Activates the manual control of a specific player direction and therefor disables the automatic control
     public void setManualControl(PlayerObject playerObject, boolean bool) {
         switch (playerObject.getPlayerNumber()){
             case PLAYER_ONE -> manDirConP1 = bool;
