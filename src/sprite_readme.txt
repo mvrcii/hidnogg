@@ -17,3 +17,6 @@ Row  |	Sprite
 14	Idle no Sword
 15	Attack no Sword
 16	Jump Kick (replaces Jump down if attack in mid-air)
+17	step high
+18	step mid
+19	step low
