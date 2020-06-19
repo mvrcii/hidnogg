@@ -45,7 +45,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         this.alive = true;
     }
 
-    /*
+
     public void reset(){
         onGround = true;
         alive = true;
@@ -53,7 +53,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         swordObject = new SwordObject(this.x, this.y, DirectionType.RIGHT, this);
         GameLoop.currentLevel.addSword(swordObject);
     }
-     */
+
 
     @Override
     public void update(long diffMillis) {
@@ -89,7 +89,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     public void processInput(long diffMillis) {
         checkCollisions();
 
-        //handleDeathAnimation(diffMillis);
+        handleDeathAnimation(diffMillis);
         handleMovementKeys(diffMillis);
         handleUpKey();
         handleDownKey();
@@ -102,31 +102,30 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         CollisionController colCon = CollisionController.getInstance();
         onGround = colCon.getPlayerOnGround(this.playerNumber);
 
-
-
         // Player getting hit by other player
         if(colCon.getPlayerHit(this.playerNumber) && alive){
             System.out.println(playerNumber +" got hit");
             alive = false;
             time_passed = 0;
+
             switch (playerNumber){
                 case PLAYER_ONE -> keyCon.setKeyPressBlockedP1(true);
                 case PLAYER_TWO -> keyCon.setKeyPressBlockedP2(true);
             }
+
             keyCon.removeAllKeyPress();
 
             if(swordObject != null){    // only if PLAYER has a sword
                 swordObject.fallToGround();
                 this.swordObject = null;
             }
-            animation = animCon.getAnimation(PLAYER_DYING);
 
-            //System.out.println("Started player dieing animation");
+            animation = animCon.getAnimation(PLAYER_DYING);
         }
 
     }
 
-    /*
+
     private void handleDeathAnimation(double diffMillis) {
         if(animation.isLastFrame() && animation.getAnimationType() == PLAYER_DYING){
            animation.stop();
@@ -138,7 +137,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
         }
     }
-    */
 
 
     private void handleStabKey() {

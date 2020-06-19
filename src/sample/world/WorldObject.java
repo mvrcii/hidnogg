@@ -78,7 +78,7 @@ public class WorldObject {
         }
     }
 
-    /*
+
     public void respawnPlayer(PlayerObject p){
 
         switch (p.getPlayerNumber()){
@@ -94,7 +94,6 @@ public class WorldObject {
         p.y = groundLevel;
         p.reset();
     }
-    */
 
     public ArrayList<GameObject> getGameObjects() {
         return gameObjects;
