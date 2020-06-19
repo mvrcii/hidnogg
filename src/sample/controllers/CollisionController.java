@@ -51,9 +51,9 @@ public class CollisionController extends Controller {
 
     // --- Player states
     // --- --- Obstacle related states
-    private boolean player1_onGround = false;
+    private boolean player1_onGround = true;
     private boolean player1_hitsWall = false;
-    private boolean player2_onGround = false;
+    private boolean player2_onGround = true;
     private boolean player2_hitsWall = false;
     // --- --- Attack related states
     private boolean player1_hit_player2 = false;

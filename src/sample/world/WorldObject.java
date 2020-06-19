@@ -40,6 +40,9 @@ public class WorldObject {
         gameObjects.add(fpsObject);
         gameObjects.add(ground);
 
+        // Testobstacle
+        gameObjects.add(new RectangleObstacle(60, groundLevel - 50, 80, 20, Color.GREY));
+
         gameObjects.add(player1);
         gameObjects.add(player2);
         gameObjects.addAll(swordObjects);

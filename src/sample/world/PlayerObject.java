@@ -13,6 +13,9 @@ import sample.enums.PlayerType;
 import sample.interfaces.InputSystem;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static sample.enums.AnimationType.*;
 
@@ -54,6 +57,10 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         GameLoop.currentLevel.addSword(swordObject);
     }
 
+    // Testing
+    private final HashSet<AnimationType> jumps = Stream.of(
+            AnimationType.PLAYER_JUMP_START,
+            AnimationType.PLAYER_JUMP_PEAK).collect(Collectors.toCollection(HashSet::new));
 
     @Override
     public void update(long diffMillis) {
@@ -62,7 +69,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         animation.update(diffMillis);
 
         y -= vy * diffMillis / 100;
-        if (!onGround) {
+        if (!onGround || jumps.contains(this.getAnimation().getAnimationType())) {
             vy -= (2 * (double) diffMillis) / 10;    //gravity
         } else {
             vy = 0;
@@ -80,7 +87,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             case RIGHT -> gc.drawImage(animation.getCurrentSprite(), drawPoint.getX(), drawPoint.getY());
         }
         //this.showHitBoxState(gc, 1);
-        //this.showHitBoxState(gc, 2);
+        this.showHitBoxState(gc, 2);
         //this.showHitBoxState(gc, 3);
     }
 
