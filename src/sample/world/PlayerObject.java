@@ -45,6 +45,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         this.alive = true;
     }
 
+
     public void reset(){
         onGround = true;
         alive = true;
@@ -52,6 +53,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         swordObject = new SwordObject(this.x, this.y, DirectionType.RIGHT, this);
         GameLoop.currentLevel.addSword(swordObject);
     }
+
 
     @Override
     public void update(long diffMillis) {
@@ -96,27 +98,33 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     }
 
     private void checkCollisions() {
-        CollisionController colCon = CollisionController.getInstance();
 
+        CollisionController colCon = CollisionController.getInstance();
         onGround = colCon.getPlayerOnGround(this.playerNumber);
 
         // Player getting hit by other player
         if(colCon.getPlayerHit(this.playerNumber) && alive){
+            System.out.println(playerNumber +" got hit");
             alive = false;
             time_passed = 0;
-            keyCon.setKeyPressBlockedP1(true);
+
+            switch (playerNumber){
+                case PLAYER_ONE -> keyCon.setKeyPressBlockedP1(true);
+                case PLAYER_TWO -> keyCon.setKeyPressBlockedP2(true);
+            }
+
             keyCon.removeAllKeyPress();
 
             if(swordObject != null){    // only if PLAYER has a sword
                 swordObject.fallToGround();
                 this.swordObject = null;
             }
-            animation = animCon.getAnimation(PLAYER_DYING);
 
-            //System.out.println("started player dieing animation");
+            animation = animCon.getAnimation(PLAYER_DYING);
         }
 
     }
+
 
     private void handleDeathAnimation(double diffMillis) {
         if(animation.isLastFrame() && animation.getAnimationType() == PLAYER_DYING){
@@ -130,12 +138,15 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         }
     }
 
+
     private void handleStabKey() {
 
         if (keyCon.isKeyPressed(keySet.getStabKey())) {
             switch (animation.getAnimationType()) {
                 case PLAYER_IDLE_LOW, PLAYER_IDLE_MEDIUM, PLAYER_IDLE_HIGH -> animation = animCon.getStabAnim(lastIdleAnimationType);
                 case PLAYER_WALK -> {
+                    // Manual control is usually turned on while walking to the left / right
+                    // by setting it to false here, the player always stabs towards his enemy
                     DirectionController.getInstance().setManualControl(this, false);
                     animation = animCon.getStabAnim(lastIdleAnimationType);
                     switch (directionType) {
@@ -157,24 +168,38 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
     private void handleMovementKeys(long diffMillis) {
+
         // RIGHT
         if (keyCon.isKeyPressed(keySet.getMoveRightKey()) && !keyCon.isKeyPressed(keySet.getMoveLeftKey())) {
             x += speed * diffMillis / 10;
-            if (animation.getAnimationType() != PLAYER_WALK && onGround) {
+            double t_pressed = keyCon.getKeyPressedTime(keySet.getMoveRightKey());
 
+            if (animation.getAnimationType() != PLAYER_WALK && onGround) {
                 DirectionController.getInstance().setManualControl(this, true);
                 directionType = DirectionType.RIGHT;
-                animation = animCon.getAnimation(PLAYER_WALK);
+
+                if(t_pressed > 100){
+                    animation = animCon.getAnimation(PLAYER_WALK);
+                }else{
+                    //animation = animCon.getAnimation(PLAYER_STEP);
+                }
             }
         }
 
         // LEFT
         if (keyCon.isKeyPressed(keySet.getMoveLeftKey()) && !keyCon.isKeyPressed(keySet.getMoveRightKey())) {
             x -= speed * diffMillis / 10;
+            double t_pressed = keyCon.getKeyPressedTime(keySet.getMoveLeftKey());
+
             if (animation.getAnimationType() != PLAYER_WALK && onGround) {
                 DirectionController.getInstance().setManualControl(this, true);
                 directionType = DirectionType.LEFT;
-                animation = animCon.getAnimation(PLAYER_WALK);
+
+                if(t_pressed > 100){
+                    animation = animCon.getAnimation(PLAYER_WALK);
+                }else{
+                    //animation = animCon.getAnimation(PLAYER_STEP);
+                }
             }
         }
 
@@ -279,7 +304,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private void handleJumpKey(long diffMillis) {
 
-
         if (keyCon.isKeyPressed(keySet.getJumpKey())) {
 
             if (onGround) {
@@ -333,10 +357,13 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     System.out.println("SWORDS COLLIDING");
                 if (CollisionController.getInstance().getPlayerHitOtherPlayer(this.playerNumber) && this.playerNumber == PlayerType.PLAYER_ONE) // Testing player1_hit_player2
                     System.out.println("PLAYER1 HIT DETECTED");
+                //recalculate coordinates
+                Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
+
                 gc.setFill(Color.GREEN); // SwordMount
-                gc.fillRect(this.x + gripX, this.y + gripY, 8, 8);
+                gc.fillRect(drawPoint.getX() + gripX, drawPoint.getY() + gripY, 8, 8);
                 gc.setFill(Color.PINK); // SwordTip
-                gc.fillRect(this.x + gripX + swordLength, this.y + gripY, 8, 8);
+                gc.fillRect(drawPoint.getX() + gripX + swordLength, drawPoint.getY() + gripY, 8, 8);
             }
             // TESTING rectangleHitBox ----------------------------------------------------------------------------------------------------
             case 2 -> {
@@ -352,7 +379,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 else
                     gc.setStroke(Color.GREEN);
                 Point2D[] playerXY = CollisionController.getInstance().getRectHitBoxP1_P2();
-                gc.strokeRect(this.x + playerXY[0].getX(), this.y + playerXY[0].getY(), playerWidthHeight[0], playerWidthHeight[1]);
+                Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
+                gc.strokeRect(drawPoint.getX() + playerXY[0].getX(), drawPoint.getY() + playerXY[0].getY(), playerWidthHeight[0], playerWidthHeight[1]);
             }
             // TESTING outLineHitBox ----------------------------------------------------------------------------------------------------
             case 3 -> {
@@ -366,7 +394,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     offset = playerWidthHeight[0] + 2;
                 }
                 for (Point2D point : hitBox) {
-                    gc.fillRect(this.x + point.getX() - offset, this.y + point.getY(), 2, 2);
+                    Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
+                    gc.fillRect(drawPoint.getX() + point.getX() - offset, drawPoint.getY() + point.getY(), 2, 2);
                 }
             }
         }

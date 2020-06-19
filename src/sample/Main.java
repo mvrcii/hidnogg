@@ -15,7 +15,6 @@ public class Main extends Application {
 
     public static Canvas canvas;
 
-
     @Override
     public void start(Stage primaryStage) throws Exception{
 
@@ -23,7 +22,6 @@ public class Main extends Application {
             Platform.exit();
             System.exit(0);
         });
-
 
         Group root = new Group();
         primaryStage.setScene(new Scene(root));

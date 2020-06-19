@@ -78,6 +78,7 @@ public class WorldObject {
         }
     }
 
+
     public void respawnPlayer(PlayerObject p){
 
         switch (p.getPlayerNumber()){
