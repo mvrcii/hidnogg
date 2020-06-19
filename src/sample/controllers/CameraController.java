@@ -67,12 +67,9 @@ public class CameraController extends Controller{
         return new Point2D(newX,newY);
     }
 
-    private Point2D lerp(Point2D a, Point2D b, double f) {
-        return new Point2D(lerp(a.getX(), b.getX(), f), lerp(a.getY(), b.getY(), f));
-    }
-
     private double lerp(double a, double b, double f) {
-        return a + f * (b - a);
+        return (a * (1.0 - f)) + (b * f);
+        //return a + f * (b - a);
     }
 
 }

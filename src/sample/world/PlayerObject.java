@@ -77,9 +77,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());
             case RIGHT -> gc.drawImage(animation.getCurrentSprite(), drawPoint.getX(), drawPoint.getY());
         }
-        //this.showHitBoxState(gc, 1);
-        //this.showHitBoxState(gc, 2);
-        //this.showHitBoxState(gc, 3);
+        this.showHitBoxState(gc, 1);
+        this.showHitBoxState(gc, 2);
+        this.showHitBoxState(gc, 3);
     }
 
 
@@ -333,10 +333,13 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     System.out.println("SWORDS COLLIDING");
                 if (CollisionController.getInstance().getPlayerHitOtherPlayer(this.playerNumber) && this.playerNumber == PlayerType.PLAYER_ONE) // Testing player1_hit_player2
                     System.out.println("PLAYER1 HIT DETECTED");
+
+                Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
+
                 gc.setFill(Color.GREEN); // SwordMount
-                gc.fillRect(this.x + gripX, this.y + gripY, 8, 8);
+                gc.fillRect(drawPoint.getX() + gripX, drawPoint.getY() + gripY, 8, 8);
                 gc.setFill(Color.PINK); // SwordTip
-                gc.fillRect(this.x + gripX + swordLength, this.y + gripY, 8, 8);
+                gc.fillRect(drawPoint.getX() + gripX + swordLength, drawPoint.getY() + gripY, 8, 8);
             }
             // TESTING rectangleHitBox ----------------------------------------------------------------------------------------------------
             case 2 -> {
@@ -352,7 +355,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 else
                     gc.setStroke(Color.GREEN);
                 Point2D[] playerXY = CollisionController.getInstance().getRectHitBoxP1_P2();
-                gc.strokeRect(this.x + playerXY[0].getX(), this.y + playerXY[0].getY(), playerWidthHeight[0], playerWidthHeight[1]);
+                Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
+                gc.strokeRect(drawPoint.getX() + playerXY[0].getX(), drawPoint.getY() + playerXY[0].getY(), playerWidthHeight[0], playerWidthHeight[1]);
             }
             // TESTING outLineHitBox ----------------------------------------------------------------------------------------------------
             case 3 -> {
@@ -366,7 +370,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     offset = playerWidthHeight[0] + 2;
                 }
                 for (Point2D point : hitBox) {
-                    gc.fillRect(this.x + point.getX() - offset, this.y + point.getY(), 2, 2);
+                    Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
+                    gc.fillRect(drawPoint.getX() + point.getX() - offset, drawPoint.getY() + point.getY(), 2, 2);
                 }
             }
         }
