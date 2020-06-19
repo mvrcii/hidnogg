@@ -167,24 +167,38 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
     private void handleMovementKeys(long diffMillis) {
+
         // RIGHT
         if (keyCon.isKeyPressed(keySet.getMoveRightKey()) && !keyCon.isKeyPressed(keySet.getMoveLeftKey())) {
             x += speed * diffMillis / 10;
-            if (animation.getAnimationType() != PLAYER_WALK && onGround) {
+            double t_pressed = keyCon.getKeyPressedTime(keySet.getMoveRightKey());
 
+            if (animation.getAnimationType() != PLAYER_WALK && onGround) {
                 DirectionController.getInstance().setManualControl(this, true);
                 directionType = DirectionType.RIGHT;
-                animation = animCon.getAnimation(PLAYER_WALK);
+
+                if(t_pressed > 100){
+                    animation = animCon.getAnimation(PLAYER_WALK);
+                }else{
+                    //animation = animCon.getAnimation(PLAYER_STEP);
+                }
             }
         }
 
         // LEFT
         if (keyCon.isKeyPressed(keySet.getMoveLeftKey()) && !keyCon.isKeyPressed(keySet.getMoveRightKey())) {
             x -= speed * diffMillis / 10;
+            double t_pressed = keyCon.getKeyPressedTime(keySet.getMoveLeftKey());
+
             if (animation.getAnimationType() != PLAYER_WALK && onGround) {
                 DirectionController.getInstance().setManualControl(this, true);
                 directionType = DirectionType.LEFT;
-                animation = animCon.getAnimation(PLAYER_WALK);
+
+                if(t_pressed > 100){
+                    animation = animCon.getAnimation(PLAYER_WALK);
+                }else{
+                    //animation = animCon.getAnimation(PLAYER_STEP);
+                }
             }
         }
 
