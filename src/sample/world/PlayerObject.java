@@ -79,9 +79,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());
             case RIGHT -> gc.drawImage(animation.getCurrentSprite(), drawPoint.getX(), drawPoint.getY());
         }
-        this.showHitBoxState(gc, 1);
-        this.showHitBoxState(gc, 2);
-        this.showHitBoxState(gc, 3);
+        //this.showHitBoxState(gc, 1);
+        //this.showHitBoxState(gc, 2);
+        //this.showHitBoxState(gc, 3);
     }
 
 
@@ -106,9 +106,13 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         // Player getting hit by other player
         if(colCon.getPlayerHit(this.playerNumber) && alive){
+            System.out.println(playerNumber +" got hit");
             alive = false;
             time_passed = 0;
-            keyCon.setKeyPressBlockedP1(true);
+            switch (playerNumber){
+                case PLAYER_ONE -> keyCon.setKeyPressBlockedP1(true);
+                case PLAYER_TWO -> keyCon.setKeyPressBlockedP2(true);
+            }
             keyCon.removeAllKeyPress();
 
             if(swordObject != null){    // only if PLAYER has a sword
