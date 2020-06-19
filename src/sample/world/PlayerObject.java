@@ -119,8 +119,18 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 swordObject.fallToGround();
                 this.swordObject = null;
             }
-
             animation = animCon.getAnimation(PLAYER_DYING);
+        }
+
+        // Player's sword hitting another player's sword
+        if(colCon.getSwordsHitting()){
+            System.out.println("Player's swords hit each other");
+            switch (directionType){
+                case LEFT -> this.x = x+10;
+                case RIGHT -> this.x = x-10;
+            }
+
+
         }
 
     }
@@ -181,7 +191,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 if(t_pressed > 100){
                     animation = animCon.getAnimation(PLAYER_WALK);
                 }else{
-                    //animation = animCon.getAnimation(PLAYER_STEP);
+                    animation = animCon.getStepAnim(lastIdleAnimationType);
                 }
             }
         }
@@ -198,7 +208,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 if(t_pressed > 100){
                     animation = animCon.getAnimation(PLAYER_WALK);
                 }else{
-                    //animation = animCon.getAnimation(PLAYER_STEP);
+                    animation = animCon.getStepAnim(lastIdleAnimationType);
                 }
             }
         }
