@@ -70,7 +70,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         animation.update(diffMillis);
 
-        y -= vy * diffMillis / 100;
+        if(!(vy > 0 && CollisionController.getInstance().getPlayerHeadBump(this.playerNumber)))
+            y -= vy * diffMillis / 100;
+
         if (!onGround || jumps.contains(this.getAnimation().getAnimationType())) {
             vy -= (2 * (double) diffMillis) / 10;    //gravity
         } else {
@@ -88,9 +90,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());
             case RIGHT -> gc.drawImage(animation.getCurrentSprite(), drawPoint.getX(), drawPoint.getY());
         }
-        //this.showHitBoxState(gc, 1);
+        this.showHitBoxState(gc, 1);
         this.showHitBoxState(gc, 2);
-        //this.showHitBoxState(gc, 3);
+        this.showHitBoxState(gc, 3);
     }
 
 
@@ -137,8 +139,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if(colCon.getSwordsHitting()){
             System.out.println("Player's swords hit each other");
             switch (directionType){
-                case LEFT -> this.x = x+10;
-                case RIGHT -> this.x = x-10;
+                case LEFT -> this.x = x + 6;
+                case RIGHT -> this.x = x - 6;
             }
 
         }
@@ -190,7 +192,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private void handleMovementKeys(long diffMillis) {
 
         // RIGHT
-        if (keyCon.isKeyPressed(keySet.getMoveRightKey()) && !keyCon.isKeyPressed(keySet.getMoveLeftKey())) {
+        if (keyCon.isKeyPressed(keySet.getMoveRightKey()) && !keyCon.isKeyPressed(keySet.getMoveLeftKey()) && !CollisionController.getInstance().getPlayerHitsWallLeft(this.playerNumber)) {
+
             x += speed * diffMillis / 10;
             double t_pressed = keyCon.getKeyPressedTime(keySet.getMoveRightKey());
 
@@ -207,7 +210,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         }
 
         // LEFT
-        if (keyCon.isKeyPressed(keySet.getMoveLeftKey()) && !keyCon.isKeyPressed(keySet.getMoveRightKey())) {
+        if (keyCon.isKeyPressed(keySet.getMoveLeftKey()) && !keyCon.isKeyPressed(keySet.getMoveRightKey()) && !CollisionController.getInstance().getPlayerHitsWallRight(this.playerNumber)) {
+
             x -= speed * diffMillis / 10;
             double t_pressed = keyCon.getKeyPressedTime(keySet.getMoveLeftKey());
 
@@ -332,7 +336,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
     private void handleJumpKey(long diffMillis) {
-
         if (keyCon.isKeyPressed(keySet.getJumpKey())) {
 
             if (onGround) {
@@ -390,15 +393,15 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
 
                 gc.setFill(Color.GREEN); // SwordMount
-                gc.fillRect(drawPoint.getX() + gripX, drawPoint.getY() + gripY, 8, 8);
+                gc.fillRect(drawPoint.getX() + gripX, drawPoint.getY() + gripY, 4, 4);
                 gc.setFill(Color.PINK); // SwordTip
-                gc.fillRect(drawPoint.getX() + gripX + swordLength, drawPoint.getY() + gripY, 8, 8);
+                gc.fillRect(drawPoint.getX() + gripX + swordLength, drawPoint.getY() + gripY, 4, 4);
             }
             // TESTING rectangleHitBox ----------------------------------------------------------------------------------------------------
             case 2 -> {
                 gc.setStroke(Color.GREEN);
                 boolean playerOnGround = CollisionController.getInstance().getPlayerOnGround(this.playerNumber);
-                boolean playerHitsWall = CollisionController.getInstance().getPlayerHitsWall(this.playerNumber);
+                boolean playerHitsWall = (CollisionController.getInstance().getPlayerHitsWallLeft(this.playerNumber) || CollisionController.getInstance().getPlayerHitsWallRight(this.playerNumber));
                 if (playerOnGround && playerHitsWall)
                     gc.setStroke(Color.BLACK);
                 else if (playerOnGround)

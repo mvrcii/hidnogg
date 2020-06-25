@@ -17,7 +17,7 @@ public class WorldObject {
     private final ArrayList<SwordObject> swordObjects;
     private final LevelType levelType;
 
-    private final int groundLevel = (int) (Main.canvas.getHeight()/2);
+    private final int groundLevel = (int) (Main.canvas.getHeight()/2 + 100);
     private RectangleObstacle ground;
 
     private PlayerObject player1, player2;
@@ -35,21 +35,50 @@ public class WorldObject {
         player1 = new PlayerObject(500, groundLevel, PlayerType.PLAYER_ONE, DirectionType.RIGHT, Config.keySet1);
         player2 = new PlayerObject(700, groundLevel, PlayerType.PLAYER_TWO, DirectionType.RIGHT, Config.keySet2);
 
-        ground = new RectangleObstacle(0, groundLevel, (int) Main.canvas.getWidth(),20, Color.GREEN);
-
         gameObjects.add(fpsObject);
+        ground = new RectangleObstacle(0 , groundLevel, (int) Main.canvas.getWidth() ,(int) Main.canvas.getHeight() - groundLevel, Color.GREY);
         gameObjects.add(ground);
 
-        // Testobstacle
-        gameObjects.add(new RectangleObstacle(60, groundLevel - 50, 80, 20, Color.GREY));
-        gameObjects.add(new RectangleObstacle(200, groundLevel - 100, 80, 20, Color.GREY));
-        gameObjects.add(new RectangleObstacle(340, groundLevel - 150, 80, 20, Color.GREY));
+        gameObjects.addAll(getTestMap(1));
 
         gameObjects.add(player1);
         gameObjects.add(player2);
         gameObjects.addAll(swordObjects);
     }
 
+    private ArrayList<RectangleObstacle> getTestMap(int mapId){
+        ArrayList<RectangleObstacle> obstacles = new ArrayList<>();
+        switch (mapId) { // Ground-related-parts (stairs) have to be added from top to bottom
+            case 1 -> {
+                int lv2 = 6, lv2_w = 100, lv2_mid = 350;
+                int lv3 = 12, lv3_w = 250;
+                int lv4 = 62, lv4_w = 125;
+                int lv5 = 112, lv5_h = 15, lv5_w = ground.width / 2 - lv3_w, lv5_offset = 50;
+                int p1_w = 15;
+                // Left obstacles
+                obstacles.add(new RectangleObstacle(ground.x, groundLevel - lv4, lv4_w, lv4, Color.GREY)); // Third stair
+                obstacles.add(new RectangleObstacle(ground.x + lv3_w, groundLevel - lv2, lv2_w, lv2, Color.GREY)); // Second stair
+                obstacles.add(new RectangleObstacle(ground.x, groundLevel - lv3, lv3_w, lv3, Color.GREY)); // First stair
+
+                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 - lv5_w, groundLevel - lv5, lv5_w - lv5_offset, lv5_h, Color.GREY)); // First upper platform
+                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 - lv5_w + p1_w, groundLevel - lv5 + lv5_h, p1_w, lv5 - lv5_h - lv2, Color.LIGHTGREY)); // First pillar
+                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 - lv5_offset - 2 * p1_w, groundLevel - lv5 + lv5_h, p1_w, lv5 - lv5_h - lv2, Color.LIGHTGREY)); // Second pillar
+
+                // Middle obstacles
+                obstacles.add(new RectangleObstacle(ground.x + (ground.width / 2) - (lv2_mid / 2), ground.y - lv2, lv2_mid, lv2, Color.GREY)); // Mid stair
+
+                // Right obstacles
+                obstacles.add(new RectangleObstacle(ground.x + ground.width - lv4_w, groundLevel - lv4, lv4_w, lv4, Color.GREY)); // Third stair
+                obstacles.add(new RectangleObstacle(ground.x + ground.width - lv2_w - lv3_w, groundLevel - lv2, lv2_w, lv2, Color.GREY)); // Second stair
+                obstacles.add(new RectangleObstacle(ground.x + ground.width - lv3_w, groundLevel - lv3, lv3_w, lv3, Color.GREY)); // First stair
+
+                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 + lv5_offset, groundLevel - lv5, lv5_w - lv5_offset, lv5_h, Color.GREY)); // First upper platform
+                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 + lv5_offset + p1_w, groundLevel - lv5 + lv5_h, p1_w, lv5 - lv5_h - lv2, Color.LIGHTGREY)); // First pillar
+                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 + lv5_w - 2 * p1_w, groundLevel - lv5 + lv5_h, p1_w, lv5 - lv5_h - lv2, Color.LIGHTGREY)); // Second pillar
+            }
+        }
+        return obstacles;
+    }
 
     public void takeSwordFromGround(PlayerObject p){
         int playerMiddle = p.x + 32;
@@ -82,7 +111,6 @@ public class WorldObject {
             //System.out.println("Player not on Ground");
         }
     }
-
 
     public void respawnPlayer(PlayerObject p){
 

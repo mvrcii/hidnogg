@@ -1,6 +1,7 @@
 package sample.controllers;
 
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 import sample.GameLoop;
 import sample.enums.AnimationType;
 import sample.enums.DirectionType;
@@ -52,9 +53,13 @@ public class CollisionController extends Controller {
     // --- Player states
     // --- --- Obstacle related states
     private boolean player1_onGround = true;
-    private boolean player1_hitsWall = false;
+    private boolean player1_hitsWall_Left = false;
+    private boolean player1_hitsWall_Right = false;
+    private boolean player1_headBump = false;
     private boolean player2_onGround = true;
-    private boolean player2_hitsWall = false;
+    private boolean player2_hitsWall_Left = false;
+    private boolean player2_hitsWall_Right = false;
+    private boolean player2_headBump;
     // --- --- Attack related states
     private boolean player1_hit_player2 = false;
     private boolean player2_hit_player1 = false;
@@ -184,20 +189,31 @@ public class CollisionController extends Controller {
         boolean onGround = false;
         boolean hitsWallRight = false;
         boolean hitsWallLeft = false;
+        boolean headBump = false;
+        int pixelOffsetX = 4;
+        int pixelOffsetX_2 = 10;
+        int pixelOffsetY = 12;
 
         // Check Avatar-Obstacle collisions
         for (RectangleObstacle obstacle : obstacles) {
+            if (obstacle.getColor() == Color.LIGHTGREY) // TODO :: Add boolean "canCollide" to RectangleObstacle
+                continue;
+
             if (!collisionRectRect(player, obstacle, 0, 0, 0, 0)) // Rect-Rect collision
                 continue; // Obstacle not near the player >> irrelevant for collision detection
 
-            if (collisionRectRect(player, obstacle, 4, 4, playersWidthHeight[1], 0)) {// Rect-Line collision >> Ground
+            if (collisionRectRect(player, obstacle, pixelOffsetX, pixelOffsetX, playersWidthHeight[1], 0)) {// Rect-Line collision >> Ground
                 onGround = true;
                 player.currentObstacleStanding = obstacle;
             }
 
-            if (collisionRectRect(player, obstacle, playersWidthHeight[0], 0, 4, 4))  // Rect-Line collision >> Wall-right
+            if (collisionRectRect(player, obstacle, pixelOffsetX_2, pixelOffsetX_2, 0, playersWidthHeight[1])) {
+                headBump = true;
+            }
+
+            if (collisionRectRect(player, obstacle, playersWidthHeight[0], 0, pixelOffsetY, pixelOffsetY))  // Rect-Line collision >> Wall-right
                 hitsWallRight = true;
-            else if (collisionRectRect(player, obstacle, 0, playersWidthHeight[0], 4, 4)) // Rect-Line collision >> Wall-left
+            else if (collisionRectRect(player, obstacle, 0, playersWidthHeight[0], pixelOffsetY, pixelOffsetY)) // Rect-Line collision >> Wall-left
                 hitsWallLeft = true;
 
             if ((hitsWallRight || hitsWallLeft) && onGround) // States have been set, no need to continue
@@ -207,10 +223,15 @@ public class CollisionController extends Controller {
         // Update states of player
         if (player.getPlayerNumber() == PlayerType.PLAYER_ONE) {
             player1_onGround = onGround;
-            player1_hitsWall = (hitsWallRight || hitsWallLeft); // TODO :: Differentiate, if necessary in player updates
+            player1_hitsWall_Left = hitsWallRight;
+            player1_hitsWall_Right = hitsWallLeft;
+            player1_headBump = headBump;
+            System.out.println("Player1 headBump = " + headBump);
         } else {
             player2_onGround = onGround;
-            player2_hitsWall = (hitsWallRight || hitsWallLeft); // TODO :: Differentiate, if necessary in player updates
+            player2_hitsWall_Left = hitsWallRight;
+            player2_hitsWall_Right = hitsWallLeft;
+            player2_headBump = headBump;
         }
     }
 
@@ -273,15 +294,23 @@ public class CollisionController extends Controller {
         return ((type == PlayerType.PLAYER_ONE) ? player1_onGround : player2_onGround);
     }
 
-    public boolean getPlayerHitsWall(PlayerType type) {
-        return ((type == PlayerType.PLAYER_ONE) ? player1_hitsWall : player2_hitsWall);
+    public boolean getPlayerHeadBump(PlayerType type) {
+        return ((type == PlayerType.PLAYER_ONE) ? player1_headBump : player2_headBump);
+    }
+
+    public boolean getPlayerHitsWallLeft(PlayerType type) {
+        return ((type == PlayerType.PLAYER_ONE) ? player1_hitsWall_Left : player2_hitsWall_Left);
+    }
+
+    public boolean getPlayerHitsWallRight(PlayerType type) {
+        return ((type == PlayerType.PLAYER_ONE) ? player1_hitsWall_Right : player2_hitsWall_Right);
     }
 
     public boolean getPlayerHitOtherPlayer(PlayerType type) {
         return ((type == PlayerType.PLAYER_ONE) ? player1_hit_player2 : player2_hit_player1);
     }
 
-    public boolean getPlayerHit(PlayerType type){
+    public boolean getPlayerHit(PlayerType type) {
         return ((type == PlayerType.PLAYER_ONE) ? player2_hit_player1 : player1_hit_player2);
     }
 
