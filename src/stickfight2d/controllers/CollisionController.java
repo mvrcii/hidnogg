@@ -105,7 +105,7 @@ public class CollisionController extends Controller {
      * Logic >> Detects, where the swordTip-point (player1) is between two points of the player2-hitBox on the same y-level
      */
     private boolean collisionSwordAvatar(PlayerObject player1, PlayerObject player2) { // TODO :: Eventually update hitBoxCalc & swordTip
-        if (nonStabAnimations.contains(player1.getAnimation().getAnimationType())) // Prevent horizontal stabbing in specific animations
+        if (nonStabAnimations.contains(player1.getAnimation().getAnimationType()) && player1.getSwordObject() != null) // Prevent horizontal stabbing in specific animations
             return false;
 
         Point2D swordTip;
