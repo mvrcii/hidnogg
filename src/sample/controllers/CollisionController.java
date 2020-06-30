@@ -190,7 +190,7 @@ public class CollisionController extends Controller {
         boolean hitsWallRight = false;
         boolean hitsWallLeft = false;
         boolean headBump = false;
-        int pixelOffsetX = 4;
+        int pixelOffsetX = 8;
         int pixelOffsetX_2 = 10;
         int pixelOffsetY = 12;
 
@@ -226,7 +226,6 @@ public class CollisionController extends Controller {
             player1_hitsWall_Left = hitsWallRight;
             player1_hitsWall_Right = hitsWallLeft;
             player1_headBump = headBump;
-            System.out.println("Player1 headBump = " + headBump);
         } else {
             player2_onGround = onGround;
             player2_hitsWall_Left = hitsWallRight;

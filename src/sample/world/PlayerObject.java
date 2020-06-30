@@ -90,9 +90,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());
             case RIGHT -> gc.drawImage(animation.getCurrentSprite(), drawPoint.getX(), drawPoint.getY());
         }
-        this.showHitBoxState(gc, 1);
-        this.showHitBoxState(gc, 2);
-        this.showHitBoxState(gc, 3);
+//        this.showHitBoxState(gc, 1);
+//        this.showHitBoxState(gc, 2);
+//        this.showHitBoxState(gc, 3);
     }
 
 
