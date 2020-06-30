@@ -44,6 +44,8 @@ public class WorldObject {
         gameObjects.add(player1);
         gameObjects.add(player2);
         gameObjects.addAll(swordObjects);
+
+        //gameObjects.add(new ParticleEmitter(650, groundLevel-100, DirectionType.RIGHT,800,4000,40,30,80,20));
     }
 
     private ArrayList<RectangleObstacle> getTestMap(int mapId){
