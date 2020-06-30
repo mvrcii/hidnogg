@@ -101,12 +101,15 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         checkCollisions();
 
         handleDeathAnimation(diffMillis);
-        handleMovementKeys(diffMillis);
-        handleUpKey();
-        handleThrowing();
-        handleDownKey();
-        handleStabKey();
-        handleJumpKey(diffMillis);
+
+        if(this.alive) {
+            handleMovementKeys(diffMillis);
+            handleUpKey();
+            handleThrowing();
+            handleDownKey();
+            handleStabKey();
+            handleJumpKey(diffMillis);
+        }
     }
 
 
