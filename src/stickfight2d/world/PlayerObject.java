@@ -90,6 +90,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());
             case RIGHT -> gc.drawImage(animation.getCurrentSprite(), drawPoint.getX(), drawPoint.getY());
         }
+
+        markPlayer(gc, drawPoint.getX(), drawPoint.getY());
+
         this.showHitBoxState(gc, 1);
         this.showHitBoxState(gc, 2);
         this.showHitBoxState(gc, 3);
@@ -451,6 +454,16 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 }
             }
         }
+    }
+
+    private void markPlayer(GraphicsContext gc, double x, double y){
+        if (playerNumber == PlayerType.PLAYER_ONE)
+            gc.setFill(Color.BLUE);
+        else
+            gc.setFill(Color.RED);
+
+        int playerWidth = CollisionController.getInstance().getPlayersWidthHeight()[0];
+        gc.fillPolygon(new double[]{x + 10, x + 14, x - 14 + playerWidth, x - 10 + playerWidth, x + playerWidth / 2}, new double[]{y - 25, y - 18, y - 18, y - 25, y - 8}, 5);
     }
 
 

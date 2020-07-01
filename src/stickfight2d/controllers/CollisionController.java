@@ -153,6 +153,9 @@ public class CollisionController extends Controller {
      * returns true if the swords collide // TODO :: Should be called in the KeyControl since it depends on previous sword positions (?)
      */
     private boolean checkCollisionSwordSword() {
+        if(players.get(0).getSwordObject() == null || players.get(1).getSwordObject() == null)
+            return false;
+
         Point2D swordTip1, swordGrip2, swordTip2;
         int offsetSword = 4; // TODO :: has to be updated, if playerRotation-implementation is changed
 
