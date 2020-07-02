@@ -2,7 +2,8 @@ package stickfight2d.controllers;
 
 import javafx.scene.input.KeyCode;
 import stickfight2d.Main;
-import stickfight2d.world.Config;
+import stickfight2d.misc.Config;
+import stickfight2d.misc.Debugger;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,7 +18,7 @@ public class KeyController extends Controller {
 
     public static KeyController getInstance() {
         if (instance == null) {
-            System.out.println("Key Controller instantiated");
+            Debugger.log("Key Controller instantiated");
             instance = new KeyController();
         }
         return instance;
@@ -57,7 +58,7 @@ public class KeyController extends Controller {
         for (KeyCode keyCode : keyObject.keys.keySet()){
             keyObject.keys.put(keyCode, keyObject.keys.get(keyCode)+diffMillis);
         }
-        //System.out.println(keyObject.getKeyHashMap().entrySet().toString());
+        //Debugger.log(keyObject.getKeyHashMap().entrySet().toString());
 
     }
 
@@ -119,12 +120,12 @@ public class KeyController extends Controller {
     }
 
     public void setKeyPressBlockedP2(boolean keyPressBlockedP2) {
-        System.out.println("Keys from player2 blocked");
+        Debugger.log("Keys from player2 blocked");
         this.keyPressBlockedP2 = keyPressBlockedP2;
     }
 
     public void setKeyPressBlockedP1(boolean keyPressBlockedP1) {
-        System.out.println("Keys from player1 blocked");
+        Debugger.log("Keys from player1 blocked");
         this.keyPressBlockedP1 = keyPressBlockedP1;
     }
 }

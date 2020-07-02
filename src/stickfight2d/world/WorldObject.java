@@ -6,6 +6,9 @@ import stickfight2d.controllers.KeyController;
 import stickfight2d.enums.DirectionType;
 import stickfight2d.enums.LevelType;
 import stickfight2d.enums.PlayerType;
+import stickfight2d.misc.Config;
+import stickfight2d.misc.Debugger;
+import stickfight2d.misc.FPSObject;
 
 import java.time.temporal.ValueRange;
 import java.util.ArrayList;
@@ -45,7 +48,7 @@ public class WorldObject {
         gameObjects.add(player2);
         gameObjects.addAll(swordObjects);
 
-        //gameObjects.add(new ParticleEmitter(650, groundLevel-100, DirectionType.RIGHT,800,4000,40,30,80,20));
+        gameObjects.add(new ParticleEmitter(650, groundLevel-100, DirectionType.RIGHT,800,1500,40,30,180,20));
     }
 
     private ArrayList<RectangleObstacle> getTestMap(int mapId){
@@ -95,9 +98,9 @@ public class WorldObject {
                         sword.setOnGround(false);
                         sword.setFalling(false);
                         p.resetAnimationToIdle();
-                        System.out.println("### SUCCESS ### Sword 1 <--> Player "+p.getPlayerNumber());
+                        Debugger.log("### SUCCESS ### Sword 1 <--> Player "+p.getPlayerNumber());
                     } else {
-                        System.out.println("Sword not on Ground");
+                        Debugger.log("Sword not on Ground");
                     }
                     break;
                 }

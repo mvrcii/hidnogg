@@ -133,7 +133,7 @@ public class AnimationData {
                 imageTransparent = false; // non-transparent image
 
 //                if (new Color(currentRGB).getRed() > 50) {  // sword pixel
-//                    //System.out.println("RED");
+//                    //Debugger.log("RED");
 //                    lastBlackPixel_x = col;
 //
 //                    if(!foundBlackLeft){

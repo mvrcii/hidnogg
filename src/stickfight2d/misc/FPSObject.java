@@ -1,7 +1,8 @@
-package stickfight2d.world;
+package stickfight2d.misc;
 
 import javafx.scene.canvas.GraphicsContext;
 import stickfight2d.enums.DirectionType;
+import stickfight2d.world.GameObject;
 
 
 public class FPSObject extends GameObject {

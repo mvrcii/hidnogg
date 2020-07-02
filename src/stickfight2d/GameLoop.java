@@ -3,6 +3,8 @@ package stickfight2d;
 import javafx.scene.canvas.GraphicsContext;
 import stickfight2d.controllers.*;
 import stickfight2d.enums.LevelType;
+import stickfight2d.misc.Config;
+import stickfight2d.misc.Debugger;
 import stickfight2d.world.*;
 import stickfight2d.interfaces.InputSystem;
 
@@ -15,9 +17,11 @@ public class GameLoop extends Thread implements Runnable {
     private final ArrayList<Controller> gameControllers = new ArrayList<>();
 
     public static WorldObject currentLevel;
+
     private Config cfg;
 
     public GameLoop() {
+
         gameControllers.add(KeyController.getInstance());
         gameControllers.add(DataController.getInstance());
         gameControllers.add(DirectionController.getInstance());

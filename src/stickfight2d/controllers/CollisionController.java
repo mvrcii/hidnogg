@@ -6,6 +6,7 @@ import stickfight2d.GameLoop;
 import stickfight2d.enums.AnimationType;
 import stickfight2d.enums.DirectionType;
 import stickfight2d.enums.PlayerType;
+import stickfight2d.misc.Debugger;
 import stickfight2d.world.GameObject;
 import stickfight2d.world.PlayerObject;
 import stickfight2d.world.RectangleObstacle;
@@ -24,7 +25,7 @@ public class CollisionController extends Controller {
 
     public static CollisionController getInstance() {
         if (instance == null) {
-            System.out.println("Collision Controller instantiated");
+            Debugger.log("Collision Controller instantiated");
             instance = new CollisionController();
         }
         return instance;

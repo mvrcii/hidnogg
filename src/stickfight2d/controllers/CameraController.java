@@ -3,6 +3,7 @@ package stickfight2d.controllers;
 import javafx.geometry.Point2D;
 import stickfight2d.GameLoop;
 import stickfight2d.Main;
+import stickfight2d.misc.Debugger;
 
 public class CameraController extends Controller{
 
@@ -17,7 +18,7 @@ public class CameraController extends Controller{
 
     public static CameraController getInstance() {
         if (instance == null) {
-            System.out.println("Camera Controller instantiated");
+            Debugger.log("Camera Controller instantiated");
             instance = new CameraController();
         }
         return instance;

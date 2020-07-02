@@ -1,4 +1,4 @@
-package stickfight2d.world;
+package stickfight2d.misc;
 
 import javafx.scene.input.KeyCode;
 

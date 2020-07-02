@@ -1,4 +1,4 @@
-package stickfight2d.world;
+package stickfight2d.misc;
 
 import javafx.scene.input.KeyCode;
 
@@ -12,6 +12,8 @@ public class Config {
     public static final double T_HOLDUP = 200;
     public static final double T_CROUCH = 200;
     public static final double T_RESPAWN = 2000;
+
+    public static boolean debug_mode = false;
 
     public Config(){
 

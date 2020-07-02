@@ -5,6 +5,7 @@ import stickfight2d.animation.Animation;
 import stickfight2d.animation.AnimationData;
 import stickfight2d.animation.FrameData;
 import stickfight2d.enums.AnimationType;
+import stickfight2d.misc.Debugger;
 import stickfight2d.world.PlayerObject;
 
 import java.util.HashMap;
@@ -19,7 +20,7 @@ public class DataController extends Controller {
     {
         if(instance == null)
         {
-            System.out.println("Data Controller instantiated");
+            Debugger.log("Data Controller instantiated");
             instance = new DataController();
         }
         return instance;
@@ -34,7 +35,7 @@ public class DataController extends Controller {
 
             for (FrameData f : swordAngleData.get(i).getFrames()) {
                 if(f.getSwordEndPoint() == null){
-                    System.out.println(f.getAngle()+" -> "+f.getFrameNumber());
+                    Debugger.log(f.getAngle()+" -> "+f.getFrameNumber());
                 }
             }
         }

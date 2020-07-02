@@ -11,6 +11,9 @@ import stickfight2d.enums.AnimationType;
 import stickfight2d.enums.DirectionType;
 import stickfight2d.enums.PlayerType;
 import stickfight2d.interfaces.InputSystem;
+import stickfight2d.misc.Config;
+import stickfight2d.misc.Debugger;
+import stickfight2d.misc.KeySet;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -84,7 +87,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     @Override
     public void draw(GraphicsContext gc) {
-        // TODO: Implement the usage of the world coordinates
         Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
         switch (directionType) {
             case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());
@@ -93,9 +95,11 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         markPlayer(gc, drawPoint.getX(), drawPoint.getY());
 
-        this.showHitBoxState(gc, 1);
-        this.showHitBoxState(gc, 2);
-        this.showHitBoxState(gc, 3);
+        if(Config.debug_mode){
+            this.showHitBoxState(gc, 1);
+            this.showHitBoxState(gc, 2);
+            this.showHitBoxState(gc, 3);
+        }
     }
 
 
@@ -123,7 +127,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         // Player getting hit by other player
         if(colCon.getPlayerHit(this.playerNumber) && alive){
-            System.out.println(playerNumber +" got hit");
+            Debugger.log(playerNumber + " got hit");
             alive = false;
             time_passed = 0;
 
@@ -140,16 +144,29 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
             animation = animCon.getAnimation(PLAYER_DYING);
             if(animation.getAnimationType() == PLAYER_DYING){
-                System.out.println("player dieing");
+                Debugger.log("player dieing");
             }
         }
 
+        /* // TODO Sobald spieler Wand berührt soll er sich von ihr weg drehen (sodass das Schwert nicht in der Wand steckt)
+               und trotzdem zustechen können. Laufen gegen wand soll verhindert werden!
+        // If the player runs against the wall, stop the movement
+        if(colCon.getPlayerHitsWallRight(this.playerNumber) || colCon.getPlayerHitsWallLeft(this.playerNumber)){
+            if(swordObject == null){
+                animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
+            }else{
+                animation = animCon.getAnimation(lastIdleAnimationType);
+            }
+        }
+        */
+
+
         // Player's sword hitting another player's sword
         if(colCon.getSwordsHitting()){
-            System.out.println("Player's swords hit each other");
+            Debugger.log("Player's swords hit each other");
             if(alive){
                 if(!colCon.getPlayerHitsWallRight(this.playerNumber) && !colCon.getPlayerHitsWallLeft(this.playerNumber))
-                    if(swordObject != null){    // only if PLAYER has a sword
+                    if(swordObject != null){        // only if PLAYER has a sword
                         swordObject.fallToGround();
                         this.swordObject = null;
                         animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
@@ -369,7 +386,12 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             animation = animCon.getAnimation(PLAYER_JUMP_END);
         }
         if(animation.getAnimationType() == PLAYER_JUMP_END && vy <= 1 && vy >= -1){
-            animation = animCon.getAnimation(lastIdleAnimationType);
+            if(swordObject == null){
+                animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
+            }else{
+                animation = animCon.getAnimation(lastIdleAnimationType);
+            }
+
         }
 
     }
@@ -397,9 +419,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                         swordLength *= (-1);
                     }
                     if (colCon.getSwordsHitting())
-                        System.out.println("SWORDS COLLIDING");
+                        Debugger.log("SWORDS COLLIDING");
                     if (colCon.getPlayerHitOtherPlayer(this.playerNumber) && this.playerNumber == PlayerType.PLAYER_ONE) // Testing player1_hit_player2
-                        System.out.println("PLAYER1 HIT DETECTED");
+                        Debugger.log("PLAYER1 HIT DETECTED");
                     //recalculate coordinates
                     Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
 

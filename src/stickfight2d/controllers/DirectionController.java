@@ -3,6 +3,7 @@ package stickfight2d.controllers;
 
 import stickfight2d.GameLoop;
 import stickfight2d.enums.DirectionType;
+import stickfight2d.misc.Debugger;
 import stickfight2d.world.GameObject;
 import stickfight2d.world.PlayerObject;
 
@@ -19,7 +20,7 @@ public class DirectionController extends Controller{
 
     public static DirectionController getInstance() {
         if (instance == null) {
-            System.out.println("Direction Controller instantiated");
+            Debugger.log("Direction Controller instantiated");
             instance = new DirectionController();
         }
         return instance;
