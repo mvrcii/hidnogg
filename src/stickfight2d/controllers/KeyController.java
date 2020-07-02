@@ -106,6 +106,7 @@ public class KeyController extends Controller {
     }
 
     public void removeKeyPress(KeyCode keycode){
+        previousKeyObject.getKeyHashMap().remove(keycode);
         keyObject.getKeyHashMap().remove(keycode);
     }
 

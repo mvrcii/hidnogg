@@ -152,6 +152,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     if(swordObject != null){    // only if PLAYER has a sword
                         swordObject.fallToGround();
                         this.swordObject = null;
+                        animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
                     }
 
                     /*switch (directionType){
@@ -180,28 +181,33 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
     private void handleStabKey() {
-
         if (keyCon.isKeyPressed(keySet.getStabKey())) {
             switch (animation.getAnimationType()) {
                 case PLAYER_IDLE_LOW, PLAYER_IDLE_MEDIUM, PLAYER_IDLE_HIGH -> animation = animCon.getStabAnim(lastIdleAnimationType);
+                case PLAYER_IDLE_NO_SWORD -> animation = animCon.getAnimation(PLAYER_STAB_NO_SWORD);
                 case PLAYER_WALK -> {
                     // Manual control is usually turned on while walking to the left / right
                     // by setting it to false here, the player always stabs towards his enemy
                     DirectionController.getInstance().setManualControl(this, false);
-                    animation = animCon.getStabAnim(lastIdleAnimationType);
+                    if(swordObject == null){
+                        animation = animCon.getAnimation(PLAYER_STAB_NO_SWORD);
+                    }else{
+                        animation = animCon.getStabAnim(lastIdleAnimationType);
+                    }
                     switch (directionType) {
                         case LEFT -> keyCon.removeKeyPress(keySet.getMoveLeftKey());
                         case RIGHT -> keyCon.removeKeyPress(keySet.getMoveRightKey());
                     }
                 }
             }
+
         }
 
         if (animation.isLastFrame()) {
             switch (animation.getAnimationType()) {
                 case PLAYER_STAB_LOW, PLAYER_STAB_HIGH, PLAYER_STAB_MEDIUM -> animation = animCon.getAnimation(lastIdleAnimationType);
+                case PLAYER_STAB_NO_SWORD -> animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
             }
-
         }
 
     }
@@ -222,9 +228,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 if(t_pressed > 100){
                     animation = animCon.getAnimation(PLAYER_WALK);
                 }else{
-                    animation = animCon.getAnimation(lastIdleAnimationType);
-                   // animation = animCon.getStepAnim(lastIdleAnimationType);
-                    System.out.println(animation.getAnimationType());
+                    animation = animCon.getStepAnim(lastIdleAnimationType);
                 }
             }
         }
@@ -249,49 +253,45 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         if (keyCon.isKeyPressed(keySet.getMoveLeftKey()) && keyCon.isKeyPressed(keySet.getMoveRightKey())){
             if(animation.getAnimationType() != lastIdleAnimationType){
-                animation = animCon.getAnimation(lastIdleAnimationType);
+                if(swordObject == null){
+
+                }else{
+                    animation = animCon.getAnimation(lastIdleAnimationType);
+                }
             }
         }
 
         if (keyCon.isKeyReleased(keySet.getMoveLeftKey()) || keyCon.isKeyReleased(keySet.getMoveRightKey())) {
             DirectionController.getInstance().setManualControl(this, false);
-            animation = animCon.getAnimation(lastIdleAnimationType);
+            if(swordObject == null){
+                animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
+            }else{
+                animation = animCon.getAnimation(lastIdleAnimationType);
+            }
         }
     }
 
 
-    /**
-     * Controls upKey
-     *        T_HOLDUP = fixed delta time (ms) for holdUp
-     *        t_pressed = = pressed time in ms
-     *
-     * Handling keyPressed:
-     *                 (t_pressed > t_holdUp)           --> PLAYER_IDLE_HOLD_UP
-     *
-     * Handling keyReleased:
-     *                 animation == PLAYER_IDLE_LOW     --> PLAYER_IDLE_MEDIUM
-     *                 animation == PLAYER_IDLE_MEDIUM  --> PLAYER_IDLE_HIGH
-     *                 animation == PLAYER_HOLD_UP      --> PLAYER_IDLE_LOW
-     */
-
     private void handleUpKey() {
-        if (keyCon.isKeyPressed(keySet.getUpKey())) {
-            double t_pressed = keyCon.getKeyPressedTime(keySet.getUpKey());
-            if(t_pressed > Config.T_HOLDUP){
-                animation = animCon.getAnimation(PLAYER_IDLE_HOLD_UP);
+        if(swordObject != null){
+            if (keyCon.isKeyPressed(keySet.getUpKey())) {
+                double t_pressed = keyCon.getKeyPressedTime(keySet.getUpKey());
+                if(t_pressed > Config.T_HOLDUP){
+                    animation = animCon.getAnimation(PLAYER_IDLE_HOLD_UP);
+                }
             }
-        }
 
-        if (keyCon.isKeyReleased(keySet.getUpKey())){
-            AnimationType animType = animation.getAnimationType();
-            if (animType == PLAYER_IDLE_LOW) {
-                animation = animCon.getAnimation(PLAYER_IDLE_MEDIUM);
-                lastIdleAnimationType = animation.getAnimationType();
-            } else if (animType == PLAYER_IDLE_MEDIUM) {
-                animation = animCon.getAnimation(PLAYER_IDLE_HIGH);
-                lastIdleAnimationType = animation.getAnimationType();
-            } else if (animType == PLAYER_IDLE_HOLD_UP) {
-                animation = animCon.getAnimation(lastIdleAnimationType);
+            if (keyCon.isKeyReleased(keySet.getUpKey())){
+                AnimationType animType = animation.getAnimationType();
+                if (animType == PLAYER_IDLE_LOW) {
+                    animation = animCon.getAnimation(PLAYER_IDLE_MEDIUM);
+                    lastIdleAnimationType = animation.getAnimationType();
+                } else if (animType == PLAYER_IDLE_MEDIUM) {
+                    animation = animCon.getAnimation(PLAYER_IDLE_HIGH);
+                    lastIdleAnimationType = animation.getAnimationType();
+                } else if (animType == PLAYER_IDLE_HOLD_UP) {
+                    animation = animCon.getAnimation(lastIdleAnimationType);
+                }
             }
         }
     }
@@ -306,37 +306,20 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     }
 
 
-    /**
-     * Controls downKey
-     *        T_CROUCH = fixed delta time (ms) for crouching
-     *        t_pressed = = pressed time in ms
-     *
-     * Handling keyPressed:
-     *                 (t_pressed > t_crouch)           --> PLAYER_CROUCH
-     *
-     * Handling keyReleased:
-     *                 animation == PLAYER_IDLE_HIGH    --> PLAYER_IDLE_MEDIUM
-     *                 animation == PLAYER_IDLE_MEDIUM  --> PLAYER_IDLE_LOW
-     *                 animation == PLAYER_CROUCH       --> PLAYER_IDLE_LOW
-     */
-
     private void handleDownKey() {
-        // TODO: Needs implementation for crouching
         if(keyCon.isKeyPressed(keySet.getDownKey())){
             double t_pressed = keyCon.getKeyPressedTime(keySet.getDownKey());
+
             if(t_pressed > Config.T_CROUCH){
-                /* // TODO: Activate as soon as PLAYER_CROUCH Animation is implemented
+
                 if(animation.getAnimationType() != PLAYER_CROUCH){
-                    lastIdleAnimationType = animation.getAnimationType();
+                    animation = animCon.getAnimation(PLAYER_CROUCH);
                 }
-                animation = animCon.getAnimation(PLAYER_CROUCH);
-                 */
                 if(swordObject == null){
                     GameLoop.currentLevel.takeSwordFromGround(this);
                 }
             }
         }
-
         if(keyCon.isKeyReleased(keySet.getDownKey())){
             AnimationType animType = animation.getAnimationType();
             if (animType == PLAYER_IDLE_HIGH) {
@@ -346,11 +329,17 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 animation = animCon.getAnimation(PLAYER_IDLE_LOW);
                 lastIdleAnimationType = animation.getAnimationType();
             }
-            /* // TODO: Activate as soon as PLAYER_CROUCH Animation is implemented
-            else if (animType == PLAYER_CROUCH) {
-                animation = animCon.getAnimation(lastIdleAnimationType);
+        }
+
+        if (animation.isLastFrame()) {
+            if(animation.getAnimationType() == PLAYER_CROUCH){
+                if(swordObject != null){
+                    animation = animCon.getAnimation(lastIdleAnimationType);
+                }else{
+                    animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
+                }
+                keyCon.removeKeyPress(keySet.getDownKey());
             }
-            */
         }
     }
 
@@ -467,7 +456,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     }
 
 
-
+    public void resetAnimationToIdle(){
+        this.animation = animCon.getAnimation(lastIdleAnimationType);
+    }
 
     public Animation getAnimation() {
         return animation;

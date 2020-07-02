@@ -5,6 +5,7 @@ import stickfight2d.animation.Animation;
 import stickfight2d.animation.AnimationData;
 import stickfight2d.animation.FrameData;
 import stickfight2d.enums.AnimationType;
+import stickfight2d.world.PlayerObject;
 
 import java.util.HashMap;
 
@@ -24,48 +25,44 @@ public class DataController extends Controller {
         return instance;
     }
 
-    private DataController()
-    {
+
+    private DataController() {
         // SWORD
         basicAnimationData.put(AnimationType.SWORD, new AnimationData(0));
         for (int i = 1; i < 360; i++) {
             swordAngleData.put(i, basicAnimationData.get(AnimationType.SWORD).rotateAnimDataByDegree(i));
-
-            //System.out.println("["+i+"] "+swordAngleData.get(i).getFrames().get(0).getHitBox().size());
 
             for (FrameData f : swordAngleData.get(i).getFrames()) {
                 if(f.getSwordEndPoint() == null){
                     System.out.println(f.getAngle()+" -> "+f.getFrameNumber());
                 }
             }
-            //System.out.println(swordAngleData.get(i).getFrames().toString());
-
-
         }
 
+        basicAnimationData.put(AnimationType.PLAYER_WALK, new AnimationData(1));
 
-
-
-
-        // JUMP
         basicAnimationData.put(AnimationType.PLAYER_JUMP_START, new AnimationData(2));
         basicAnimationData.put(AnimationType.PLAYER_JUMP_END, new AnimationData(3));
         basicAnimationData.put(AnimationType.PLAYER_JUMP_PEAK, new AnimationData(4));
 
-        // PLAYER
-        basicAnimationData.put(AnimationType.PLAYER_WALK, new AnimationData(1));
         basicAnimationData.put(AnimationType.PLAYER_IDLE_LOW, new AnimationData(5));
         basicAnimationData.put(AnimationType.PLAYER_IDLE_MEDIUM, new AnimationData(6));
         basicAnimationData.put(AnimationType.PLAYER_IDLE_HIGH, new AnimationData(7));
         basicAnimationData.put(AnimationType.PLAYER_IDLE_HOLD_UP, new AnimationData(8));
+
         basicAnimationData.put(AnimationType.PLAYER_STAB_LOW, new AnimationData(9));
         basicAnimationData.put(AnimationType.PLAYER_STAB_MEDIUM, new AnimationData(10));
         basicAnimationData.put(AnimationType.PLAYER_STAB_HIGH, new AnimationData(11));
-        basicAnimationData.put(AnimationType.PLAYER_DYING, new AnimationData(12));
 
-        basicAnimationData.put(AnimationType.PLAYER_STEP_LOW, new AnimationData(10));
-        basicAnimationData.put(AnimationType.PLAYER_STEP_MEDIUM, new AnimationData(11));
-        basicAnimationData.put(AnimationType.PLAYER_STEP_HIGH, new AnimationData(12));
+        basicAnimationData.put(AnimationType.PLAYER_DYING, new AnimationData(12));
+        basicAnimationData.put(AnimationType.PLAYER_CROUCH, new AnimationData(13));
+
+        basicAnimationData.put(AnimationType.PLAYER_IDLE_NO_SWORD, new AnimationData(14));
+        basicAnimationData.put(AnimationType.PLAYER_STAB_NO_SWORD, new AnimationData(15));
+
+        basicAnimationData.put(AnimationType.PLAYER_STEP_HIGH, new AnimationData(17));
+        basicAnimationData.put(AnimationType.PLAYER_STEP_MEDIUM, new AnimationData(18));
+        basicAnimationData.put(AnimationType.PLAYER_STEP_LOW, new AnimationData(19));
 
     }
 
@@ -73,7 +70,6 @@ public class DataController extends Controller {
     public void update(long diffMillis) {
 
     }
-
 
     public Animation getAnimation(AnimationType animationType){
         return new Animation(animationType, basicAnimationData.get(animationType));
@@ -86,7 +82,7 @@ public class DataController extends Controller {
             case PLAYER_IDLE_LOW -> swordAnimType = AnimationType.PLAYER_STAB_LOW;
             case PLAYER_IDLE_MEDIUM -> swordAnimType = AnimationType.PLAYER_STAB_MEDIUM;
             case PLAYER_IDLE_HIGH -> swordAnimType = AnimationType.PLAYER_STAB_HIGH;
-            default -> throw new IllegalArgumentException("Wrong usage of method getStabAnim(). Has to be called with an idle animation type!");
+            default -> throw new IllegalArgumentException("Wrong usage of method getStabAnim(). Has to be called with an idle animation type!\nInstead called with: "+animationType);
         }
         return new Animation(swordAnimType, basicAnimationData.get(swordAnimType));
     }
@@ -98,7 +94,7 @@ public class DataController extends Controller {
             case PLAYER_IDLE_LOW -> animType = AnimationType.PLAYER_STEP_LOW;
             case PLAYER_IDLE_MEDIUM -> animType = AnimationType.PLAYER_STEP_MEDIUM;
             case PLAYER_IDLE_HIGH -> animType = AnimationType.PLAYER_STEP_HIGH;
-            default -> throw new IllegalArgumentException("Wrong usage of method getStepAnim(). Has to be called with an idle animation type!");
+            default -> throw new IllegalArgumentException("Wrong usage of method getStepAnim(). Has to be called with an idle animation type!\nInstead called with: "+lastIdleAnimType);
         }
         return new Animation(animType, basicAnimationData.get(animType));
     }
