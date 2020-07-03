@@ -9,6 +9,7 @@ import stickfight2d.controllers.CameraController;
 import stickfight2d.controllers.DataController;
 import stickfight2d.enums.AnimationType;
 import stickfight2d.enums.DirectionType;
+import stickfight2d.misc.Debugger;
 
 public class SwordObject extends GameObject {
 
@@ -17,24 +18,28 @@ public class SwordObject extends GameObject {
 
     private boolean falling;
     private boolean onGround;
+    private boolean throwing;
 
     private int currentAngle;
     private int bounceStartAngle = -1;
 
     private double diffSeconds = 0;
-    private double timePassed = 0;
+    private double timePassedGround = 0;
     private double bounceOffSet = 0;
+    private double timePassedAir = 0;
+    private int singleRotationTime = 2000; // 5seconds
 
     public SwordObject(int x, int y, DirectionType directionType, PlayerObject playerObject) {
         super(x, y, directionType);
         this.falling = false;
         this.onGround = false;
+        this.throwing = false;
         this.playerObject = playerObject;
 
         if (playerObject != null) {
             this.directionType = playerObject.getDirectionType();
         }
-        currentAngle = calculateRotationAngle();    // initial angle
+        currentAngle = calculateRotationAngle();            // initial angle
     }
 
 
@@ -44,7 +49,9 @@ public class SwordObject extends GameObject {
 
         updateAngle();                                          // Updating Angle
         if (!onGround) {
-            directionType = playerObject.getDirectionType();    // Updating Direction
+            if(playerObject != null){
+                directionType = playerObject.getDirectionType();    // Updating Direction
+            }
             animation.update(diffSeconds);                      // Updating Animation
         }
         updateCoordinates();
@@ -77,6 +84,16 @@ public class SwordObject extends GameObject {
                 playerObject = null;
                 animation.stop();
             }
+        } else if(throwing){
+
+            if(playerObject == null){
+                Debugger.log("Update Sword Coords: Player == null -> do nothing");
+                switch (directionType){
+                    case RIGHT -> x++;
+                    case LEFT -> x--;
+                }
+            }
+
         } else {
             if (playerObject != null) {
                 switch (directionType) {
@@ -101,11 +118,11 @@ public class SwordObject extends GameObject {
 
     private void updateAngle() {
         if (onGround) {
-            timePassed += diffSeconds;
+            timePassedGround += diffSeconds;
             double a = 0.5;
             double w = 3;
 
-            currentAngle = (int) Math.round(Math.exp(-a * (timePassed / 150)) * Math.cos(w * timePassed / 150) * bounceStartAngle);
+            currentAngle = (int) Math.round(Math.exp(-a * (timePassedGround / 150)) * Math.cos(w * timePassedGround / 150) * bounceStartAngle);
 
             // If angle is negative, the sword needs to be shifted in y direction
             if (currentAngle < 0) {
@@ -115,6 +132,25 @@ public class SwordObject extends GameObject {
                 bounceOffSet = Math.sin(360+currentAngle) * Math.sqrt(Math.pow(p2.getX() - p1.getX(), 2) + Math.pow(p2.getY() - p1.getY(), 2));
             }
             animation = DataController.getInstance().getSwordAnimAngle(currentAngle);
+
+        } else if(throwing){
+
+            timePassedAir += diffSeconds;
+            if(playerObject == null){
+                Debugger.log("Update Sword Angle: Player == null -> do nothing");
+
+                if(timePassedAir >= singleRotationTime){
+                    timePassedAir = 0;
+                }
+                currentAngle = (int) Math.floor(timePassedAir / (double) (singleRotationTime/360));
+
+                if(currentAngle >= 360){
+                    timePassedAir = 0;
+                    currentAngle = 0;
+                }
+
+                animation = DataController.getInstance().getSwordAnimAngle(currentAngle);
+            }
 
         } else {
             FrameData f = playerObject.getAnimation().getCurrentFrame();
@@ -148,12 +184,17 @@ public class SwordObject extends GameObject {
     public void startThrowing(){
         if(this.playerObject != null){
             System.out.println("Start throw");
+            int startAngle = calculateRotationAngle();
+            throwing = true;
+
 
             // Clear bindings
-            //playerObject.setSwordObject(null);
-            //this.playerObject = null;
+            playerObject.setSwordObject(null);
+;            this.playerObject = null;
 
-            fallToGround();
+            //fallToGround();
+        }else{
+
         }
     }
 

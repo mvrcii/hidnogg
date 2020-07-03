@@ -14,7 +14,7 @@ public class Main extends Application {
     public static Canvas canvas;
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) {
 
         primaryStage.setOnCloseRequest(e->{
             Platform.exit();
@@ -38,7 +38,6 @@ public class Main extends Application {
         root.getChildren().add(canvas);
 
         primaryStage.show();
-
 
         new GameLoop().start();
 

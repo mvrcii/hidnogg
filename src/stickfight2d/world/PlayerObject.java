@@ -195,7 +195,10 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if(animation.isLastFrame() && animation.getAnimationType() == PLAYER_DYING){
            animation.stop();
            if(!spread_blood){
-               GameLoop.currentLevel.addGameObject(new ParticleEmitter(x+36, y+38, DirectionType.RIGHT,100,1500,10,50,180,20));
+               switch (directionType){
+                   case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x, y+38, DirectionType.RIGHT,600,1500,2,15,180,60));
+                   case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x+36, y+38, DirectionType.RIGHT,600,1500,2,15,180,60));
+               }
                spread_blood = true;
            }
 
@@ -332,7 +335,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private void handleThrowing() {
         if(animation.getAnimationType() == PLAYER_IDLE_HOLD_UP){
             if(keyCon.isKeyPressed(keySet.getStabKey())){
-                //swordObject.startThrowing();
+                swordObject.startThrowing();
             }
         }
     }
