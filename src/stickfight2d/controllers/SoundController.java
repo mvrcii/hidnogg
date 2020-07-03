@@ -36,6 +36,7 @@ public class SoundController extends Controller {
             URI uri = file.toURI();
             Media media = new Media(uri.toString());
             MediaPlayer player = new MediaPlayer(media);
+            player.setVolume(0.1);
             player.play();
 
         } catch (Exception e) {
