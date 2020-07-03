@@ -132,17 +132,6 @@ public class AnimationData {
 
                 imageTransparent = false; // non-transparent image
 
-//                if (new Color(currentRGB).getRed() > 50) {  // sword pixel
-//                    //Debugger.log("RED");
-//                    lastBlackPixel_x = col;
-//
-//                    if(!foundBlackLeft){
-//                        foundBlackLeft = true;
-//                        hitBox.add(new Point2D(col, row));
-//                        hitBoxInverted.add(new Point2D(bufferedImage.getWidth() - col, row));
-//                    }
-//                }
-
                 if (currentRGB == black) { // player pixel
                     lastBlackPixel_x = col;
 
@@ -156,18 +145,17 @@ public class AnimationData {
                     frameData.setSwordStartPoint(new Point2D(col, row));
                     frameData.setSwordStartPointInverted(new Point2D(bufferedImage.getWidth() - col, row));
                     previousGreen++; // for swordLength calculation
-
+                    frameData.getBufferedImage().setRGB(col, row, bufferedImage.getRGB(col - 1, row));
                 } else if (currentRGB == blue || currentRGB == blueTest || currentRGB == blueTest2) { // end mountPoint
                     frameData.setSwordEndPoint(new Point2D(col, row));
-
+                    frameData.getBufferedImage().setRGB(col, row, bufferedImage.getRGB(col - 1, row));
                 } else if (currentRGB == red && previousGreen == 1) {
                     calculateSwordLength(col, row, bufferedImage);
                     previousGreen++;
                 }
             }
         }
-
-
+        frameData.setBufferedImage(bufferedImage);
         frameData.setHitBox(hitBox);
         frameData.setHitBoxInverted(hitBoxInverted);
         return frameData;
