@@ -65,6 +65,9 @@ public class CollisionController extends Controller {
     private boolean player1_hit_player2 = false;
     private boolean player2_hit_player1 = false;
     private boolean swordsHitting = false;
+    private AnimationType p1_prevState = AnimationType.PLAYER_IDLE_MEDIUM;
+    private AnimationType p2_prevState = AnimationType.PLAYER_IDLE_MEDIUM;
+    private int disarming = 0;
     // ----------------------------------------------------------------------------------------------------
 
     private CollisionController() {
@@ -94,6 +97,7 @@ public class CollisionController extends Controller {
         player2_hit_player1 = collisionSwordAvatar(players.get(1), players.get(0));
 
         swordsHitting = checkCollisionSwordSword();
+        disarming = checkDisarm();
     }
 
 
@@ -151,10 +155,10 @@ public class CollisionController extends Controller {
 
 
     /**
-     * returns true if the swords collide // TODO :: Should be called in the KeyControl since it depends on previous sword positions (?)
+     * returns true if the swords collide
      */
     private boolean checkCollisionSwordSword() {
-        if(players.get(0).getSwordObject() == null || players.get(1).getSwordObject() == null)
+        if (players.get(0).getSwordObject() == null || players.get(1).getSwordObject() == null)
             return false;
 
         Point2D swordTip1, swordGrip2, swordTip2;
@@ -182,6 +186,37 @@ public class CollisionController extends Controller {
         boolean onSameXInterval = (swordTip1.getX() - swordTip2.getX()) * (swordTip1.getX() - swordGrip2.getX()) <= 0;
 
         return onSameY && onSameXInterval;
+    }
+
+    /**
+     * Checks, if players should disarm each other
+     * returns:     0 if no one's disarmed
+     * 1 if player1 disarms player2
+     * 2 if player2 disarms player1
+     */
+    private int checkDisarm() {
+        if(players.get(0).getSwordObject() == null || players.get(1).getSwordObject() == null)
+            return 0;
+
+        AnimationType p1_anim = players.get(0).getAnimation().getAnimationType();
+        AnimationType p2_anim = players.get(1).getAnimation().getAnimationType();
+        int type = 0;
+
+        if (!(p1_anim != p2_anim || p1_prevState == p2_prevState)) {
+            // Invariant: p1 and p2 are in the same animation, one of both had a different previous animation
+            if (!(p1_prevState == AnimationType.PLAYER_WALK || p2_prevState == AnimationType.PLAYER_WALK)) {
+
+                if (p1_anim == p1_prevState && swordsHitting)
+                    type = 2;
+
+                else if (p2_anim == p2_prevState && swordsHitting)
+                    type = 1;
+            }
+        }
+        // Update player states
+        p1_prevState = p1_anim;
+        p2_prevState = p2_anim;
+        return type;
     }
 
 
@@ -317,12 +352,19 @@ public class CollisionController extends Controller {
         return ((type == PlayerType.PLAYER_ONE) ? player2_hit_player1 : player1_hit_player2);
     }
 
-    public HashSet<AnimationType> getNonStabAnimations(){
+    public HashSet<AnimationType> getNonStabAnimations() {
         return nonStabAnimations;
     }
 
     public boolean getSwordsHitting() {
         return swordsHitting;
+    }
+
+    public boolean getPlayerBeingDisarmed(PlayerType type) {
+        if(disarming == 0)
+            return false;
+
+        return (type == PlayerType.PLAYER_TWO && disarming == 1) || (type == PlayerType.PLAYER_ONE && disarming == 2);
     }
 
     public int getSwordLength() {

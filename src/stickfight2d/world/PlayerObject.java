@@ -162,22 +162,23 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
         // Player's sword hitting another player's sword
-        if(colCon.getSwordsHitting()){
+        if (colCon.getSwordsHitting()) {
             Debugger.log("Player's swords hit each other");
-            if(alive){
-                if(!colCon.getPlayerHitsWallRight(this.playerNumber) && !colCon.getPlayerHitsWallLeft(this.playerNumber))
-                    if(swordObject != null){        // only if PLAYER has a sword
+            if (alive) {
+                if (colCon.getPlayerBeingDisarmed(this.playerNumber)) {
+                    if (swordObject != null) {        // only if PLAYER has a sword
                         swordObject.fallToGround();
                         this.swordObject = null;
                         animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
                     }
-
-                    /*switch (directionType){
-                    case LEFT -> this.x = x + 6;
-                    case RIGHT -> this.x = x - 6;
                 }
-                */
 
+                if (!colCon.getPlayerHitsWallRight(this.playerNumber) && !colCon.getPlayerHitsWallLeft(this.playerNumber)) {
+                    switch (directionType) {
+                        case LEFT -> this.x = x + 6;
+                        case RIGHT -> this.x = x - 6;
+                    }
+                }
             }
         }
 
@@ -474,7 +475,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             gc.setFill(Color.RED);
 
         int playerWidth = CollisionController.getInstance().getPlayersWidthHeight()[0];
-        gc.fillPolygon(new double[]{x + 10, x + 14, x - 14 + playerWidth, x - 10 + playerWidth, x + playerWidth / 2}, new double[]{y - 25, y - 18, y - 18, y - 25, y - 8}, 5);
+        gc.fillPolygon(new double[]{x + 10, x + 14, x - 14 + playerWidth, x - 10 + playerWidth, x + playerWidth / 2.0}, new double[]{y - 25, y - 18, y - 18, y - 25, y - 8}, 5);
     }
 
 
