@@ -143,7 +143,7 @@ public class CollisionController extends Controller {
             if (swordTip.getY() <= player2.getY() + player2_block.getY() && swordTip.getY() >= player2.getY() + player2_block.getY() - swordLength) {
 
                 if ((player2.getDirectionType() == DirectionType.RIGHT && swordTip.getX() <= player2.getX() + player2_block.getX())
-                        || (player2.getDirectionType() == DirectionType.LEFT && swordTip.getX() >= player2.getX() + player2_block.getX()))
+                        || (player2.getDirectionType() == DirectionType.LEFT && swordTip.getX() >= player2.getX() + player2_block.getX() - offsetHitBox))
                     attackBlocked = true;
                 else
                     attackBlocked = false;
