@@ -300,7 +300,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             if (keyCon.isKeyPressed(keySet.getUpKey())) {
                 double t_pressed = keyCon.getKeyPressedTime(keySet.getUpKey());
                 if(t_pressed > Config.T_HOLDUP){
-                    animation = animCon.getAnimation(PLAYER_IDLE_HOLD_UP);
+                    if(animation.getAnimationType() != PLAYER_IDLE_HOLD_UP){
+                        animation = animCon.getAnimation(PLAYER_IDLE_HOLD_UP);
+                    }
                 }
             }
 
