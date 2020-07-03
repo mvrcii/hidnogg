@@ -18,8 +18,6 @@ public class GameLoop extends Thread implements Runnable {
 
     public static WorldObject currentLevel;
 
-    private Config cfg;
-
     public GameLoop() {
 
         gameControllers.add(KeyController.getInstance());

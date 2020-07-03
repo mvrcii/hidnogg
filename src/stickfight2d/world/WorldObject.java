@@ -48,7 +48,7 @@ public class WorldObject {
         gameObjects.add(player2);
         gameObjects.addAll(swordObjects);
 
-        gameObjects.add(new ParticleEmitter(650, groundLevel-100, DirectionType.RIGHT,800,1500,40,30,180,20));
+       //gameObjects.add(new ParticleEmitter(650, groundLevel-100, DirectionType.RIGHT,5,600,10,30,180,20));
     }
 
     private ArrayList<RectangleObstacle> getTestMap(int mapId){
@@ -163,6 +163,10 @@ public class WorldObject {
     public void addSword(SwordObject swordObject){
         swordObjects.add(swordObject);
         gameObjectsToAdd.add(swordObject);
+    }
+
+    public void addGameObject(GameObject gameObject){
+        gameObjectsToAdd.add(gameObject);
     }
 
     public void refreshGameObjects(){

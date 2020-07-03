@@ -132,17 +132,6 @@ public class AnimationData {
 
                 imageTransparent = false; // non-transparent image
 
-//                if (new Color(currentRGB).getRed() > 50) {  // sword pixel
-//                    //Debugger.log("RED");
-//                    lastBlackPixel_x = col;
-//
-//                    if(!foundBlackLeft){
-//                        foundBlackLeft = true;
-//                        hitBox.add(new Point2D(col, row));
-//                        hitBoxInverted.add(new Point2D(bufferedImage.getWidth() - col, row));
-//                    }
-//                }
-
                 if (currentRGB == black) { // player pixel
                     lastBlackPixel_x = col;
 
@@ -166,7 +155,6 @@ public class AnimationData {
                 }
             }
         }
-
 
         frameData.setHitBox(hitBox);
         frameData.setHitBoxInverted(hitBoxInverted);
