@@ -1,6 +1,9 @@
 package stickfight2d.world;
 
+import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
+import org.w3c.dom.css.Rect;
+import stickfight2d.GameLoop;
 import stickfight2d.Main;
 import stickfight2d.controllers.KeyController;
 import stickfight2d.controllers.SoundController;
@@ -22,7 +25,8 @@ public class WorldObject {
     private final LevelType levelType;
 
     private final int groundLevel = (int) (Main.canvas.getHeight()/2 + 100);
-    private RectangleObstacle ground;
+    private ArrayList<RectangleObstacle> grounds = new ArrayList<>();
+    private BackgroundObject background;
 
     private PlayerObject player1, player2;
     private SwordObject sword1, sword2;
@@ -40,10 +44,15 @@ public class WorldObject {
         player2 = new PlayerObject(700, groundLevel, PlayerType.PLAYER_TWO, DirectionType.RIGHT, Config.keySet2);
 
         gameObjects.add(fpsObject);
-        ground = new RectangleObstacle(0 , groundLevel, (int) Main.canvas.getWidth() ,(int) Main.canvas.getHeight() - groundLevel, Color.GREY);
-        gameObjects.add(ground);
 
-        gameObjects.addAll(getTestMap(1));
+        background = new BackgroundObject(0,0,null);
+        gameObjects.add(background);
+
+        //ground = new RectangleObstacle(0, 648, (int) Main.canvas.getWidth(), 20, Color.GREEN, -1);
+        //gameObjects.add(ground);
+
+        // gameObjects.addAll(getTestMap(1));
+        gameObjects.addAll(getMapObstacles());
 
         gameObjects.add(player1);
         gameObjects.add(player2);
@@ -53,39 +62,105 @@ public class WorldObject {
        //gameObjects.add(new ParticleEmitter(650, groundLevel-100, DirectionType.RIGHT,5,600,10,30,180,20));
     }
 
-    private ArrayList<RectangleObstacle> getTestMap(int mapId){
+    private ArrayList<RectangleObstacle> getMapObstacles() {
         ArrayList<RectangleObstacle> obstacles = new ArrayList<>();
-        switch (mapId) { // Ground-related-parts (stairs) have to be added from top to bottom
-            case 1 -> {
-                int lv2 = 6, lv2_w = 100, lv2_mid = 350;
-                int lv3 = 12, lv3_w = 250;
-                int lv4 = 62, lv4_w = 125;
-                int lv5 = 112, lv5_h = 15, lv5_w = ground.width / 2 - lv3_w, lv5_offset = 50;
-                int p1_w = 15;
-                // Left obstacles
-                obstacles.add(new RectangleObstacle(ground.x, groundLevel - lv4, lv4_w, lv4, Color.GREY)); // Third stair
-                obstacles.add(new RectangleObstacle(ground.x + lv3_w, groundLevel - lv2, lv2_w, lv2, Color.GREY)); // Second stair
-                obstacles.add(new RectangleObstacle(ground.x, groundLevel - lv3, lv3_w, lv3, Color.GREY)); // First stair
+        int mapState = 0;
 
-                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 - lv5_w, groundLevel - lv5, lv5_w - lv5_offset, lv5_h, Color.GREY)); // First upper platform
-                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 - lv5_w + p1_w, groundLevel - lv5 + lv5_h, p1_w, lv5 - lv5_h - lv2, Color.LIGHTGREY)); // First pillar
-                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 - lv5_offset - 2 * p1_w, groundLevel - lv5 + lv5_h, p1_w, lv5 - lv5_h - lv2, Color.LIGHTGREY)); // Second pillar
+        // Map 00
+        obstacles.add(new RectangleObstacle(130, 600, 74, 155, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(380, 532, 114, 40, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(495, 532, 82, 22, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(320, 768, 24, 30, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(343, 744, 71, 30, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(413, 720, 73, 30, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(484, 696, 73, 30, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(506, 671, 71, 30, Color.GREEN, mapState));
 
-                // Middle obstacles
-                obstacles.add(new RectangleObstacle(ground.x + (ground.width / 2) - (lv2_mid / 2), ground.y - lv2, lv2_mid, lv2, Color.GREY)); // Mid stair
+        obstacles.add(new RectangleObstacle(577, 648, 456, 30, Color.GREEN, mapState));
+        grounds.add(obstacles.get(obstacles.size() - 1));
 
-                // Right obstacles
-                obstacles.add(new RectangleObstacle(ground.x + ground.width - lv4_w, groundLevel - lv4, lv4_w, lv4, Color.GREY)); // Third stair
-                obstacles.add(new RectangleObstacle(ground.x + ground.width - lv2_w - lv3_w, groundLevel - lv2, lv2_w, lv2, Color.GREY)); // Second stair
-                obstacles.add(new RectangleObstacle(ground.x + ground.width - lv3_w, groundLevel - lv3, lv3_w, lv3, Color.GREY)); // First stair
+        mapState++;
 
-                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 + lv5_offset, groundLevel - lv5, lv5_w - lv5_offset, lv5_h, Color.GREY)); // First upper platform
-                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 + lv5_offset + p1_w, groundLevel - lv5 + lv5_h, p1_w, lv5 - lv5_h - lv2, Color.LIGHTGREY)); // First pillar
-                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 + lv5_w - 2 * p1_w, groundLevel - lv5 + lv5_h, p1_w, lv5 - lv5_h - lv2, Color.LIGHTGREY)); // Second pillar
-            }
-        }
+        // Map 01
+        obstacles.add(new RectangleObstacle(370, 624, 24, 30, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(391, 575, 47, 80, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(437, 599, 47, 62, Color.GREEN, mapState));
+
+        obstacles.add(new RectangleObstacle(0, 648, (int) Main.canvas.getWidth(), 20, Color.GREEN, mapState));
+        grounds.add(obstacles.get(obstacles.size() - 1));
+
+        mapState++;
+
+        // Map 02
+        obstacles.add(new RectangleObstacle(121, 624, 90, 30, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(144, 601, 43, 30, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(460, 571, 118, 12, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(822, 625, 90, 30, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(845, 601, 43, 30, Color.GREEN, mapState));
+
+        obstacles.add(new RectangleObstacle(0, 648, (int) Main.canvas.getWidth(), 20, Color.GREEN, mapState));
+        grounds.add(obstacles.get(obstacles.size() - 1));
+
+        mapState++;
+
+        // Map 03
+        obstacles.add(new RectangleObstacle(551, 601, 47, 62, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(596, 576, 47, 80, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(642, 624, 24, 30, Color.GREEN, mapState));
+
+        obstacles.add(new RectangleObstacle(0, 648, (int) Main.canvas.getWidth(), 20, Color.GREEN, mapState));
+        grounds.add(obstacles.get(obstacles.size() - 1));
+
+        mapState++;
+        // Map 04
+        obstacles.add(new RectangleObstacle(902 - 74, 600, 74, 155, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(652 - 114, 532, 114, 40, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(537 - 82, 532, 82, 22, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(712 - 24, 768, 24, 30, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(689 - 71, 744, 71, 30, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(619 - 73, 720, 73, 30, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(548 - 73, 696, 73, 30, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(526 - 71, 671, 71, 30, Color.GREEN, mapState));
+
+        obstacles.add(new RectangleObstacle(0, 648, 455, 30, Color.GREEN, mapState));
+        grounds.add(obstacles.get(obstacles.size() - 1));
+
         return obstacles;
     }
+
+//    private ArrayList<RectangleObstacle> getTestMap(int mapId){
+//        ArrayList<RectangleObstacle> obstacles = new ArrayList<>();
+//        switch (mapId) { // Ground-related-parts (stairs) have to be added from top to bottom
+//            case 1 -> {
+//                int lv2 = 6, lv2_w = 100, lv2_mid = 350;
+//                int lv3 = 12, lv3_w = 250;
+//                int lv4 = 62, lv4_w = 125;
+//                int lv5 = 112, lv5_h = 15, lv5_w = ground.width / 2 - lv3_w, lv5_offset = 50;
+//                int p1_w = 15;
+//                // Left obstacles
+//                obstacles.add(new RectangleObstacle(ground.x, groundLevel - lv4, lv4_w, lv4, Color.GREY)); // Third stair
+//                obstacles.add(new RectangleObstacle(ground.x + lv3_w, groundLevel - lv2, lv2_w, lv2, Color.GREY)); // Second stair
+//                obstacles.add(new RectangleObstacle(ground.x, groundLevel - lv3, lv3_w, lv3, Color.GREY)); // First stair
+//
+//                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 - lv5_w, groundLevel - lv5, lv5_w - lv5_offset, lv5_h, Color.GREY)); // First upper platform
+//                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 - lv5_w + p1_w, groundLevel - lv5 + lv5_h, p1_w, lv5 - lv5_h - lv2, Color.LIGHTGREY)); // First pillar
+//                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 - lv5_offset - 2 * p1_w, groundLevel - lv5 + lv5_h, p1_w, lv5 - lv5_h - lv2, Color.LIGHTGREY)); // Second pillar
+//
+//                // Middle obstacles
+//                obstacles.add(new RectangleObstacle(ground.x + (ground.width / 2) - (lv2_mid / 2), ground.y - lv2, lv2_mid, lv2, Color.GREY)); // Mid stair
+//
+//                // Right obstacles
+//                obstacles.add(new RectangleObstacle(ground.x + ground.width - lv4_w, groundLevel - lv4, lv4_w, lv4, Color.GREY)); // Third stair
+//                obstacles.add(new RectangleObstacle(ground.x + ground.width - lv2_w - lv3_w, groundLevel - lv2, lv2_w, lv2, Color.GREY)); // Second stair
+//                obstacles.add(new RectangleObstacle(ground.x + ground.width - lv3_w, groundLevel - lv3, lv3_w, lv3, Color.GREY)); // First stair
+//
+//                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 + lv5_offset, groundLevel - lv5, lv5_w - lv5_offset, lv5_h, Color.GREY)); // First upper platform
+//                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 + lv5_offset + p1_w, groundLevel - lv5 + lv5_h, p1_w, lv5 - lv5_h - lv2, Color.LIGHTGREY)); // First pillar
+//                obstacles.add(new RectangleObstacle(ground.x + ground.width / 2 + lv5_w - 2 * p1_w, groundLevel - lv5 + lv5_h, p1_w, lv5 - lv5_h - lv2, Color.LIGHTGREY)); // Second pillar
+//            }
+//        }
+//        return obstacles;
+//    }
 
     public void takeSwordFromGround(PlayerObject p){
         int playerMiddle = p.x + 32;
@@ -134,6 +209,10 @@ public class WorldObject {
         return groundLevel;
     }
 
+    public BackgroundObject getBackground(){
+        return background;
+    }
+
     public FPSObject getFpsObject() {
         return fpsObject;
     }
@@ -143,7 +222,7 @@ public class WorldObject {
     }
 
     public RectangleObstacle getGround() {
-        return ground;
+        return grounds.get(background.getWorldState());
     }
 
     public PlayerObject getPlayer1() {

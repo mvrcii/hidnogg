@@ -3,13 +3,12 @@ package stickfight2d.controllers;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import stickfight2d.GameLoop;
+import stickfight2d.Main;
 import stickfight2d.enums.AnimationType;
 import stickfight2d.enums.DirectionType;
 import stickfight2d.enums.PlayerType;
 import stickfight2d.misc.Debugger;
-import stickfight2d.world.GameObject;
-import stickfight2d.world.PlayerObject;
-import stickfight2d.world.RectangleObstacle;
+import stickfight2d.world.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,8 +33,11 @@ public class CollisionController extends Controller {
     // --- World Data
     // --- --- Obstacle Data
     private final ArrayList<RectangleObstacle> obstacles = new ArrayList<>();
+    private final BackgroundObject background = GameLoop.currentLevel.getBackground();
+
     // --- --- Player Data
     private final ArrayList<PlayerObject> players = new ArrayList<>();
+
     // --- --- --- Attack related data
     private final HashSet<AnimationType> nonStabAnimations = Stream.of(
             AnimationType.PLAYER_WALK,
@@ -46,6 +48,7 @@ public class CollisionController extends Controller {
             AnimationType.PLAYER_DYING,
             AnimationType.SWORD).collect(Collectors.toCollection(HashSet::new));
     private static int swordLength = 0; // swordLength for sword-tip-calculation
+
     // --- --- --- Obstacle-Collision related data
     private final Point2D[] rectHitBoxP1_P2 = new Point2D[2]; // Contains upper left X,Y and bottom right X,Y of both players
     private final int[] playersWidthHeight = new int[2]; // Contains Width and Height of both players
@@ -61,6 +64,7 @@ public class CollisionController extends Controller {
     private boolean player2_hitsWall_Left = false;
     private boolean player2_hitsWall_Right = false;
     private boolean player2_headBump;
+
     // --- --- Attack related states
     private boolean player1_hit_player2 = false;
     private boolean player2_hit_player1 = false;
@@ -70,6 +74,7 @@ public class CollisionController extends Controller {
     private AnimationType p2_prevState = AnimationType.PLAYER_IDLE_MEDIUM;
     private int disarming = 0;
     // ----------------------------------------------------------------------------------------------------
+
 
     private CollisionController() {
         for (GameObject obj : GameLoop.currentLevel.getGameObjects()) { // Collect PlayerObjects
@@ -99,6 +104,8 @@ public class CollisionController extends Controller {
 
         swordsHitting = checkCollisionSwordSword();
         disarming = checkDisarm();
+
+        checkMapBoundaries();
     }
 
 
@@ -131,7 +138,7 @@ public class CollisionController extends Controller {
 
         } else { // --> player1 direction must be Direction.RIGHT
             hitBox_Player2 = player2.getAnimation().getCurrentFrame().getHitBoxInverted();
-            offsetHitBox = playersWidthHeight[0] + 2; // TODO :: has to be updated, if playerRotation-implementation is changed
+            offsetHitBox = playersWidthHeight[0] + 2;
 
             Point2D swordStartPoint = player1.getAnimation().getCurrentFrame().getSwordStartPoint();
             swordTip = new Point2D(player1.getX() + swordStartPoint.getX() + swordLength, player1.getY() + swordStartPoint.getY());
@@ -142,11 +149,8 @@ public class CollisionController extends Controller {
         if (player2.getAnimation().getAnimationType() == AnimationType.PLAYER_IDLE_HOLD_UP) {
             if (swordTip.getY() <= player2.getY() + player2_block.getY() && swordTip.getY() >= player2.getY() + player2_block.getY() - swordLength) {
 
-                if ((player2.getDirectionType() == DirectionType.RIGHT && swordTip.getX() <= player2.getX() + player2_block.getX() && player1.getX() > player2.getX())
-                        || (player2.getDirectionType() == DirectionType.LEFT && swordTip.getX() >= player2.getX() + player2_block.getX() - offsetHitBox && player1.getX() < player2.getX()))
-                    attackBlocked = true;
-                else
-                    attackBlocked = false;
+                attackBlocked = (player2.getDirectionType() == DirectionType.RIGHT && swordTip.getX() <= player2.getX() + player2_block.getX() && player1.getX() > player2.getX())
+                        || (player2.getDirectionType() == DirectionType.LEFT && swordTip.getX() >= player2.getX() + player2_block.getX() - offsetHitBox && player1.getX() < player2.getX());
             }
         }
 
@@ -180,7 +184,7 @@ public class CollisionController extends Controller {
             return false;
 
         Point2D swordTip1, swordGrip2, swordTip2;
-        int offsetSword = 4; // TODO :: has to be updated, if playerRotation-implementation is changed
+        int offsetSword = 4;
 
         if (players.get(0).getDirectionType() == DirectionType.RIGHT) { // --> p2 LEFT
             Point2D swordStartPoint = players.get(0).getAnimation().getCurrentFrame().getSwordStartPoint();
@@ -213,7 +217,7 @@ public class CollisionController extends Controller {
      * 2 if player2 disarms player1
      */
     private int checkDisarm() {
-        if(players.get(0).getSwordObject() == null || players.get(1).getSwordObject() == null)
+        if (players.get(0).getSwordObject() == null || players.get(1).getSwordObject() == null)
             return 0;
 
         AnimationType p1_anim = players.get(0).getAnimation().getAnimationType();
@@ -253,7 +257,8 @@ public class CollisionController extends Controller {
 
         // Check Avatar-Obstacle collisions
         for (RectangleObstacle obstacle : obstacles) {
-            if (obstacle.getColor() == Color.LIGHTGREY) // TODO :: Add boolean "canCollide" to RectangleObstacle
+            int currentMap = GameLoop.currentLevel.getBackground().getWorldState();
+            if (obstacle.getMapState() != currentMap)
                 continue;
 
             if (!collisionRectRect(player, obstacle, 0, 0, 0, 0)) // Rect-Rect collision
@@ -300,6 +305,33 @@ public class CollisionController extends Controller {
                 && player.getX() + playersWidthHeight[0] - x2 >= obstacle.getX() // Checks, that rect2 is close enough from the right side
                 && player.getY() + y1 <= obstacle.getY() + obstacle.getHeight() // Checks, --*-- from above
                 && player.getY() + playersWidthHeight[1] - y2 >= obstacle.getY()); // Checks, --*-- from below
+    }
+
+
+    // ----------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------
+    // ---  checkMapBoundaries
+
+
+    /**
+     *  Updates the map state, if a player reaches the opposite map boundary
+     */
+    private void checkMapBoundaries() { // TODO :: MAKE NEW SPAWNS DEPENDENT ON MAP
+        Point2D player1 = CameraController.getInstance().convertWorldToScreen(players.get(0).getX(), players.get(0).getY());
+        Point2D player2 = CameraController.getInstance().convertWorldToScreen(players.get(1).getX(), players.get(0).getY());
+        Point2D map_begin = CameraController.getInstance().convertWorldToScreen(0,0);
+        Point2D map_end = CameraController.getInstance().convertWorldToScreen((int) Main.canvas.getWidth(),0);
+
+        if (player1.getX() + playersWidthHeight[0] / 2.0 > map_end.getX()) { // Player 0
+            background.setWorldState(background.getWorldState() + 1);
+            players.get(0).setXY(500, GameLoop.currentLevel.getGroundLevel());
+            players.get(1).setXY(700, GameLoop.currentLevel.getGroundLevel());
+
+        } else if (player2.getX() - playersWidthHeight[0] / 2.0 < map_begin.getX()) { // Player 1
+            background.setWorldState(background.getWorldState() + -1);
+            players.get(0).setXY(500, GameLoop.currentLevel.getGroundLevel());
+            players.get(1).setXY(700, GameLoop.currentLevel.getGroundLevel());
+        }
     }
 
 
@@ -378,12 +410,12 @@ public class CollisionController extends Controller {
         return swordsHitting;
     }
 
-    public boolean isAttackBlocked(){
+    public boolean isAttackBlocked() {
         return attackBlocked;
     }
 
     public boolean getPlayerBeingDisarmed(PlayerType type) {
-        if(disarming == 0)
+        if (disarming == 0)
             return false;
 
         return (type == PlayerType.PLAYER_TWO && disarming == 1) || (type == PlayerType.PLAYER_ONE && disarming == 2);

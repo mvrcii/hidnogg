@@ -25,8 +25,6 @@ public class AnimationData {
     private static final int red = new Color(255, 0, 0).getRGB();
     private static final int green = new Color(0, 255, 0).getRGB();
     private static final int blue = new Color(0, 0, 255).getRGB();
-    private static final int blueTest = new Color(47,47,255).getRGB(); // TODO :: solution for now, pixels should be changed
-    private static final int blueTest2 = new Color(35,35,234).getRGB();
 
     private static int previousGreen = 0; // prevent multiple calculations of sword length
 
@@ -146,7 +144,7 @@ public class AnimationData {
                     frameData.setSwordStartPointInverted(new Point2D(bufferedImage.getWidth() - col, row));
                     previousGreen++; // for swordLength calculation
                     frameData.getBufferedImage().setRGB(col, row, bufferedImage.getRGB(col - 1, row));
-                } else if (currentRGB == blue || currentRGB == blueTest || currentRGB == blueTest2) { // end mountPoint
+                } else if (currentRGB == blue) { // end mountPoint
                     frameData.setSwordEndPoint(new Point2D(col, row));
                     frameData.getBufferedImage().setRGB(col, row, bufferedImage.getRGB(col - 1, row));
                 } else if (currentRGB == red && previousGreen == 1) {

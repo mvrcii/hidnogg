@@ -518,6 +518,11 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         return playerNumber;
     }
 
+    public void setXY(int x, int y){
+        this.setX(x);
+        this.setY(y);
+    }
+
     public boolean isOnGround() {
         return onGround;
     }
