@@ -126,7 +126,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         onGround = colCon.getPlayerOnGround(this.playerNumber);
 
         // Player getting hit by other player
-        if(colCon.getPlayerHit(this.playerNumber) && alive){
+        if(colCon.getPlayerHit(this.playerNumber) && alive && !colCon.isAttackBlocked()){
             Debugger.log(playerNumber + " got hit");
             alive = false;
             time_passed = 0;
@@ -145,6 +145,11 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             animation = animCon.getAnimation(PLAYER_DYING);
             if(animation.getAnimationType() == PLAYER_DYING){
                 Debugger.log("player dieing");
+            }
+        } else if (colCon.isAttackBlocked()){
+            switch (directionType) {
+                case LEFT -> this.x = x + 6;
+                case RIGHT -> this.x = x - 6;
             }
         }
 

@@ -65,6 +65,7 @@ public class CollisionController extends Controller {
     private boolean player1_hit_player2 = false;
     private boolean player2_hit_player1 = false;
     private boolean swordsHitting = false;
+    private boolean attackBlocked = false;
     private AnimationType p1_prevState = AnimationType.PLAYER_IDLE_MEDIUM;
     private AnimationType p2_prevState = AnimationType.PLAYER_IDLE_MEDIUM;
     private int disarming = 0;
@@ -117,12 +118,16 @@ public class CollisionController extends Controller {
         ArrayList<Point2D> hitBox_Player2;
         int offsetHitBox = 0;
 
+        // Blocking
+        Point2D player2_block;
+
         // Get relevant hitBox of player2 and swordTip-position of player1
         if (player2.getDirectionType() == DirectionType.RIGHT) { // --> player1 direction must be Direction.LEFT
             hitBox_Player2 = player2.getAnimation().getCurrentFrame().getHitBox();
 
             Point2D swordStartPoint = player1.getAnimation().getCurrentFrame().getSwordStartPointInverted();
             swordTip = new Point2D(player1.getX() + swordStartPoint.getX() - playersWidthHeight[0] - swordLength, player1.getY() + swordStartPoint.getY());
+            player2_block = player2.getAnimation().getCurrentFrame().getSwordStartPoint();
 
         } else { // --> player1 direction must be Direction.RIGHT
             hitBox_Player2 = player2.getAnimation().getCurrentFrame().getHitBoxInverted();
@@ -130,6 +135,22 @@ public class CollisionController extends Controller {
 
             Point2D swordStartPoint = player1.getAnimation().getCurrentFrame().getSwordStartPoint();
             swordTip = new Point2D(player1.getX() + swordStartPoint.getX() + swordLength, player1.getY() + swordStartPoint.getY());
+            player2_block = player2.getAnimation().getCurrentFrame().getSwordStartPointInverted();
+        }
+
+        // Blocking
+        if (player2.getAnimation().getAnimationType() == AnimationType.PLAYER_IDLE_HOLD_UP) {
+            System.out.println("SwordTIP : " + swordTip.getY());
+            System.out.println("BlockArm : " + (player2.getY() + player2_block.getY()));
+
+            if (swordTip.getY() <= player2.getY() + player2_block.getY() && swordTip.getY() >= player2.getY() + player2_block.getY() - swordLength) {
+
+                if ((player2.getDirectionType() == DirectionType.RIGHT && swordTip.getX() <= player2.getX() + player2_block.getX())
+                        || (player2.getDirectionType() == DirectionType.LEFT && swordTip.getX() >= player2.getX() + player2_block.getX()))
+                    attackBlocked = true;
+                else
+                    attackBlocked = false;
+            }
         }
 
         // Get points of interest for hitBox detection
@@ -358,6 +379,10 @@ public class CollisionController extends Controller {
 
     public boolean getSwordsHitting() {
         return swordsHitting;
+    }
+
+    public boolean isAttackBlocked(){
+        return attackBlocked;
     }
 
     public boolean getPlayerBeingDisarmed(PlayerType type) {
