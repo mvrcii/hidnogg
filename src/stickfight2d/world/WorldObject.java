@@ -3,6 +3,7 @@ package stickfight2d.world;
 import javafx.scene.paint.Color;
 import stickfight2d.Main;
 import stickfight2d.controllers.KeyController;
+import stickfight2d.controllers.SoundController;
 import stickfight2d.enums.DirectionType;
 import stickfight2d.enums.LevelType;
 import stickfight2d.enums.PlayerType;
@@ -48,7 +49,8 @@ public class WorldObject {
         gameObjects.add(player2);
         gameObjects.addAll(swordObjects);
 
-        gameObjects.add(new ParticleEmitter(650, groundLevel-100, DirectionType.RIGHT,800,1500,40,30,180,20));
+        SoundController.getInstance().playTestSound();
+       //gameObjects.add(new ParticleEmitter(650, groundLevel-100, DirectionType.RIGHT,5,600,10,30,180,20));
     }
 
     private ArrayList<RectangleObstacle> getTestMap(int mapId){
@@ -163,6 +165,10 @@ public class WorldObject {
     public void addSword(SwordObject swordObject){
         swordObjects.add(swordObject);
         gameObjectsToAdd.add(swordObject);
+    }
+
+    public void addGameObject(GameObject gameObject){
+        gameObjectsToAdd.add(gameObject);
     }
 
     public void refreshGameObjects(){

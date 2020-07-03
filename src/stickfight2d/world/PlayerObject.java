@@ -34,6 +34,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private boolean canAccelerate;
     private boolean onGround;
     private boolean alive;
+    private boolean spread_blood = false;
 
     private double time_passed = 0;
 
@@ -193,11 +194,20 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private void handleDeathAnimation(double diffMillis) {
         if(animation.isLastFrame() && animation.getAnimationType() == PLAYER_DYING){
            animation.stop();
+           if(!spread_blood){
+               switch (directionType){
+                   case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x, y+38, DirectionType.RIGHT,600,1500,2,15,180,60));
+                   case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x+36, y+38, DirectionType.RIGHT,600,1500,2,15,180,60));
+               }
+               spread_blood = true;
+           }
+
         }
         if(!alive){
             time_passed += diffMillis;
             if(time_passed > Config.T_RESPAWN){
                 GameLoop.currentLevel.respawnPlayer(this);
+                spread_blood = false;
             }
         }
     }
@@ -325,7 +335,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private void handleThrowing() {
         if(animation.getAnimationType() == PLAYER_IDLE_HOLD_UP){
             if(keyCon.isKeyPressed(keySet.getStabKey())){
-                //swordObject.startThrowing();
+                swordObject.startThrowing();
             }
         }
     }
@@ -360,9 +370,10 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             if(animation.getAnimationType() == PLAYER_CROUCH){
                 if(swordObject != null){
                     animation = animCon.getAnimation(lastIdleAnimationType);
-                }else{
+                }else {
                     animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
                 }
+
                 keyCon.removeKeyPress(keySet.getDownKey());
             }
         }
@@ -388,6 +399,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             canAccelerate = false;
         }
         if(animation.getAnimationType() == PLAYER_JUMP_START && vy >= 20){
+
             animation = animCon.getAnimation(PLAYER_JUMP_PEAK);
         }
         if(animation.getAnimationType() == PLAYER_JUMP_PEAK && vy <= -15){

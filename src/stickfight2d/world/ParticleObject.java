@@ -28,16 +28,13 @@ public class ParticleObject extends GameObject {
             alive = false;
         } else {
             if (onGround) {
-
-            }
-                /*
-                else if(collisionRectRect(this, GameLoop.currentLevel.getGround()))
-                {
-                    onGround = true;
-                    vy = vy * 0.2;
-                    vx = vx * 0.1;
-                } */
-            else {
+                vy = vy * 0.99;
+                vx = vx * 0.95;
+            } else if (collisionRectRect(this, GameLoop.currentLevel.getGround())) {
+                onGround = true;
+                vy = vy * 0.99;
+                vx = vx * 0.95;
+            } else {
                 vy -= (diffMillis / 10.0);    //gravity
             }
 
@@ -56,10 +53,13 @@ public class ParticleObject extends GameObject {
     }
 
     private boolean collisionRectRect(ParticleObject particle, RectangleObstacle obstacle) {
+
         return (particle.getX() <= obstacle.getX() + obstacle.getWidth()
                 && particle.getX() >= obstacle.getX()
                 && particle.getY() <= obstacle.getY() + obstacle.getHeight()
                 && particle.getY() >= obstacle.getY());
     }
+
+
 
 }
