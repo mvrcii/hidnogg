@@ -24,6 +24,7 @@ public class GameLoop extends Thread implements Runnable {
         gameControllers.add(DataController.getInstance());
         gameControllers.add(DirectionController.getInstance());
         gameControllers.add(CameraController.getInstance());
+        gameControllers.add(SoundController.getInstance());
 
         currentLevel = new WorldObject(LevelType.LEVEL_ONE);
         currentLevel.initObjects();
