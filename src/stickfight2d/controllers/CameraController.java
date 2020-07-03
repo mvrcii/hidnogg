@@ -47,10 +47,9 @@ public class CameraController extends Controller{
         Point2D diffPlayer1 = new Point2D(GameLoop.currentLevel.getPlayer1().getX() - player1StartPosition.getX(), GameLoop.currentLevel.getPlayer1().getY() - player1StartPosition.getY());
         Point2D diffPlayer2 = new Point2D(GameLoop.currentLevel.getPlayer2().getX() - player2StartPosition.getX(), GameLoop.currentLevel.getPlayer2().getY() - player2StartPosition.getY());
 
-        //TODO: add lerp to smooth camera movement
         //calculate center point for camera
-        camX = (diffPlayer1.getX() + diffPlayer2.getX()) / 2 + desiredOffset;
-        camY = (diffPlayer1.getY() + diffPlayer2.getY()) / 2;
+        camX = lerp(camX, (diffPlayer1.getX() + diffPlayer2.getX()) / 2 + desiredOffset, 0.005 * diffMillis);
+        camY = lerp(camY, (diffPlayer1.getY() + diffPlayer2.getY()) / 2, 0.005 * diffMillis);
 
     }
 
