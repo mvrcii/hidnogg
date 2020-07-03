@@ -110,7 +110,7 @@ public class CollisionController extends Controller {
      * Returns true, if there is a collision between the sword of player1 and the character of player2
      * Logic >> Detects, where the swordTip-point (player1) is between two points of the player2-hitBox on the same y-level
      */
-    private boolean collisionSwordAvatar(PlayerObject player1, PlayerObject player2) { // TODO :: Eventually update hitBoxCalc & swordTip
+    private boolean collisionSwordAvatar(PlayerObject player1, PlayerObject player2) {
         if (nonStabAnimations.contains(player1.getAnimation().getAnimationType()) || player1.getSwordObject() == null) // Prevent horizontal stabbing in specific animations
             return false;
 
@@ -140,9 +140,6 @@ public class CollisionController extends Controller {
 
         // Blocking
         if (player2.getAnimation().getAnimationType() == AnimationType.PLAYER_IDLE_HOLD_UP) {
-            System.out.println("SwordTIP : " + swordTip.getY());
-            System.out.println("BlockArm : " + (player2.getY() + player2_block.getY()));
-
             if (swordTip.getY() <= player2.getY() + player2_block.getY() && swordTip.getY() >= player2.getY() + player2_block.getY() - swordLength) {
 
                 if ((player2.getDirectionType() == DirectionType.RIGHT && swordTip.getX() <= player2.getX() + player2_block.getX())
@@ -245,7 +242,7 @@ public class CollisionController extends Controller {
     // ----------------------------------------------------------------------------------------------------
     // --- Obstacle collisions:
 
-    private void updatePlayerObstacleCollisions(PlayerObject player) { // TODO :: Eventually add collisions on head, if necessary in the maps
+    private void updatePlayerObstacleCollisions(PlayerObject player) {
         boolean onGround = false;
         boolean hitsWallRight = false;
         boolean hitsWallLeft = false;
