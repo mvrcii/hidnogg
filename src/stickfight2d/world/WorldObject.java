@@ -206,7 +206,7 @@ public class WorldObject {
     }
 
     public int getGroundLevel() {
-        return groundLevel;
+        return getGround().getY();
     }
 
     public BackgroundObject getBackground(){
