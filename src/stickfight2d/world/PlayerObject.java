@@ -137,7 +137,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 case PLAYER_TWO -> keyCon.setKeyPressBlockedP2(true);
             }
 
-            keyCon.removeAllKeyPress();
+            keyCon.removePlayerKeyPress(this);   // only clear player specific keys
 
             if(swordObject != null){    // only if PLAYER has a sword
                 swordObject.fallToGround();
@@ -264,7 +264,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     animation = animCon.getStepAnim(lastIdleAnimationType);
                 }
             }
+
         }
+
 
         // LEFT
         if (keyCon.isKeyPressed(keySet.getMoveLeftKey()) && !keyCon.isKeyPressed(keySet.getMoveRightKey()) && !CollisionController.getInstance().getPlayerHitsWallRight(this.playerNumber)) {
@@ -287,7 +289,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if (keyCon.isKeyPressed(keySet.getMoveLeftKey()) && keyCon.isKeyPressed(keySet.getMoveRightKey())){
             if(animation.getAnimationType() != lastIdleAnimationType){
                 if(swordObject == null){
-
+                    if(animation.getAnimationType() != PLAYER_IDLE_NO_SWORD){
+                        animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
+                    }
                 }else{
                     animation = animCon.getAnimation(lastIdleAnimationType);
                 }
@@ -302,6 +306,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 animation = animCon.getAnimation(lastIdleAnimationType);
             }
         }
+
     }
 
 
@@ -489,9 +494,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private void markPlayer(GraphicsContext gc, double x, double y){
         if (playerNumber == PlayerType.PLAYER_ONE)
-            gc.setFill(Color.BLUE);
+            gc.setFill(Color.CYAN);
         else
-            gc.setFill(Color.RED);
+            gc.setFill(Color.ORANGERED);
 
         int playerWidth = CollisionController.getInstance().getPlayersWidthHeight()[0];
         gc.fillPolygon(new double[]{x + 10, x + 14, x - 14 + playerWidth, x - 10 + playerWidth, x + playerWidth / 2.0}, new double[]{y - 25, y - 18, y - 18, y - 25, y - 8}, 5);
@@ -529,6 +534,10 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     public boolean getAlive() {
         return this.alive;
+    }
+
+    public KeySet getKeySet() {
+        return keySet;
     }
 }
 

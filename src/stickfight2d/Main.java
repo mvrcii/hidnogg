@@ -8,10 +8,16 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import kuusisto.tinysound.Music;
+import kuusisto.tinysound.TinySound;
+
+import java.io.File;
 
 public class Main extends Application {
 
     public static Canvas canvas;
+    private static Group root;
+    private static Stage primaryStage;
 
     private final int SUB_MAP_WIDTH = 1032;
     private final int SUB_MAP_HEIGHT = 810;
@@ -20,12 +26,14 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
 
+        Main.primaryStage = primaryStage;
         primaryStage.setOnCloseRequest(e->{
             Platform.exit();
             System.exit(0);
         });
 
-        Group root = new Group();
+
+        root = new Group();
         primaryStage.setScene(new Scene(root));
         primaryStage.setFullScreen(false);
 
@@ -51,4 +59,11 @@ public class Main extends Application {
     }
 
 
+    public static Group getRoot() {
+        return root;
+    }
+
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
 }

@@ -23,11 +23,15 @@ public class SwordObject extends GameObject {
     private int currentAngle;
     private int bounceStartAngle = -1;
 
+    private int x0 = 0;
+    private int y0 = 0;
+
     private double diffSeconds = 0;
     private double timePassedGround = 0;
     private double bounceOffSet = 0;
-    private double timePassedAir = 0;
-    private int singleRotationTime = 2000; // 5seconds
+    private double timePassedAir;
+    private double timePassedAirCoordinates;
+    private final static int SINGLE_ROTATION_TIME = 1000; // 1seconds
 
     public SwordObject(int x, int y, DirectionType directionType, PlayerObject playerObject) {
         super(x, y, directionType);
@@ -35,6 +39,7 @@ public class SwordObject extends GameObject {
         this.onGround = false;
         this.throwing = false;
         this.playerObject = playerObject;
+        this.vx = 100;
 
         if (playerObject != null) {
             this.directionType = playerObject.getDirectionType();
@@ -84,14 +89,13 @@ public class SwordObject extends GameObject {
                 playerObject = null;
                 animation.stop();
             }
+
         } else if(throwing){
+            timePassedAirCoordinates += diffSeconds;
 
             if(playerObject == null){
-                Debugger.log("Update Sword Coords: Player == null -> do nothing");
-                switch (directionType){
-                    case RIGHT -> x++;
-                    case LEFT -> x--;
-                }
+                update_x();
+                update_y();
             }
 
         } else {
@@ -115,6 +119,26 @@ public class SwordObject extends GameObject {
 
     }
 
+    private void update_x(){
+        if(directionType == DirectionType.RIGHT){
+            this.x = x0 + (int) (vx * timePassedAirCoordinates/1000);
+        }else{
+            this.x = x0 + (int) (-vx * timePassedAirCoordinates/1000);
+        }
+    }
+
+    private void update_y(){
+        int swordOffset = (int) animation.getCurrentFrame().getSwordStartPoint().getX() + 10;
+        if (y < GameLoop.currentLevel.getGroundLevel() - swordOffset) {
+            this.y = y0 + (int) (0.5 * 9.81 * Math.pow(timePassedAirCoordinates/1000, 2));
+        } else{
+            this.y = GameLoop.currentLevel.getGroundLevel() - swordOffset;
+            onGround = true;
+            throwing = false;
+
+        }
+
+    }
 
     private void updateAngle() {
         if (onGround) {
@@ -136,15 +160,16 @@ public class SwordObject extends GameObject {
         } else if(throwing){
 
             timePassedAir += diffSeconds;
-            if(playerObject == null){
-                Debugger.log("Update Sword Angle: Player == null -> do nothing");
 
-                if(timePassedAir >= singleRotationTime){
+            if(playerObject == null){
+
+                if(timePassedAir >= SINGLE_ROTATION_TIME){
                     timePassedAir = 0;
                 }
-                currentAngle = (int) Math.floor(timePassedAir / (double) (singleRotationTime/360));
 
-                if(currentAngle >= 360){
+                currentAngle = 360 - (int) Math.floor(timePassedAir / (double) (SINGLE_ROTATION_TIME/360));
+
+                if(currentAngle <= 0){
                     timePassedAir = 0;
                     currentAngle = 0;
                 }
@@ -182,19 +207,18 @@ public class SwordObject extends GameObject {
     }
 
     public void startThrowing(){
-        if(this.playerObject != null){
-            System.out.println("Start throw");
+        if(playerObject != null){
             int startAngle = calculateRotationAngle();
+            timePassedAirCoordinates = 0;
+            vx = 100;
+            timePassedAir = (int) (startAngle * SINGLE_ROTATION_TIME / 360);
+            x0 = x;
+            y0 = y;
             throwing = true;
-
 
             // Clear bindings
             playerObject.setSwordObject(null);
-;            this.playerObject = null;
-
-            //fallToGround();
-        }else{
-
+            playerObject = null;
         }
     }
 

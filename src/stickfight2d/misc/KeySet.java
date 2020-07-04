@@ -36,7 +36,9 @@ public class KeySet {
         keyCodes.add(upKey);
     }
 
-
+    public ArrayList<KeyCode> getKeyCodes() {
+        return keyCodes;
+    }
 
     public KeyCode getMoveLeftKey() {
         return moveLeftKey;

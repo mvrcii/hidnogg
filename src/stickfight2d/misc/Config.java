@@ -14,6 +14,7 @@ public class Config {
     public static final double T_RESPAWN = 2000;
 
     public static boolean debug_mode = false;
+    public static boolean fps_print_mode = true;
 
     public Config(){
 

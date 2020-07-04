@@ -4,7 +4,10 @@ import javafx.scene.input.KeyCode;
 import stickfight2d.Main;
 import stickfight2d.misc.Config;
 import stickfight2d.misc.Debugger;
+import stickfight2d.misc.KeySet;
+import stickfight2d.world.PlayerObject;
 
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class KeyController extends Controller {
@@ -113,6 +116,14 @@ public class KeyController extends Controller {
 
     public void removeAllKeyPress(){
         keyObject.getKeyHashMap().clear();
+    }
+
+    public void removePlayerKeyPress(PlayerObject playerObject){
+        ArrayList<KeyCode> keyCodes = playerObject.getKeySet().getKeyCodes();
+        for (KeyCode keyCode : keyCodes) {
+            previousKeyObject.getKeyHashMap().remove(keyCode);
+            keyObject.getKeyHashMap().remove(keyCode);
+        }
     }
 
     public boolean isKeyPressBlockedP1() {

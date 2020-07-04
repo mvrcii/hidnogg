@@ -1,12 +1,18 @@
 package stickfight2d;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
+import kuusisto.tinysound.TinySound;
 import stickfight2d.controllers.*;
 import stickfight2d.enums.LevelType;
-import stickfight2d.misc.Config;
-import stickfight2d.misc.Debugger;
-import stickfight2d.world.*;
+import stickfight2d.enums.SoundType;
 import stickfight2d.interfaces.InputSystem;
+import stickfight2d.world.GameObject;
+import stickfight2d.world.WorldObject;
 
 import java.util.ArrayList;
 
@@ -18,8 +24,12 @@ public class GameLoop extends Thread implements Runnable {
 
     public static WorldObject currentLevel;
 
-    public GameLoop() {
+    private Text counterText;
+    private int counterState = 0;
+    private double diffTimeMs = 0;
 
+    public GameLoop() {
+        TinySound.init();
         gameControllers.add(KeyController.getInstance());
         gameControllers.add(DataController.getInstance());
         gameControllers.add(DirectionController.getInstance());
@@ -30,6 +40,9 @@ public class GameLoop extends Thread implements Runnable {
         currentLevel.initObjects();
 
         gameControllers.add(CollisionController.getInstance());
+
+        SoundController.getInstance().getMusic(SoundType.THEME_01).play(false,0.15); // Music theme
+        initCounter();
     }
 
 
@@ -65,15 +78,15 @@ public class GameLoop extends Thread implements Runnable {
 
 
     private void update(long diffMillis) {
-
+        diffTimeMs += diffMillis;
 
         for (GameObject obj : currentLevel.getGameObjects()) {
 
             if (obj instanceof InputSystem) {
                 ((InputSystem) obj).processInput(diffMillis);
             }
-
             obj.update(diffMillis);
+
         }
 
         for (Controller con : gameControllers) {
@@ -81,7 +94,7 @@ public class GameLoop extends Thread implements Runnable {
         }
 
         currentLevel.refreshGameObjects();
-
+        updateCounter();
     }
 
 
@@ -95,5 +108,35 @@ public class GameLoop extends Thread implements Runnable {
         gc.clearRect(0, 0, Main.canvas.getWidth(), Main.canvas.getHeight());
     }
 
+    private void updateCounter(){
+        if(diffTimeMs/1000 >= 3 && counterState == 0){
+            counterState = 1;
+            counterText.setFont(Font.font("Verdana", 80));
+            counterText.setText("3");
+        }else if(diffTimeMs/1000 >= 4 && counterState == 1){
+            counterState = 2;
+            counterText.setText("2");
+        }else if(diffTimeMs/1000 >= 5 && counterState == 2){
+            counterState = 3;
+            counterText.setText("1");
+        }else if(diffTimeMs/1000 >= 6 && counterState == 3){
+            counterState = 4;
+            counterText.setText("GO");
+        }else if(diffTimeMs/1000 >= 7 && counterState == 4){
+            counterState = 5;
+            counterText.setText("");
+        }
+    }
 
+    private void initCounter() {
+        Stage stage = Main.getPrimaryStage();
+        counterText = new Text("Get ready!");
+        counterText.setTextAlignment(TextAlignment.CENTER);
+        counterText.setX(stage.getWidth()/2-90);
+        counterText.setY(stage.getHeight()/2);
+        counterText.setFill(Color.LIGHTGREEN);
+        counterText.setFont(Font.font("Verdana", 50));
+        Main.getRoot().getChildren().add(counterText);
+
+    }
 }

@@ -1,16 +1,21 @@
 package stickfight2d.controllers;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import kuusisto.tinysound.Music;
+import kuusisto.tinysound.Sound;
+import kuusisto.tinysound.TinySound;
+import stickfight2d.enums.SoundType;
 import stickfight2d.misc.Debugger;
-import java.io.File;
-import java.net.URI;
+
+import java.util.HashMap;
+
+import static stickfight2d.enums.SoundType.THEME_01;
 
 public class SoundController extends Controller {
 
     //TODO: add sound list with different sounds
     //TODO: add music
-
+    private final HashMap<SoundType, Music> musicData = new HashMap<>();
+    private final HashMap<SoundType, Sound> soundData = new HashMap<>();
 
     private static SoundController instance;
 
@@ -22,26 +27,24 @@ public class SoundController extends Controller {
         return instance;
     }
 
+    private SoundController(){
+        // Music
+        musicData.put(THEME_01, TinySound.loadMusic(THEME_01.getFile()));
+
+        // Sound
+    }
+
     @Override
     public void update(long diffMillis) {
 
     }
 
-    public void playTestSound() {
+    public Music getMusic(SoundType soundType){
+        return musicData.get(soundType);
+    }
 
-        try {
-
-            File file = new File("src/sound/knife.mp3");
-            String path = file.getAbsolutePath();
-            URI uri = file.toURI();
-            Media media = new Media(uri.toString());
-            MediaPlayer player = new MediaPlayer(media);
-            player.setVolume(0.1);
-            player.play();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public Sound getSound(SoundType soundType){
+        return soundData.get(soundType);
     }
 
 }

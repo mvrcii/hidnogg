@@ -2,6 +2,10 @@ package stickfight2d.world;
 
 import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import kuusisto.tinysound.Music;
 import org.w3c.dom.css.Rect;
 import stickfight2d.GameLoop;
 import stickfight2d.Main;
@@ -10,33 +14,38 @@ import stickfight2d.controllers.SoundController;
 import stickfight2d.enums.DirectionType;
 import stickfight2d.enums.LevelType;
 import stickfight2d.enums.PlayerType;
+import stickfight2d.enums.SoundType;
 import stickfight2d.misc.Config;
 import stickfight2d.misc.Debugger;
 import stickfight2d.misc.FPSObject;
 
 import java.time.temporal.ValueRange;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class WorldObject {
 
     private final ArrayList<GameObject> gameObjects = new ArrayList<>();
     private final ArrayList<GameObject> gameObjectsToAdd = new ArrayList<>();
-    private final ArrayList<SwordObject> swordObjects;
+    private final ArrayList<GameObject> gameObjectsToRemove = new ArrayList<>();
+    private final Queue<SwordObject> swordObjects;
     private final LevelType levelType;
 
     private final int groundLevel = (int) (Main.canvas.getHeight()/2 + 100);
-    private ArrayList<RectangleObstacle> grounds = new ArrayList<>();
+    private final ArrayList<RectangleObstacle> grounds = new ArrayList<>();
     private BackgroundObject background;
 
     private PlayerObject player1, player2;
-    private SwordObject sword1, sword2;
 
     private final FPSObject fpsObject = new FPSObject();
 
+
     public WorldObject(LevelType levelType){
         this.levelType = levelType;
-        swordObjects = new ArrayList<>();
-        fpsObject.setPrintMode(false);
+        swordObjects = new LinkedList<>();
+        fpsObject.setPrintMode(true);
     }
 
     public void initObjects() {
@@ -48,19 +57,14 @@ public class WorldObject {
         background = new BackgroundObject(0,0,null);
         gameObjects.add(background);
 
-        //ground = new RectangleObstacle(0, 648, (int) Main.canvas.getWidth(), 20, Color.GREEN, -1);
-        //gameObjects.add(ground);
-
-        // gameObjects.addAll(getTestMap(1));
         gameObjects.addAll(getMapObstacles());
 
         gameObjects.add(player1);
         gameObjects.add(player2);
         gameObjects.addAll(swordObjects);
-
-        SoundController.getInstance().playTestSound();
-       //gameObjects.add(new ParticleEmitter(650, groundLevel-100, DirectionType.RIGHT,5,600,10,30,180,20));
     }
+
+
 
     private ArrayList<RectangleObstacle> getMapObstacles() {
         ArrayList<RectangleObstacle> obstacles = new ArrayList<>();
@@ -217,10 +221,6 @@ public class WorldObject {
         return fpsObject;
     }
 
-    public LevelType getLevelType() {
-        return levelType;
-    }
-
     public RectangleObstacle getGround() {
         return grounds.get(background.getWorldState());
     }
@@ -233,25 +233,26 @@ public class WorldObject {
         return player2;
     }
 
-    public SwordObject getSword1() {
-        return sword1;
-    }
-
-    public SwordObject getSword2() {
-        return sword2;
-    }
-
     public void addSword(SwordObject swordObject){
+        if(swordObjects.size() == 4){
+            removeGameObject(swordObjects.remove());
+        }
         swordObjects.add(swordObject);
-        gameObjectsToAdd.add(swordObject);
+        addGameObject(swordObject);
     }
 
     public void addGameObject(GameObject gameObject){
         gameObjectsToAdd.add(gameObject);
     }
 
+    public void removeGameObject(GameObject gameObject){
+        gameObjectsToRemove.add(gameObject);
+    }
+
     public void refreshGameObjects(){
         gameObjects.addAll(gameObjectsToAdd);
+        gameObjects.removeAll(gameObjectsToRemove);
+        gameObjectsToRemove.clear();
         gameObjectsToAdd.clear();
     }
 }
