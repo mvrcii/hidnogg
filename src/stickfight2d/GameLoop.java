@@ -125,6 +125,8 @@ public class GameLoop extends Thread implements Runnable {
         }else if(diffTimeMs/1000 >= 7 && counterState == 4){
             counterState = 5;
             counterText.setText("");
+            KeyController.getInstance().setKeyPressBlockedP1(false);
+            KeyController.getInstance().setKeyPressBlockedP2(false);
         }
     }
 
@@ -138,5 +140,7 @@ public class GameLoop extends Thread implements Runnable {
         counterText.setFont(Font.font("Verdana", 50));
         Main.getRoot().getChildren().add(counterText);
 
+        KeyController.getInstance().setKeyPressBlockedP1(true);
+        KeyController.getInstance().setKeyPressBlockedP2(true);
     }
 }

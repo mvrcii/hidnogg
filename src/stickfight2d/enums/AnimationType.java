@@ -20,7 +20,7 @@ public enum AnimationType {
     PLAYER_DYING(60),
     PLAYER_CROUCH(60),
 
-    PLAYER_WALK(30),
+    PLAYER_WALK(30), // time for each frame
     PLAYER_STEP_LOW(30),
     PLAYER_STEP_MEDIUM(30),
     PLAYER_STEP_HIGH(30),
