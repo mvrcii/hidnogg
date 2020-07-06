@@ -7,6 +7,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import kuusisto.tinysound.Music;
 import kuusisto.tinysound.TinySound;
 import stickfight2d.controllers.*;
 import stickfight2d.enums.LevelType;
@@ -32,6 +33,8 @@ public class GameLoop extends Thread implements Runnable {
 
     private double diffTimeMs = 0;
 
+    public static Music currentMusic;
+
     public GameLoop() {
         TinySound.init();
         gameControllers.add(KeyController.getInstance());
@@ -46,7 +49,8 @@ public class GameLoop extends Thread implements Runnable {
         gameControllers.add(CollisionController.getInstance());
         gameControllers.add(MenuController.getInstance());
 
-        SoundController.getInstance().getMusic(SoundType.THEME_01).play(false,0.01); // Music theme
+        currentMusic = SoundController.getInstance().getMusic(SoundType.THEME_01); // Music theme
+        currentMusic.play(false,0.01);
     }
 
 
@@ -154,4 +158,5 @@ public class GameLoop extends Thread implements Runnable {
         KeyController.getInstance().setKeyPressBlockedP1(true);
         KeyController.getInstance().setKeyPressBlockedP2(true);
     }
+
 }
