@@ -8,10 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import kuusisto.tinysound.Music;
-import kuusisto.tinysound.TinySound;
-
-import java.io.File;
 
 public class Main extends Application {
 

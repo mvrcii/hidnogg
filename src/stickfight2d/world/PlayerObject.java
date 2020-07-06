@@ -35,6 +35,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private boolean onGround;
     private boolean alive;
     private boolean spread_blood = false;
+    private boolean inputDisabled;
 
     private double time_passed = 0;
 
@@ -56,6 +57,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         this.onGround = true;
         this.alive = true;
+        this.inputDisabled = false;
     }
 
     public void reset(){
@@ -109,7 +111,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         handleDeathAnimation(diffMillis);
 
-        if(this.alive) {
+        if(!inputDisabled && this.alive) {
             handleMovementKeys(diffMillis);
             handleUpKey();
             handleThrowing();
@@ -540,5 +542,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     public KeySet getKeySet() {
         return keySet;
     }
+
+    public void setInputDisabled(boolean inputDisabled) { this.inputDisabled = inputDisabled;}
 }
 
