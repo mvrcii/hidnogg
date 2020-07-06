@@ -134,6 +134,7 @@ public class MenuController extends Controller {
             add(new MenuItem("Start Game", () -> {
                 disablePlayerInput(false);
                 displayMenu("none");
+
             }));
             add(new MenuItem("Options", () -> {
                 displayMenu("options");
