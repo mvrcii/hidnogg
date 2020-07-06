@@ -154,6 +154,14 @@ public class WorldObject {
         }
     }
 
+    public void clearSwordsOnGround(){
+        for (SwordObject sword: swordObjects) {
+            if(sword.isOnGround()){
+                removeGameObject(sword);
+            }
+        }
+    }
+
     public void respawnPlayer(PlayerObject p){ // TODO :: adjust respawn
 
         switch (p.getPlayerNumber()){
