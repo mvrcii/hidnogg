@@ -39,7 +39,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private double time_passed = 0;
 
-    private Animation animation = DataController.getInstance().getAnimation(PLAYER_IDLE_MEDIUM);
+    private Animation animation = DataController.getInstance().getAnimation(PLAYER_WIN);
     private AnimationType lastIdleAnimationType = PLAYER_IDLE_LOW;
 
     // Gravity-Ground detection
@@ -201,10 +201,28 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
     private void handleDeathAnimation(double diffMillis) {
+        /*
+        if(animation.getAnimationType() == PLAYER_DYING){
+            Point2D[] bloodPoints = new Point2D[];
+
+        }
+        */
+
         if(animation.isLastFrame() && animation.getAnimationType() == PLAYER_DYING){
            animation.stop();
            if(!spread_blood){
                switch (directionType){
+                   //   Frame   X       Y
+                   //   1       12      19
+                   //   2       11      55
+                   //   3       9       30
+                   //   4       16      30
+                   //   5       23      35
+                   //   6       28      38
+                   //   7       29      41
+                   //   8       29      41
+                   //   9       30      42
+                   //   10      29     42
                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x, y+38, DirectionType.RIGHT,600,1500,2,15,180,60));
                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x+36, y+38, DirectionType.RIGHT,600,1500,2,15,180,60));
                }
