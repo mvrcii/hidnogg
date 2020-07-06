@@ -3,7 +3,6 @@ package stickfight2d;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Control;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -12,10 +11,8 @@ import javafx.stage.Stage;
 import kuusisto.tinysound.Music;
 import kuusisto.tinysound.TinySound;
 import stickfight2d.controllers.*;
-import stickfight2d.enums.LevelType;
 import stickfight2d.enums.SoundType;
 import stickfight2d.interfaces.InputSystem;
-import stickfight2d.misc.Config;
 import stickfight2d.world.GameObject;
 import stickfight2d.world.WorldObject;
 
@@ -45,11 +42,11 @@ public class GameLoop extends Thread implements Runnable {
         gameControllers.add(CameraController.getInstance());
         gameControllers.add(SoundController.getInstance());
 
-        currentLevel = new WorldObject(LevelType.LEVEL_ONE);
+        currentLevel = new WorldObject();
         currentLevel.initObjects();
 
         gameControllers.add(CollisionController.getInstance());
-        gameControllers.add(MenuController.getInstance());
+        //gameControllers.add(MenuController.getInstance());
 
         currentMusic = SoundController.getInstance().getMusic(SoundType.THEME_01); // Music theme
     }
