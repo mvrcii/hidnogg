@@ -61,7 +61,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         this.inputDisabled = false;
     }
 
-
     public void reset(){
         onGround = true;
         alive = true;
