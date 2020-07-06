@@ -123,8 +123,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private void checkWin() {
         if(CollisionController.getInstance().getWin(this.playerNumber)){
-            keyCon.setKeyPressBlockedP1(true);
-            keyCon.setKeyPressBlockedP2(true);
+            //keyCon.setKeyPressBlockedP1(true);
+            //keyCon.setKeyPressBlockedP2(true);
             animation = animCon.getAnimation(PLAYER_WIN);
         }
     }
@@ -433,7 +433,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     }
 
     /**
-     * Test method >> can be removed
+     *  HitBox Test method
      */
     private void showHitBoxState(GraphicsContext gc, int testId) {
         CollisionController colCon = CollisionController.getInstance();
@@ -541,10 +541,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     public boolean isOnGround() {
         return onGround;
-    }
-
-    public boolean getAlive() {
-        return this.alive;
     }
 
     public KeySet getKeySet() {

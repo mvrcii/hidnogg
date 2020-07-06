@@ -1,10 +1,7 @@
 package stickfight2d.world;
 
-import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import stickfight2d.GameLoop;
-import stickfight2d.controllers.CameraController;
 
 public class RectangleObstacle extends GameObject {
 
@@ -14,7 +11,6 @@ public class RectangleObstacle extends GameObject {
     protected int width;
     protected int height;
     protected Color color; // Default color
-    protected boolean isGround;
     protected int mapState;
 
     /*
@@ -39,7 +35,12 @@ public class RectangleObstacle extends GameObject {
 
     @Override
     public void draw(GraphicsContext gc) { // Don't have to be drawn
-//        if (!(this.mapState == GameLoop.currentLevel.getBackground().getWorldState()))
+//        if (this.mapState != GameLoop.currentLevel.getBackground().getWorldState() && this.mapState >= 0)
+//            return;
+//
+//        if ((GameLoop.currentLevel.getBackground().getWorldState() == 0 && this.mapState == -4)
+//                || (GameLoop.currentLevel.getBackground().getWorldState() == 4 && this.mapState == -3)
+//                || GameLoop.currentLevel.getBackground().getWorldState() != 0 && GameLoop.currentLevel.getBackground().getWorldState() != 4)
 //            return;
 //
 //        Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
@@ -56,10 +57,6 @@ public class RectangleObstacle extends GameObject {
 
     public int getHeight() {
         return this.height;
-    }
-
-    public Color getColor() {
-        return this.color;
     }
 
     public int getMapState() {

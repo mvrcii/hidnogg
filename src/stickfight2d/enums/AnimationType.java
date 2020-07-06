@@ -2,6 +2,7 @@ package stickfight2d.enums;
 
 
 public enum AnimationType {
+
     PLAYER_IDLE_LOW(90),
     PLAYER_IDLE_MEDIUM(90),
     PLAYER_IDLE_HIGH(90),
@@ -26,8 +27,6 @@ public enum AnimationType {
     PLAYER_STEP_HIGH(30),
 
     PLAYER_WIN(60),
-
-
 
     SWORD(150);
 
