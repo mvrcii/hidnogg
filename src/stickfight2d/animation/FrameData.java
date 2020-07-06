@@ -81,7 +81,10 @@ public class FrameData {
     }
 
     public Point2D getSwordEndPoint() {
-        return swordEndPoint;
+        if(getSwordStartPoint() != null){
+            return swordEndPoint;
+        }
+        throw new IllegalArgumentException("Sword start Point is null!");
     }
 
     public void setSwordEndPoint(Point2D swordEndPoint) {

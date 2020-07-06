@@ -34,14 +34,12 @@ public class Main extends Application {
         primaryStage.setFullScreen(false);
 
         Screen screen = Screen.getPrimary();
-        Rectangle2D bounds = screen.getVisualBounds();
-        //canvas = new Canvas(bounds.getWidth()/2, bounds.getHeight()/2);
         canvas = new Canvas(SUB_MAP_WIDTH, SUB_MAP_HEIGHT);
 
         canvas.requestFocus();
         canvas.setFocusTraversable(true);
-        canvas.setScaleX(1.5);
-        canvas.setScaleY(1.5);
+        canvas.setScaleX(1);
+        canvas.setScaleY(1);
 
         root.getChildren().add(canvas);
 
