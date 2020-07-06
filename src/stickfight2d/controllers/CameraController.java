@@ -51,6 +51,13 @@ public class CameraController extends Controller{
         camX = lerp(camX, (diffPlayer1.getX() + diffPlayer2.getX()) / 2 + desiredOffset, 0.005 * diffMillis);
         camY = lerp(camY, (diffPlayer1.getY() + diffPlayer2.getY()) / 2, 0.005 * diffMillis);
 
+        //hardcoded screen boundaries
+        if (camX - desiredOffset < -100) {
+            camX = -100 + desiredOffset;
+        } else if (camX - desiredOffset > 70) {
+            camX = 70 + desiredOffset;
+        }
+
     }
 
     //this method has to be called in first update loop after startup or in new level
