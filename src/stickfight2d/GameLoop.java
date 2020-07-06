@@ -26,8 +26,8 @@ public class GameLoop extends Thread implements Runnable {
 
     public static WorldObject currentLevel;
 
-    private Text counterText;
-    private boolean counterOn = false;
+    private static Text counterText;
+    private static boolean counterOn = false;
     private int counterState = 0;
 
     private double diffTimeMs = 0;
@@ -46,7 +46,7 @@ public class GameLoop extends Thread implements Runnable {
         gameControllers.add(CollisionController.getInstance());
         gameControllers.add(MenuController.getInstance());
 
-        SoundController.getInstance().getMusic(SoundType.THEME_01).play(false,0.05); // Music theme
+        SoundController.getInstance().getMusic(SoundType.THEME_01).play(false,0.01); // Music theme
     }
 
 
@@ -82,7 +82,9 @@ public class GameLoop extends Thread implements Runnable {
 
 
     private void update(long diffMillis) {
-        diffTimeMs += diffMillis;
+        if(counterOn){
+            diffTimeMs += diffMillis;
+        }
 
         for (GameObject obj : currentLevel.getGameObjects()) {
 
@@ -138,7 +140,7 @@ public class GameLoop extends Thread implements Runnable {
         }
     }
 
-    public void startCounter() {
+    public static void startCounter() {
         Stage stage = Main.getPrimaryStage();
         counterOn = true;
         counterText = new Text("Get ready!");
