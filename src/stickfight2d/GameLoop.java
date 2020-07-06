@@ -25,7 +25,9 @@ public class GameLoop extends Thread implements Runnable {
     public static WorldObject currentLevel;
 
     private Text counterText;
+    private boolean counterOn = false;
     private int counterState = 0;
+
     private double diffTimeMs = 0;
 
     public GameLoop() {
@@ -41,8 +43,8 @@ public class GameLoop extends Thread implements Runnable {
 
         gameControllers.add(CollisionController.getInstance());
 
-        SoundController.getInstance().getMusic(SoundType.THEME_01).play(false,0.15); // Music theme
-        initCounter();
+        SoundController.getInstance().getMusic(SoundType.THEME_01).play(false,0.05); // Music theme
+        startCounter();
     }
 
 
@@ -109,32 +111,37 @@ public class GameLoop extends Thread implements Runnable {
     }
 
     private void updateCounter(){
-        if(diffTimeMs/1000 >= 3 && counterState == 0){
-            counterState = 1;
-            counterText.setFont(Font.font("Verdana", 80));
-            counterText.setText("3");
-        }else if(diffTimeMs/1000 >= 4 && counterState == 1){
-            counterState = 2;
-            counterText.setText("2");
-        }else if(diffTimeMs/1000 >= 5 && counterState == 2){
-            counterState = 3;
-            counterText.setText("1");
-        }else if(diffTimeMs/1000 >= 6 && counterState == 3){
-            counterState = 4;
-            counterText.setText("GO");
-        }else if(diffTimeMs/1000 >= 7 && counterState == 4){
-            counterState = 5;
-            counterText.setText("");
-            KeyController.getInstance().setKeyPressBlockedP1(false);
-            KeyController.getInstance().setKeyPressBlockedP2(false);
+        if(counterOn){
+            if(diffTimeMs/1000 >= 3 && counterState == 0){
+                counterState = 1;
+                counterText.setX(Main.getPrimaryStage().getWidth()/2-90);
+                counterText.setFont(Font.font("Verdana", 80));
+                counterText.setText("3");
+            }else if(diffTimeMs/1000 >= 4 && counterState == 1){
+                counterState = 2;
+                counterText.setText("2");
+            }else if(diffTimeMs/1000 >= 5 && counterState == 2){
+                counterState = 3;
+                counterText.setText("1");
+            }else if(diffTimeMs/1000 >= 6 && counterState == 3){
+                counterState = 4;
+                counterText.setText("GO");
+            }else if(diffTimeMs/1000 >= 7 && counterState == 4){
+                counterState = 5;
+                counterText.setText("");
+                KeyController.getInstance().setKeyPressBlockedP1(false);
+                KeyController.getInstance().setKeyPressBlockedP2(false);
+                counterOn = false;
+            }
         }
     }
 
-    private void initCounter() {
+    public void startCounter() {
         Stage stage = Main.getPrimaryStage();
+        counterOn = true;
         counterText = new Text("Get ready!");
         counterText.setTextAlignment(TextAlignment.CENTER);
-        counterText.setX(stage.getWidth()/2-90);
+        counterText.setX(stage.getWidth()/2-140);
         counterText.setY(stage.getHeight()/2);
         counterText.setFill(Color.LIGHTGREEN);
         counterText.setFont(Font.font("Verdana", 50));

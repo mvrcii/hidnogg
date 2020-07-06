@@ -32,11 +32,11 @@ public class KeyController extends Controller {
         previousKeyObject = new KeyObject();
 
         Main.canvas.setOnKeyPressed(keyEvent -> {
-            if(keyPressBlockedP1 && Config.keySet2.containsKeyCode(keyEvent.getCode())){
+            if(!keyPressBlockedP2 && Config.keySet2.containsKeyCode(keyEvent.getCode())){
                 if (!keyObject.keys.containsKey(keyEvent.getCode())) {
                     keyObject.keys.put(keyEvent.getCode(), 0L);
                 }
-            }else if(keyPressBlockedP2 && Config.keySet1.containsKeyCode(keyEvent.getCode())){
+            }else if(!keyPressBlockedP1 && Config.keySet1.containsKeyCode(keyEvent.getCode())){
                 if (!keyObject.keys.containsKey(keyEvent.getCode())) {
                     keyObject.keys.put(keyEvent.getCode(), 0L);
                 }
@@ -58,9 +58,7 @@ public class KeyController extends Controller {
 
         keyObject.getKeyHashMap().putAll(previousKeyObject.getKeyHashMap());    // Alle vorherigen Keys in das neue KeyObject kopieren
 
-        for (KeyCode keyCode : keyObject.keys.keySet()){
-            keyObject.keys.put(keyCode, keyObject.keys.get(keyCode)+diffMillis);
-        }
+        keyObject.keys.replaceAll((c, v) -> keyObject.keys.get(c) + diffMillis);
 
     }
 
@@ -117,7 +115,7 @@ public class KeyController extends Controller {
         keyObject.getKeyHashMap().clear();
     }
 
-    public void removePlayerKeyPress(PlayerObject playerObject){
+    public void removePlayerKeyPress(PlayerObject playerObject) {
         ArrayList<KeyCode> keyCodes = playerObject.getKeySet().getKeyCodes();
         for (KeyCode keyCode : keyCodes) {
             previousKeyObject.getKeyHashMap().remove(keyCode);
@@ -125,17 +123,13 @@ public class KeyController extends Controller {
         }
     }
 
-    public boolean isKeyPressBlockedP1() {
-        return keyPressBlockedP1;
-    }
-
     public void setKeyPressBlockedP2(boolean keyPressBlockedP2) {
-        Debugger.log("Keys from player2 blocked");
+        System.out.println("Player2 KeyBlock: "+keyPressBlockedP2);
         this.keyPressBlockedP2 = keyPressBlockedP2;
     }
 
     public void setKeyPressBlockedP1(boolean keyPressBlockedP1) {
-        Debugger.log("Keys from player1 blocked");
+        System.out.println("Player1 KeyBlock: "+keyPressBlockedP1);
         this.keyPressBlockedP1 = keyPressBlockedP1;
     }
 }

@@ -339,7 +339,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private void handleThrowing() {
         if(animation.getAnimationType() == PLAYER_IDLE_HOLD_UP){
             if(keyCon.isKeyPressed(keySet.getStabKey())){
-                swordObject.startThrowing();
+                if(swordObject != null){
+                    swordObject.startThrowing();
+                }
             }
         }
     }
