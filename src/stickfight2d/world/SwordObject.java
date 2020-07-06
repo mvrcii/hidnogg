@@ -181,6 +181,7 @@ public class SwordObject extends GameObject {
             FrameData f = playerObject.getAnimation().getCurrentFrame();
             double x_start = f.getSwordStartPoint().getX();
             double y_start = f.getSwordStartPoint().getY();
+            f.getSwordEndPoint();
             double x_end = f.getSwordEndPoint().getX();
             double y_end = f.getSwordEndPoint().getY();
 
