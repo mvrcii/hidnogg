@@ -1,6 +1,7 @@
 package stickfight2d;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Control;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -11,6 +12,7 @@ import stickfight2d.controllers.*;
 import stickfight2d.enums.LevelType;
 import stickfight2d.enums.SoundType;
 import stickfight2d.interfaces.InputSystem;
+import stickfight2d.misc.Config;
 import stickfight2d.world.GameObject;
 import stickfight2d.world.WorldObject;
 
@@ -40,8 +42,8 @@ public class GameLoop extends Thread implements Runnable {
         currentLevel.initObjects();
 
         gameControllers.add(CollisionController.getInstance());
-
-        SoundController.getInstance().getMusic(SoundType.THEME_01).play(false,0.15); // Music theme
+        gameControllers.add(MenuController.getInstance());
+        SoundController.getInstance().getMusic(SoundType.THEME_01).play(false, Config.volume); // Music theme
         initCounter();
     }
 
