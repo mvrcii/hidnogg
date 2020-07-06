@@ -59,7 +59,9 @@ public class CameraController extends Controller{
         player2StartPosition = new Point2D(GameLoop.currentLevel.getPlayer2().getX(), GameLoop.currentLevel.getPlayer2().getY());
 
         //DONT LOOK AT ME IM UGLY
-        desiredOffset = (player1StartPosition.getX() - (player1StartPosition.getX() + (Main.canvas.getWidth() - player2StartPosition.getX())) / 2) / 2;
+        //desiredOffset = ((player1StartPosition.getX() - (player1StartPosition.getX() + (Main.canvas.getWidth() - player2StartPosition.getX())) / 2) / 2);
+        //TODO: calculate instead of fix value
+        desiredOffset = -70;
     }
 
     public Point2D convertWorldToScreen(int x, int y) {
