@@ -1,6 +1,5 @@
 package stickfight2d;
 
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
@@ -9,17 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-import kuusisto.tinysound.Music;
-import kuusisto.tinysound.TinySound;
-import stickfight2d.controllers.KeyController;
-import stickfight2d.world.WorldObject;
-
-import java.io.Console;
-import java.io.File;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main extends Application {
 
@@ -32,7 +20,7 @@ public class Main extends Application {
 
 
     @Override
-    public void start(Stage primaryStage) throws InterruptedException {
+    public void start(Stage primaryStage) {
 
         Main.primaryStage = primaryStage;
         primaryStage.setOnCloseRequest(e->{
@@ -60,7 +48,6 @@ public class Main extends Application {
         primaryStage.show();
 
         new GameLoop().start();
-
     }
 
     public static void main(String[] args) {

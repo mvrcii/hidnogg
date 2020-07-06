@@ -24,7 +24,6 @@ import static stickfight2d.enums.AnimationType.*;
 
 public class PlayerObject extends MoveableObject implements InputSystem {
 
-
     private final KeyController keyCon = KeyController.getInstance();
     private final DataController animCon = DataController.getInstance();
 
