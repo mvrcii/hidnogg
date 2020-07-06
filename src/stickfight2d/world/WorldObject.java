@@ -162,15 +162,15 @@ public class WorldObject {
         }
     }
 
-    public void respawnPlayer(PlayerObject p){ // TODO :: adjust respawn
+    public void respawnPlayer(PlayerObject p) {
 
-        switch (p.getPlayerNumber()){
+        switch (p.getPlayerNumber()) {
             case PLAYER_ONE -> {
-                p.x = (int) (Main.canvas.getWidth()*0.20);
+                p.x = (int) background.getCurrentSpawnPoint(PlayerType.PLAYER_ONE).getX();
                 KeyController.getInstance().setKeyPressBlockedP1(false);
             }
             case PLAYER_TWO -> {
-                p.x = (int) (Main.canvas.getWidth()*0.80);
+                p.x = (int) background.getCurrentSpawnPoint(PlayerType.PLAYER_TWO).getX();
                 KeyController.getInstance().setKeyPressBlockedP2(false);
             }
         }

@@ -4,6 +4,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import stickfight2d.GameLoop;
 import stickfight2d.controllers.CameraController;
 import stickfight2d.enums.DirectionType;
 import stickfight2d.enums.PlayerType;
@@ -50,8 +51,8 @@ public class BackgroundObject extends GameObject {
 
         // Spawns Map_0
         HashMap<PlayerType, Point2D> spawns_0 = new HashMap<>();
-        spawns_0.put(PlayerType.PLAYER_ONE, new Point2D(580,500));
-        spawns_0.put(PlayerType.PLAYER_TWO, new Point2D(width - 100,500));
+        spawns_0.put(PlayerType.PLAYER_ONE, new Point2D(580, 500));
+        spawns_0.put(PlayerType.PLAYER_TWO, new Point2D(width - 100, 500));
         map.put(0, spawns_0);
 
         // Spawns Map_1
@@ -62,8 +63,8 @@ public class BackgroundObject extends GameObject {
 
         // Spawns Map_2
         HashMap<PlayerType, Point2D> spawns_2 = new HashMap<>();
-        spawns_2.put(PlayerType.PLAYER_ONE, symmetricSpawns_P1);
-        spawns_2.put(PlayerType.PLAYER_TWO, symmetricSpawns_P2);
+        spawns_2.put(PlayerType.PLAYER_ONE, new Point2D(275, 500));
+        spawns_2.put(PlayerType.PLAYER_TWO, new Point2D(width - 275, 500));
         map.put(2, spawns_2);
 
         // Spawns Map_3
@@ -74,8 +75,8 @@ public class BackgroundObject extends GameObject {
 
         // Spawns Map_4
         HashMap<PlayerType, Point2D> spawns_4 = new HashMap<>();
-        spawns_4.put(PlayerType.PLAYER_ONE, new Point2D(100,500));
-        spawns_4.put(PlayerType.PLAYER_TWO, new Point2D(400,500));
+        spawns_4.put(PlayerType.PLAYER_ONE, new Point2D(100, 500));
+        spawns_4.put(PlayerType.PLAYER_TWO, new Point2D(400, 500));
         map.put(4, spawns_4);
 
         return map;
@@ -97,6 +98,8 @@ public class BackgroundObject extends GameObject {
         this.subImageStartX = worldState * subImageWidth;
         worldSubImage = SwingFXUtils.toFXImage(defaultImage.getSubimage(subImageStartX, 0, subImageWidth, subImageHeight), null);
 
+        GameLoop.currentLevel.clearSwordsOnGround();
+
         Point2D pointP1 = spawnPoints.get(this.worldState).get(p1.getPlayerNumber());
         Point2D pointP2 = spawnPoints.get(this.worldState).get(p2.getPlayerNumber());
 
@@ -106,5 +109,9 @@ public class BackgroundObject extends GameObject {
 
     public int getWorldState() {
         return worldState;
+    }
+
+    public Point2D getCurrentSpawnPoint(PlayerType type) {
+        return spawnPoints.get(worldState).get(type);
     }
 }
