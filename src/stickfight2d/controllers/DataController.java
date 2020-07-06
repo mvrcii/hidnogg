@@ -65,6 +65,8 @@ public class DataController extends Controller {
         basicAnimationData.put(AnimationType.PLAYER_STEP_MEDIUM, new AnimationData(18));
         basicAnimationData.put(AnimationType.PLAYER_STEP_LOW, new AnimationData(19));
 
+        basicAnimationData.put(AnimationType.PLAYER_WIN, new AnimationData(20));
+
     }
 
     @Override

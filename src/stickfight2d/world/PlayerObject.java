@@ -39,7 +39,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private double time_passed = 0;
 
-    private Animation animation = DataController.getInstance().getAnimation(PLAYER_IDLE_LOW);
+    private Animation animation = DataController.getInstance().getAnimation(PLAYER_WIN);
     private AnimationType lastIdleAnimationType = PLAYER_IDLE_LOW;
 
     // Gravity-Ground detection

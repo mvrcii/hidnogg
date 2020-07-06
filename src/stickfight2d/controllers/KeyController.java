@@ -124,12 +124,12 @@ public class KeyController extends Controller {
     }
 
     public void setKeyPressBlockedP2(boolean keyPressBlockedP2) {
-        System.out.println("Player2 KeyBlock: "+keyPressBlockedP2);
+        Debugger.log("Player2 KeyBlock: "+keyPressBlockedP2);
         this.keyPressBlockedP2 = keyPressBlockedP2;
     }
 
     public void setKeyPressBlockedP1(boolean keyPressBlockedP1) {
-        System.out.println("Player1 KeyBlock: "+keyPressBlockedP1);
+        Debugger.log("Player1 KeyBlock: "+keyPressBlockedP1);
         this.keyPressBlockedP1 = keyPressBlockedP1;
     }
 }
