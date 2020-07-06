@@ -8,6 +8,7 @@ import stickfight2d.misc.Debugger;
 
 import java.util.HashMap;
 
+import static stickfight2d.enums.SoundType.MAIN_MENU_THEME_01;
 import static stickfight2d.enums.SoundType.THEME_01;
 
 public class SoundController extends Controller {
@@ -30,6 +31,7 @@ public class SoundController extends Controller {
     private SoundController(){
         // Music
         musicData.put(THEME_01, TinySound.loadMusic(THEME_01.getFile()));
+        musicData.put(MAIN_MENU_THEME_01, TinySound.loadMusic(MAIN_MENU_THEME_01.getFile()));
 
         // Sound
     }

@@ -18,8 +18,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import kuusisto.tinysound.Music;
 import stickfight2d.GameLoop;
 import stickfight2d.Main;
+import stickfight2d.enums.SoundType;
 import stickfight2d.misc.Config;
 import stickfight2d.misc.Debugger;
 import stickfight2d.misc.KeySet;
@@ -39,6 +41,8 @@ public class MenuController extends Controller {
     private String lastMenu = "main";
     private boolean inGame = false;
 
+    private Music mainMenuMusic;
+
     public MenuController() {
         root = Main.getRoot();
         primaryStage = Main.getPrimaryStage();
@@ -46,6 +50,9 @@ public class MenuController extends Controller {
         menuBox.layoutXProperty().bind(primaryStage.widthProperty().divide(2).subtract(menuBox.widthProperty().divide(2)));
         menuBox.layoutYProperty().bind(primaryStage.heightProperty().divide(2).subtract(menuBox.heightProperty().divide(2)));
         root.getChildren().addAll(menuBox);
+
+        mainMenuMusic = SoundController.getInstance().getMusic(SoundType.MAIN_MENU_THEME_01);
+        mainMenuMusic.play(true, 0.01);
 
         root.setOnKeyPressed(keyEvent -> {
             processInput(keyEvent);
@@ -135,6 +142,8 @@ public class MenuController extends Controller {
                 disablePlayerInput(false);
                 displayMenu("none");
                 GameLoop.startCounter();
+                mainMenuMusic.stop();
+                GameLoop.currentMusic.play(false,0.1);
             }));
             add(new MenuItem("Options", () -> {
                 displayMenu("options");

@@ -50,7 +50,6 @@ public class GameLoop extends Thread implements Runnable {
         gameControllers.add(MenuController.getInstance());
 
         currentMusic = SoundController.getInstance().getMusic(SoundType.THEME_01); // Music theme
-        currentMusic.play(false,0.01);
     }
 
 

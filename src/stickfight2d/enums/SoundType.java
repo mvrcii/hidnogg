@@ -4,7 +4,8 @@ import java.io.File;
 
 public enum SoundType {
 
-    THEME_01("theme_01.wav");
+    THEME_01("theme_01.wav"),
+    MAIN_MENU_THEME_01("main_menu_theme.wav");
 
     private final File file;
 
