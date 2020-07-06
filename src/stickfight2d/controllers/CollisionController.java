@@ -63,7 +63,8 @@ public class CollisionController extends Controller {
     private boolean player2_onGround = true;
     private boolean player2_hitsWall_Left = false;
     private boolean player2_hitsWall_Right = false;
-    private boolean player2_headBump;
+    private boolean player2_headBump = false;
+    private boolean[] inCave = new boolean[2];
 
     // --- --- Attack related states
     private boolean player1_hit_player2 = false;
@@ -105,6 +106,7 @@ public class CollisionController extends Controller {
         swordsHitting = checkCollisionSwordSword();
         disarming = checkDisarm();
 
+        checkWinningCondition();
         checkMapBoundaries();
     }
 
@@ -250,7 +252,7 @@ public class CollisionController extends Controller {
         boolean onGround = false;
         boolean hitsWallRight = false;
         boolean hitsWallLeft = false;
-        boolean headBump = false;
+        // boolean headBump = false;
         int pixelOffsetX = 8;
         int pixelOffsetX_2 = 10;
         int pixelOffsetY = 12;
@@ -269,9 +271,9 @@ public class CollisionController extends Controller {
                 player.currentObstacleStanding = obstacle;
             }
 
-            if (collisionRectRect(player, obstacle, pixelOffsetX_2, pixelOffsetX_2, 0, playersWidthHeight[1])) {
-                headBump = true;
-            }
+//            if (collisionRectRect(player, obstacle, pixelOffsetX_2, pixelOffsetX_2, 0, playersWidthHeight[1])) {
+//                headBump = true;
+//            }
 
             if (collisionRectRect(player, obstacle, playersWidthHeight[0], 0, pixelOffsetY, pixelOffsetY))  // Rect-Line collision >> Wall-right
                 hitsWallRight = true;
@@ -287,12 +289,12 @@ public class CollisionController extends Controller {
             player1_onGround = onGround;
             player1_hitsWall_Left = hitsWallRight;
             player1_hitsWall_Right = hitsWallLeft;
-            player1_headBump = headBump;
+//            player1_headBump = headBump;
         } else {
             player2_onGround = onGround;
             player2_hitsWall_Left = hitsWallRight;
             player2_hitsWall_Right = hitsWallLeft;
-            player2_headBump = headBump;
+//            player2_headBump = headBump;
         }
     }
 
@@ -310,27 +312,41 @@ public class CollisionController extends Controller {
 
     // ----------------------------------------------------------------------------------------------------
     // ----------------------------------------------------------------------------------------------------
-    // ---  checkMapBoundaries
+    // ---  checkMapBoundaries / winningCondition
 
 
     /**
-     *  Updates the map state, if a player reaches the opposite map boundary
+     * Updates the map state, if a player reaches the opposite map boundary
      */
     private void checkMapBoundaries() { // TODO :: MAKE NEW SPAWNS DEPENDENT ON MAP
-        Point2D player1 = CameraController.getInstance().convertWorldToScreen(players.get(0).getX(), players.get(0).getY());
-        Point2D player2 = CameraController.getInstance().convertWorldToScreen(players.get(1).getX(), players.get(0).getY());
-        Point2D map_begin = CameraController.getInstance().convertWorldToScreen(0,0);
-        Point2D map_end = CameraController.getInstance().convertWorldToScreen((int) Main.canvas.getWidth(),0);
+        CameraController cam = CameraController.getInstance();
+        Point2D player1 = cam.convertWorldToScreen(players.get(0).getX(), players.get(0).getY());
+        Point2D player2 = cam.convertWorldToScreen(players.get(1).getX(), players.get(0).getY());
+        Point2D map_begin = cam.convertWorldToScreen(0, 0);
+        Point2D map_end = cam.convertWorldToScreen((int) Main.canvas.getWidth(), 0);
 
         if (player1.getX() + playersWidthHeight[0] / 2.0 > map_end.getX()) { // Player 0
             background.setWorldState(background.getWorldState() + 1);
-            players.get(0).setXY(500, GameLoop.currentLevel.getGroundLevel());
-            players.get(1).setXY(700, GameLoop.currentLevel.getGroundLevel());
+            players.get(0).setXY(500, GameLoop.currentLevel.getGroundLevel() - 50);
+            players.get(1).setXY(700, GameLoop.currentLevel.getGroundLevel() - 50);
 
         } else if (player2.getX() - playersWidthHeight[0] / 2.0 < map_begin.getX()) { // Player 1
             background.setWorldState(background.getWorldState() + -1);
-            players.get(0).setXY(500, GameLoop.currentLevel.getGroundLevel());
-            players.get(1).setXY(700, GameLoop.currentLevel.getGroundLevel());
+            players.get(0).setXY(500, GameLoop.currentLevel.getGroundLevel() - 50);
+            players.get(1).setXY(700, GameLoop.currentLevel.getGroundLevel() - 50);
+        }
+    }
+
+    private void checkWinningCondition() {
+        CameraController cam = CameraController.getInstance();
+        Point2D player1 = cam.convertWorldToScreen(players.get(0).getX(), players.get(0).getY());
+        Point2D player2 = cam.convertWorldToScreen(players.get(1).getX(), players.get(0).getY());
+        Point2D ground = cam.convertWorldToScreen(0, (int) Main.canvas.getHeight());
+
+        if (player1.getY() > ground.getY()) {
+            inCave[0] = true;
+        } else if (player2.getY() > ground.getY()) {
+            inCave[1] = true;
         }
     }
 
@@ -419,6 +435,10 @@ public class CollisionController extends Controller {
             return false;
 
         return (type == PlayerType.PLAYER_TWO && disarming == 1) || (type == PlayerType.PLAYER_ONE && disarming == 2);
+    }
+
+    public boolean getWin(PlayerType type){
+        return (type == PlayerType.PLAYER_ONE) ? inCave[0] : inCave[1];
     }
 
     public int getSwordLength() {

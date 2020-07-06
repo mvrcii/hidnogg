@@ -25,6 +25,8 @@ public enum AnimationType {
     PLAYER_STEP_MEDIUM(30),
     PLAYER_STEP_HIGH(30),
 
+    PLAYER_WIN(30),
+
 
 
     SWORD(150);

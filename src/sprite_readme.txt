@@ -20,3 +20,4 @@ Row  |	Sprite
 17	step high
 18	step mid
 19	step low
+20  win / dance

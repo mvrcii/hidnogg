@@ -84,7 +84,7 @@ public class FrameData {
         if(getSwordStartPoint() != null){
             return swordEndPoint;
         }
-        throw new IllegalArgumentException("Sword start Point is null!");
+        throw new IllegalArgumentException("Sword start Point is null in frame"+frameNumber+"!");
     }
 
     public void setSwordEndPoint(Point2D swordEndPoint) {

@@ -38,8 +38,8 @@ public class Main extends Application {
 
         canvas.requestFocus();
         canvas.setFocusTraversable(true);
-        canvas.setScaleX(1);
-        canvas.setScaleY(1);
+        canvas.setScaleX(1.5);
+        canvas.setScaleY(1.5);
 
         root.getChildren().add(canvas);
 

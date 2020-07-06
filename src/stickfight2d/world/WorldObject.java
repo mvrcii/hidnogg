@@ -98,7 +98,7 @@ public class WorldObject {
         // Map 02
         obstacles.add(new RectangleObstacle(121, 624, 90, 30, Color.GREEN, mapState));
         obstacles.add(new RectangleObstacle(144, 601, 43, 30, Color.GREEN, mapState));
-        obstacles.add(new RectangleObstacle(460, 571, 118, 12, Color.GREEN, mapState));
+        obstacles.add(new RectangleObstacle(460, 571, 118, 8, Color.GREEN, mapState));
         obstacles.add(new RectangleObstacle(822, 625, 90, 30, Color.GREEN, mapState));
         obstacles.add(new RectangleObstacle(845, 601, 43, 30, Color.GREEN, mapState));
 
