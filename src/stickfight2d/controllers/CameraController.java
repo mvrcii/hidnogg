@@ -3,18 +3,22 @@ package stickfight2d.controllers;
 import javafx.geometry.Point2D;
 import stickfight2d.GameLoop;
 import stickfight2d.Main;
+import stickfight2d.enums.PlayerType;
 import stickfight2d.misc.Debugger;
 
 public class CameraController extends Controller{
 
     private static CameraController instance;
-
-    //camera position
-    private double camX,camY, desiredOffset;
-
     //players start positions
     Point2D player1StartPosition = null;
     Point2D player2StartPosition = null;
+    //camera position
+    private double camX,camY, desiredOffset;
+
+    private CameraController() {
+        camX = 0;
+        camY = 0;
+    }
 
     public static CameraController getInstance() {
         if (instance == null) {
@@ -22,11 +26,6 @@ public class CameraController extends Controller{
             instance = new CameraController();
         }
         return instance;
-    }
-
-    private CameraController() {
-        camX = 0;
-        camY = 0;
     }
 
     @Override
@@ -57,6 +56,18 @@ public class CameraController extends Controller{
         } else if (camX - desiredOffset > 70) {
             camX = 70 + desiredOffset;
         }
+
+        // TODO: If one player has won, switch camera focus to him
+        //       FIX ME :) war nur ein Versuch
+        /*
+        if(CollisionController.getInstance().getWin(PlayerType.PLAYER_ONE)){
+            camX = GameLoop.currentLevel.getPlayer1().getX();
+            camY = GameLoop.currentLevel.getPlayer1().getY();
+        }else if(CollisionController.getInstance().getWin(PlayerType.PLAYER_TWO)){
+            camX = GameLoop.currentLevel.getPlayer2().getX();
+            camY = GameLoop.currentLevel.getPlayer2().getY();
+        }
+        */
 
     }
 
