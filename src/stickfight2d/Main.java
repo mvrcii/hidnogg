@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    public static Canvas canvas;
+    public static Canvas canvas, backgroundCanvas;
     private static Group root;
     private static Stage primaryStage;
 
@@ -33,8 +33,9 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.setFullScreen(false);
 
-        Screen screen = Screen.getPrimary();
+
         canvas = new Canvas(SUB_MAP_WIDTH, SUB_MAP_HEIGHT);
+
 
         canvas.requestFocus();
         canvas.setFocusTraversable(true);
