@@ -252,7 +252,7 @@ public class CollisionController extends Controller {
         boolean onGround = false;
         boolean hitsWallRight = false;
         boolean hitsWallLeft = false;
-        boolean headBump = false;
+        // boolean headBump = false;
         int pixelOffsetX = 8;
         int pixelOffsetX_2 = 10;
         int pixelOffsetY = 12;
@@ -271,9 +271,9 @@ public class CollisionController extends Controller {
                 player.currentObstacleStanding = obstacle;
             }
 
-            if (collisionRectRect(player, obstacle, pixelOffsetX_2, pixelOffsetX_2, 0, playersWidthHeight[1])) {
-                headBump = true;
-            }
+//            if (collisionRectRect(player, obstacle, pixelOffsetX_2, pixelOffsetX_2, 0, playersWidthHeight[1])) {
+//                headBump = true;
+//            }
 
             if (collisionRectRect(player, obstacle, playersWidthHeight[0], 0, pixelOffsetY, pixelOffsetY))  // Rect-Line collision >> Wall-right
                 hitsWallRight = true;
@@ -289,12 +289,12 @@ public class CollisionController extends Controller {
             player1_onGround = onGround;
             player1_hitsWall_Left = hitsWallRight;
             player1_hitsWall_Right = hitsWallLeft;
-            player1_headBump = headBump;
+//            player1_headBump = headBump;
         } else {
             player2_onGround = onGround;
             player2_hitsWall_Left = hitsWallRight;
             player2_hitsWall_Right = hitsWallLeft;
-            player2_headBump = headBump;
+//            player2_headBump = headBump;
         }
     }
 
