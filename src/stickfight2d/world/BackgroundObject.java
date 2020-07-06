@@ -54,25 +54,25 @@ public class BackgroundObject extends GameObject {
         spawns_0.put(PlayerType.PLAYER_TWO, new Point2D(width - 100,500));
         map.put(0, spawns_0);
 
-        // Spawns Map_2
+        // Spawns Map_1
         HashMap<PlayerType, Point2D> spawns_1 = new HashMap<>();
         spawns_1.put(PlayerType.PLAYER_ONE, symmetricSpawns_P1);
         spawns_1.put(PlayerType.PLAYER_TWO, symmetricSpawns_P2);
         map.put(1, spawns_1);
 
-        // Spawns Map_3
+        // Spawns Map_2
         HashMap<PlayerType, Point2D> spawns_2 = new HashMap<>();
-        spawns_2.put(PlayerType.PLAYER_ONE, new Point2D(150, 500));
-        spawns_2.put(PlayerType.PLAYER_TWO, new Point2D(850, 500));
+        spawns_2.put(PlayerType.PLAYER_ONE, symmetricSpawns_P1);
+        spawns_2.put(PlayerType.PLAYER_TWO, symmetricSpawns_P2);
         map.put(2, spawns_2);
 
-        // Spawns Map_4
+        // Spawns Map_3
         HashMap<PlayerType, Point2D> spawns_3 = new HashMap<>();
         spawns_3.put(PlayerType.PLAYER_ONE, symmetricSpawns_P1);
         spawns_3.put(PlayerType.PLAYER_TWO, symmetricSpawns_P2);
         map.put(3, spawns_3);
 
-        // Spawns Map_5
+        // Spawns Map_4
         HashMap<PlayerType, Point2D> spawns_4 = new HashMap<>();
         spawns_4.put(PlayerType.PLAYER_ONE, new Point2D(100,500));
         spawns_4.put(PlayerType.PLAYER_TWO, new Point2D(400,500));
