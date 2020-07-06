@@ -49,8 +49,8 @@ public class WorldObject {
     }
 
     public void initObjects() {
-        player1 = new PlayerObject(300, groundLevel, PlayerType.PLAYER_ONE, DirectionType.RIGHT, Config.keySet1);
-        player2 = new PlayerObject((int)Main.canvas.getWidth()-300, groundLevel, PlayerType.PLAYER_TWO, DirectionType.RIGHT, Config.keySet2);
+        player1 = new PlayerObject((int)Main.canvas.getWidth()/2-150, groundLevel, PlayerType.PLAYER_ONE, DirectionType.RIGHT, Config.keySet1);
+        player2 = new PlayerObject((int)Main.canvas.getWidth()/2+150, groundLevel, PlayerType.PLAYER_TWO, DirectionType.RIGHT, Config.keySet2);
 
         gameObjects.add(fpsObject);
 
