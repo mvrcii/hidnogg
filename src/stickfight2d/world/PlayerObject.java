@@ -39,7 +39,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private double time_passed = 0;
 
-    private Animation animation = DataController.getInstance().getAnimation(PLAYER_WIN);
+    private Animation animation = DataController.getInstance().getAnimation(PLAYER_IDLE_MEDIUM);
     private AnimationType lastIdleAnimationType = PLAYER_IDLE_LOW;
 
     // Gravity-Ground detection
@@ -108,7 +108,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     @Override
     public void processInput(long diffMillis) {
         checkCollisions();
-
+        checkWin();
         handleDeathAnimation(diffMillis);
 
         if(!inputDisabled && this.alive) {
@@ -118,6 +118,14 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             handleDownKey();
             handleStabKey();
             handleJumpKey(diffMillis);
+        }
+    }
+
+    private void checkWin() {
+        if(CollisionController.getInstance().getWin(this.playerNumber)){
+            keyCon.setKeyPressBlockedP1(true);
+            keyCon.setKeyPressBlockedP2(true);
+            animation = animCon.getAnimation(PLAYER_WIN);
         }
     }
 
