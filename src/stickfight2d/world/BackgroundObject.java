@@ -93,6 +93,13 @@ public class BackgroundObject extends GameObject {
         gc.drawImage(worldSubImage, drawPoint.getX(), drawPoint.getY());
     }
 
+    /**
+     *  Updates player spawns when a new map is being loaded onto the screen
+     *
+     * @param worldState    new worldState, when new map has to be loaded
+     * @param p1            player1
+     * @param p2            player2
+     */
     public void setWorldState(int worldState, PlayerObject p1, PlayerObject p2) {
         this.worldState = worldState;
         this.subImageStartX = worldState * subImageWidth;

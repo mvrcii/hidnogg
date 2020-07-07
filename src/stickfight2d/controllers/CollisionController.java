@@ -94,6 +94,7 @@ public class CollisionController extends Controller {
         calculatePlayerRectangleHitBox();
     }
 
+
     /**
      * Updates information on player states
      */
@@ -118,8 +119,9 @@ public class CollisionController extends Controller {
     // --- Attack collisions
 
     /**
-     * Returns true, if there is a collision between the sword of player1 and the character of player2
-     * Logic >> Detects, where the swordTip-point (player1) is between two points of the player2-hitBox on the same y-level
+     * @param player1 Attacking player
+     * @param player2 Player who is being attacked
+     * @return [true] if player1-sword hits player2, [false] otherwise
      */
     private boolean collisionSwordAvatar(PlayerObject player1, PlayerObject player2) {
         if (nonStabAnimations.contains(player1.getAnimation().getAnimationType()) || player1.getSwordObject() == null) // Prevent horizontal stabbing in specific animations
@@ -180,7 +182,7 @@ public class CollisionController extends Controller {
 
 
     /**
-     * returns true if the swords collide
+     * @return [true] if swords of players collide, [false] otherwise
      */
     private boolean checkCollisionSwordSword() {
         if (players.get(0).getSwordObject() == null || players.get(1).getSwordObject() == null)
@@ -215,10 +217,9 @@ public class CollisionController extends Controller {
 
 
     /**
-     * Checks, if players should disarm each other
-     * returns:     0 if no one's disarmed
-     * 1 if player1 disarms player2
-     * 2 if player2 disarms player1
+     * Checks, if a player is being disarmed
+     *
+     * @return [1] if player1 disarms player2, [2] if player2 disarms player1, [0] otherwise
      */
     private int checkDisarm() {
         if (players.get(0).getSwordObject() == null || players.get(1).getSwordObject() == null)
@@ -249,6 +250,11 @@ public class CollisionController extends Controller {
     // ----------------------------------------------------------------------------------------------------
     // --- Obstacle collisions:
 
+    /**
+     * Updates collision-states of a player
+     *
+     * @param player player whose collision states are being updated
+     */
     private void updatePlayerObstacleCollisions(PlayerObject player) {
         // Flags that have to be set
         boolean onGround = false;
@@ -315,7 +321,15 @@ public class CollisionController extends Controller {
 
 
     /**
-     * Returns true, if there is a collision between the player and the given obstacle
+     * Checks, if a players rectangle hitBox collides with an obstacle
+     *
+     * @param player   Player whose collision is being checked
+     * @param obstacle Obstacle that is supposed to collide with the player
+     * @param x1       Offset on the left side of the players rectangle hitBox (added)
+     * @param x2       Offset on the right side of the players rectangle hitBox (subtracted)
+     * @param y1       Offset on the top of the players hitBox (added)
+     * @param y2       Offset on the bottom of the players hitBox (subtracted)
+     * @return [true] if there is a collision between {player} and {obstacle}
      */
     private boolean collisionRectRect(PlayerObject player, RectangleObstacle obstacle, int x1, int x2, int y1, int y2) {
         return (player.getX() + x1 <= obstacle.getX() + obstacle.getWidth() // Checks, that rect2 is close enough from the left side
@@ -339,10 +353,10 @@ public class CollisionController extends Controller {
         Point2D map_begin = cam.convertWorldToScreen(0, 0);
         Point2D map_end = cam.convertWorldToScreen((int) Main.canvas.getWidth(), 0);
 
-        if (player1.getX() + playersWidthHeight[0] / 2.0 > map_end.getX()) { // Player 0
+        if (player1.getX() + playersWidthHeight[0] / 2.0 > map_end.getX()) { // Player1 leaves map boundary on the right side
             background.setWorldState(background.getWorldState() + 1, players.get(0), players.get(1));
 
-        } else if (player2.getX() - playersWidthHeight[0] / 2.0 < map_begin.getX()) { // Player 1
+        } else if (player2.getX() - playersWidthHeight[0] / 2.0 < map_begin.getX()) { // Player2 leaves map boundary on the left side
             background.setWorldState(background.getWorldState() - 1, players.get(0), players.get(1));
         }
     }

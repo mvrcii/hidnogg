@@ -1,7 +1,11 @@
 package stickfight2d.world;
 
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import stickfight2d.GameLoop;
+import stickfight2d.controllers.CameraController;
+import stickfight2d.misc.Config;
 
 public class RectangleObstacle extends GameObject {
 
@@ -34,18 +38,15 @@ public class RectangleObstacle extends GameObject {
     }
 
     @Override
-    public void draw(GraphicsContext gc) { // Don't have to be drawn
-//        if (this.mapState != GameLoop.currentLevel.getBackground().getWorldState() && this.mapState >= 0)
-//            return;
-//
-//        if ((GameLoop.currentLevel.getBackground().getWorldState() == 0 && this.mapState == -4)
-//                || (GameLoop.currentLevel.getBackground().getWorldState() == 4 && this.mapState == -3)
-//                || GameLoop.currentLevel.getBackground().getWorldState() != 0 && GameLoop.currentLevel.getBackground().getWorldState() != 4)
-//            return;
-//
-//        Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
-//        gc.setFill(this.color);
-//        gc.fillRect(drawPoint.getX(), drawPoint.getY(), this.width, this.height);
+    public void draw(GraphicsContext gc) {
+        if (!Config.debug_mode
+                || this.mapState != GameLoop.currentLevel.getBackground().getWorldState() && this.mapState >= 0
+                || this.mapState < 0 && !(GameLoop.currentLevel.getBackground().getWorldState() == 0 || GameLoop.currentLevel.getBackground().getWorldState() == 4))
+            return;
+
+        Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
+        gc.setFill(this.color);
+        gc.fillRect(drawPoint.getX(), drawPoint.getY(), this.width, this.height);
     }
 
     // ----------------------------------------------------------------------------------------------------
