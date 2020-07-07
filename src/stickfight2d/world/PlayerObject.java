@@ -16,6 +16,7 @@ import stickfight2d.misc.Debugger;
 import stickfight2d.misc.KeySet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -34,7 +35,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private boolean canAccelerate;
     private boolean onGround;
     private boolean alive;
-    private boolean spread_blood = false;
+    private boolean spread_blood[] = new boolean[10];
     private boolean inputDisabled;
 
     private double time_passed = 0;
@@ -55,6 +56,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         this.swordObject = new SwordObject(this.x, this.y, DirectionType.RIGHT, this);
         GameLoop.currentLevel.addSword(swordObject);
 
+        Arrays.fill(spread_blood, Boolean.FALSE);
         this.onGround = true;
         this.alive = true;
         this.inputDisabled = false;
@@ -201,40 +203,62 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
     private void handleDeathAnimation(double diffMillis) {
-        /*
+
+        Point2D[] bloodPoints = new Point2D[]{    //   Frame   X       Y
+                new Point2D(12,19),     //   0       12      19
+                new Point2D(11,55),     //   1       11      55
+                new Point2D(9,30),      //   2       9       30
+                new Point2D(16,30),     //   3       16      30
+                new Point2D(23,35),     //   4       23      35
+                new Point2D(28,38),     //   5       28      38
+                new Point2D(29,41),     //   6       29      41
+                new Point2D(29,41),     //   7       29      41
+                new Point2D(30,42),     //   8       30      42
+                new Point2D(29,42)};    //   9       29      42
+
         if(animation.getAnimationType() == PLAYER_DYING){
-            Point2D[] bloodPoints = new Point2D[];
+            if(animation.isLastFrame()){
+                animation.stop();
+            }
+            int i = animation.getCurrentFrameNumber();
 
+            if(!spread_blood[i]){
+                int xOffset = (int) bloodPoints[i].getX();
+                int yOffset = (int) bloodPoints[i].getY();
+
+                switch (directionType){
+                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x, y+yOffset, DirectionType.RIGHT,30,300,2,10,180,60));
+                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x+xOffset, y+yOffset, DirectionType.RIGHT,30,300,2,10,180,60));
+                }
+                /*
+                switch (directionType){
+                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x, y+yOffset, DirectionType.RIGHT,600,1500,2,15,180,60));
+                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x+xOffset, y+yOffset, DirectionType.RIGHT,600,1500,2,15,180,60));
+                }
+                 */
+                spread_blood[i] = true;
+            }
         }
-        */
 
+
+        /*
         if(animation.isLastFrame() && animation.getAnimationType() == PLAYER_DYING){
            animation.stop();
            if(!spread_blood){
                switch (directionType){
-                   //   Frame   X       Y
-                   //   1       12      19
-                   //   2       11      55
-                   //   3       9       30
-                   //   4       16      30
-                   //   5       23      35
-                   //   6       28      38
-                   //   7       29      41
-                   //   8       29      41
-                   //   9       30      42
-                   //   10      29     42
                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x, y+38, DirectionType.RIGHT,600,1500,2,15,180,60));
                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x+36, y+38, DirectionType.RIGHT,600,1500,2,15,180,60));
                }
                spread_blood = true;
            }
-
         }
+        */
+
         if(!alive){
             time_passed += diffMillis;
             if(time_passed > Config.T_RESPAWN){
                 GameLoop.currentLevel.respawnPlayer(this);
-                spread_blood = false;
+                Arrays.fill(spread_blood,Boolean.FALSE);
             }
         }
     }
