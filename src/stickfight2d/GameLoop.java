@@ -3,7 +3,6 @@ package stickfight2d;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Control;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -13,10 +12,8 @@ import javafx.stage.Stage;
 import kuusisto.tinysound.Music;
 import kuusisto.tinysound.TinySound;
 import stickfight2d.controllers.*;
-import stickfight2d.enums.LevelType;
 import stickfight2d.enums.SoundType;
 import stickfight2d.interfaces.InputSystem;
-import stickfight2d.misc.Config;
 import stickfight2d.world.GameObject;
 import stickfight2d.world.WorldObject;
 

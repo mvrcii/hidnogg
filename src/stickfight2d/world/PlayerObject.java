@@ -227,8 +227,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 int yOffset = (int) bloodPoints[i].getY();
 
                 switch (directionType){
-                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x, y+yOffset, DirectionType.RIGHT,30,300,2,10,180,60));
-                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x+xOffset, y+yOffset, DirectionType.RIGHT,30,300,2,10,180,60));
+                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x, y+yOffset, DirectionType.RIGHT,30,300,2,10,180,60,"0xFF0000",4));
+                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x+xOffset, y+yOffset, DirectionType.RIGHT,30,300,2,10,180,60,"0xFF0000",4));
                 }
                 /*
                 switch (directionType){
@@ -591,4 +591,3 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     public void setInputDisabled(boolean inputDisabled) { this.inputDisabled = inputDisabled;}
 }
-
