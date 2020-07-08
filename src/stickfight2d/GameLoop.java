@@ -1,8 +1,8 @@
 package stickfight2d;
 
-import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -165,6 +165,6 @@ public class GameLoop extends Thread implements Runnable {
             KeyController.getInstance().setKeyPressBlockedP1(true);
             KeyController.getInstance().setKeyPressBlockedP2(true);
         });
-        }
+    }
 
 }
