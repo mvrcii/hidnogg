@@ -12,13 +12,17 @@ public class ParticleObject extends GameObject {
     protected int lifetimeRemaining;
     protected boolean alive = true;
     protected boolean onGround = false;
+    protected String color;
+    protected int size;
 
-    public ParticleObject(int x, int y, double vx, double vy, int lifetime) {
+    public ParticleObject(int x, int y, double vx, double vy, int lifetime,String color,int size) {
         super(x, y, DirectionType.RIGHT);
         this.vx = vx;
         this.vy = vy;
         this.lifetime = lifetime;
         this.lifetimeRemaining = lifetime;
+        this.color = color;
+        this.size = size;
     }
 
     @Override
@@ -47,8 +51,8 @@ public class ParticleObject extends GameObject {
     public void draw(GraphicsContext gc) {
         if (alive) {
             Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
-            gc.setFill(Color.web("0xFF0000", (lifetimeRemaining / (float) lifetime)));
-            gc.fillOval((int) drawPoint.getX(), (int) drawPoint.getY(), 4, 4);
+            gc.setFill(Color.web(color, (lifetimeRemaining / (float) lifetime)));
+            gc.fillOval((int) drawPoint.getX(), (int) drawPoint.getY(), size, size);
         }
     }
 
@@ -59,7 +63,4 @@ public class ParticleObject extends GameObject {
                 && particle.getY() <= obstacle.getY() + obstacle.getHeight()
                 && particle.getY() >= obstacle.getY());
     }
-
-
-
 }

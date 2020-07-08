@@ -46,9 +46,21 @@ public class CameraController extends Controller{
         Point2D diffPlayer1 = new Point2D(GameLoop.currentLevel.getPlayer1().getX() - player1StartPosition.getX(), GameLoop.currentLevel.getPlayer1().getY() - player1StartPosition.getY());
         Point2D diffPlayer2 = new Point2D(GameLoop.currentLevel.getPlayer2().getX() - player2StartPosition.getX(), GameLoop.currentLevel.getPlayer2().getY() - player2StartPosition.getY());
 
-        //calculate center point for camera
-        camX = lerp(camX, (diffPlayer1.getX() + diffPlayer2.getX()) / 2 + desiredOffset, 0.005 * diffMillis);
-        camY = lerp(camY, (diffPlayer1.getY() + diffPlayer2.getY()) / 2, 0.005 * diffMillis);
+
+        //calculate camera position based on win condition
+        if (CollisionController.getInstance().getWin(PlayerType.PLAYER_ONE)) {
+            camX = lerp(camX, (diffPlayer1.getX()) + desiredOffset, 0.005 * diffMillis);
+            camY = lerp(camY, (diffPlayer1.getY()), 0.005 * diffMillis);
+        } else if (CollisionController.getInstance().getWin(PlayerType.PLAYER_TWO)) {
+            camX = lerp(camX, (diffPlayer2.getX()) + desiredOffset, 0.005 * diffMillis);
+            camY = lerp(camY, (diffPlayer2.getY()), 0.005 * diffMillis);
+        } else {
+            //calculate center point for camera if game is running
+            camX = lerp(camX, (diffPlayer1.getX() + diffPlayer2.getX()) / 2 + desiredOffset, 0.005 * diffMillis);
+            camY = lerp(camY, (diffPlayer1.getY() + diffPlayer2.getY()) / 2, 0.005 * diffMillis);
+        }
+
+
 
         //hardcoded screen boundaries
         if (camX - desiredOffset < -100) {
@@ -56,18 +68,6 @@ public class CameraController extends Controller{
         } else if (camX - desiredOffset > 70) {
             camX = 70 + desiredOffset;
         }
-
-        // TODO: If one player has won, switch camera focus to him
-        //       FIX ME :) war nur ein Versuch
-        /*
-        if(CollisionController.getInstance().getWin(PlayerType.PLAYER_ONE)){
-            camX = GameLoop.currentLevel.getPlayer1().getX();
-            camY = GameLoop.currentLevel.getPlayer1().getY();
-        }else if(CollisionController.getInstance().getWin(PlayerType.PLAYER_TWO)){
-            camX = GameLoop.currentLevel.getPlayer2().getX();
-            camY = GameLoop.currentLevel.getPlayer2().getY();
-        }
-        */
 
     }
 

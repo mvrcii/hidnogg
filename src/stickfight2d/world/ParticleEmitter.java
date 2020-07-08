@@ -19,9 +19,10 @@ public class ParticleEmitter extends GameObject {
     private boolean mirrored = true;
     private final List<ParticleObject> particles;
     private int totalTime;
+    private String color;
+    private int size;
 
-
-    public ParticleEmitter(int x, int y, DirectionType direction, int amount, int time, int speed, int speedRandomness, int angle, int angleRandomness) {
+    public ParticleEmitter(int x, int y, DirectionType direction, int amount, int time, int speed, int speedRandomness, int angle, int angleRandomness,String color,int size) {
         super(x, y, direction);
         this.totalTime = time;
         this.amount = amount;
@@ -29,7 +30,8 @@ public class ParticleEmitter extends GameObject {
         this.speedRandomness = speedRandomness;
         this.angle = Math.toRadians(angle);
         this.angleRandomness = angleRandomness;
-
+        this.color=color;
+        this.size=size;
         particles = new ArrayList<ParticleObject>();
     }
 
@@ -43,7 +45,7 @@ public class ParticleEmitter extends GameObject {
             //TODO BUG: Particles left from emitter behave slightly differently than right from it
             //double rngAngle = randomAngleInvert(1.0+(i*0.1));
             //double rngAngle = rand.nextDouble((Math.PI/4.0),(3.0*Math.PI)/4.0);
-            double rngAngle = randomAngleInvert(angle + Math.toRadians(rng.nextInt(angleRandomness) - angleRandomness / 2.0));
+            double rngAngle = randomAngleInvert(angle + Math.toRadians(rng.nextInt(angleRandomness) - angleRandomness / 2.0));//randomAngleInvert
             //double rngAngle = randomAngleInvert(angle+Math.toRadians(continuousRng((totalTime+ (count-i)*diffMillis /(double)count)/10.0)*angleRandomness));
 
             //double rngSpeed = speed;
@@ -51,7 +53,7 @@ public class ParticleEmitter extends GameObject {
             double rngSpeed = (speed+continuousRng((totalTime+ (count-i)*diffMillis /(double)count)/150.0)*speedRandomness);//(continuousRng((totalTime)/100.0)*speedRandomness)
 
             //System.out.println(rngAngle);
-            particles.add(new ParticleObject(x, y, Math.cos(rngAngle) * rngSpeed, Math.sin(rngAngle) * rngSpeed, 1000));
+            particles.add(new ParticleObject(x, y, Math.cos(rngAngle) * rngSpeed, Math.sin(rngAngle) * rngSpeed, 1000,color,size));
         }
     }
 
@@ -79,7 +81,6 @@ public class ParticleEmitter extends GameObject {
 
     @Override
     public void draw(GraphicsContext gc) {
-        //TODO BUG: Every 10-15 runs we get stuck in a thread lock
         for (ParticleObject p : particles) {
             p.draw(gc);
         }

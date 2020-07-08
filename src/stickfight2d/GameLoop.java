@@ -1,5 +1,6 @@
 package stickfight2d;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -151,17 +152,19 @@ public class GameLoop extends Thread implements Runnable {
         Platform.runLater(() -> {
             Stage stage = Main.getPrimaryStage();
             counterOn = true;
+            VBox counterBox = new VBox();
+            counterBox.layoutXProperty().bind(Main.getPrimaryStage().widthProperty().divide(2).subtract(counterBox.widthProperty().divide(2)));
+            counterBox.layoutYProperty().bind(Main.getPrimaryStage().heightProperty().divide(2).subtract(counterBox.heightProperty().divide(2)));
             counterText = new Text("Get ready!");
             counterText.setTextAlignment(TextAlignment.CENTER);
-            counterText.setX(stage.getWidth() / 2 - 140);
-            counterText.setY(stage.getHeight() / 2);
             counterText.setFill(Color.LIGHTGREEN);
             counterText.setFont(Font.font("Verdana", 50));
-            Main.getRoot().getChildren().add(counterText);
+            counterBox.getChildren().add(counterText);
+            Main.getRoot().getChildren().add(counterBox);
 
             KeyController.getInstance().setKeyPressBlockedP1(true);
             KeyController.getInstance().setKeyPressBlockedP2(true);
         });
-    }
+        }
 
 }
