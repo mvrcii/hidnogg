@@ -1,7 +1,6 @@
 package stickfight2d.controllers;
 
 import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
 import stickfight2d.GameLoop;
 import stickfight2d.Main;
 import stickfight2d.enums.AnimationType;
@@ -46,7 +45,11 @@ public class CollisionController extends Controller {
             AnimationType.PLAYER_JUMP_PEAK,
             AnimationType.PLAYER_JUMP_END,
             AnimationType.PLAYER_DYING,
-            AnimationType.SWORD).collect(Collectors.toCollection(HashSet::new));
+            AnimationType.SWORD,
+            AnimationType.PLAYER_IDLE_NO_SWORD,
+            AnimationType.PLAYER_STAB_NO_SWORD,
+            AnimationType.PLAYER_CROUCH,
+            AnimationType.PLAYER_WIN).collect(Collectors.toCollection(HashSet::new));
     private static int swordLength = 0; // swordLength for sword-tip-calculation
 
     // --- --- --- Obstacle-Collision related data
@@ -64,7 +67,7 @@ public class CollisionController extends Controller {
     private boolean player2_hitsWall_Left = false;
     private boolean player2_hitsWall_Right = false;
     private boolean player2_headBump = false;
-    private boolean[] inCave = new boolean[2];
+    private final boolean[] inCave = new boolean[2];
 
     // --- --- Attack related states
     private boolean player1_hit_player2 = false;
@@ -82,15 +85,15 @@ public class CollisionController extends Controller {
             if (obj instanceof PlayerObject) {
                 players.add((PlayerObject) obj);
                 ((PlayerObject) obj).currentObstacleStanding = GameLoop.currentLevel.getGround();
-            }
 
-            if (obj instanceof RectangleObstacle) { // Collect RectangleObjects
+            } else if (obj instanceof RectangleObstacle) { // Collect RectangleObjects
                 obstacles.add((RectangleObstacle) obj);
             }
         }
 
-        fillPlayerRectangleHitBox();
+        calculatePlayerRectangleHitBox();
     }
+
 
     /**
      * Updates information on player states
@@ -116,8 +119,9 @@ public class CollisionController extends Controller {
     // --- Attack collisions
 
     /**
-     * Returns true, if there is a collision between the sword of player1 and the character of player2
-     * Logic >> Detects, where the swordTip-point (player1) is between two points of the player2-hitBox on the same y-level
+     * @param player1 Attacking player
+     * @param player2 Player who is being attacked
+     * @return [true] if player1-sword hits player2, [false] otherwise
      */
     private boolean collisionSwordAvatar(PlayerObject player1, PlayerObject player2) {
         if (nonStabAnimations.contains(player1.getAnimation().getAnimationType()) || player1.getSwordObject() == null) // Prevent horizontal stabbing in specific animations
@@ -167,9 +171,8 @@ public class CollisionController extends Controller {
             }
         }
 
-        if (idx == 0) { // No collision possible, sword isn't on the same y position as the player
+        if (idx == 0) // No collision possible, sword isn't on the same y position as the player
             return false;
-        }
 
         int firstSign = ((int) swordTip.getX() - ((int) points[0].getX() + player2.getX() - offsetHitBox));
         int secondSign = ((int) swordTip.getX() - ((int) points[1].getX() + player2.getX() - offsetHitBox));
@@ -179,7 +182,7 @@ public class CollisionController extends Controller {
 
 
     /**
-     * returns true if the swords collide
+     * @return [true] if swords of players collide, [false] otherwise
      */
     private boolean checkCollisionSwordSword() {
         if (players.get(0).getSwordObject() == null || players.get(1).getSwordObject() == null)
@@ -212,11 +215,11 @@ public class CollisionController extends Controller {
         return onSameY && onSameXInterval;
     }
 
+
     /**
-     * Checks, if players should disarm each other
-     * returns:     0 if no one's disarmed
-     * 1 if player1 disarms player2
-     * 2 if player2 disarms player1
+     * Checks, if a player is being disarmed
+     *
+     * @return [1] if player1 disarms player2, [2] if player2 disarms player1, [0] otherwise
      */
     private int checkDisarm() {
         if (players.get(0).getSwordObject() == null || players.get(1).getSwordObject() == null)
@@ -226,17 +229,16 @@ public class CollisionController extends Controller {
         AnimationType p2_anim = players.get(1).getAnimation().getAnimationType();
         int type = 0;
 
-        if (!(p1_anim != p2_anim || p1_prevState == p2_prevState)) {
+        if (!(p1_anim != p2_anim || p1_prevState == p2_prevState) && !(p1_prevState == AnimationType.PLAYER_WALK || p2_prevState == AnimationType.PLAYER_WALK)) {
             // Invariant: p1 and p2 are in the same animation, one of both had a different previous animation
-            if (!(p1_prevState == AnimationType.PLAYER_WALK || p2_prevState == AnimationType.PLAYER_WALK)) {
 
-                if (p1_anim == p1_prevState && swordsHitting)
-                    type = 2;
+            if (p1_anim == p1_prevState && swordsHitting)
+                type = 2;
 
-                else if (p2_anim == p2_prevState && swordsHitting)
-                    type = 1;
-            }
+            else if (p2_anim == p2_prevState && swordsHitting)
+                type = 1;
         }
+
         // Update player states
         p1_prevState = p1_anim;
         p2_prevState = p2_anim;
@@ -248,38 +250,57 @@ public class CollisionController extends Controller {
     // ----------------------------------------------------------------------------------------------------
     // --- Obstacle collisions:
 
+    /**
+     * Updates collision-states of a player
+     *
+     * @param player player whose collision states are being updated
+     */
     private void updatePlayerObstacleCollisions(PlayerObject player) {
+        // Flags that have to be set
         boolean onGround = false;
         boolean hitsWallRight = false;
         boolean hitsWallLeft = false;
-        // boolean headBump = false;
+        boolean headBump = false;
+
+        // RectangleHitBox offset for head, feet and arms
         int pixelOffsetX = 8;
         int pixelOffsetX_2 = 10;
         int pixelOffsetY = 12;
 
         // Check Avatar-Obstacle collisions
         for (RectangleObstacle obstacle : obstacles) {
-            int currentMap = GameLoop.currentLevel.getBackground().getWorldState();
-            if (obstacle.getMapState() != currentMap)
+            int currentMapState = background.getWorldState();
+            int obstacleMapState = obstacle.getMapState();
+            PlayerType playerNumber = player.getPlayerNumber();
+
+            if (obstacleMapState != currentMapState && obstacle.getMapState() >= 0 // Obstacle not in current map state
+                    || (!collisionRectRect(player, obstacle, 0, 0, 0, 0)) // Rect-Rect collision
+                    || ((obstacleMapState == -2 && playerNumber == PlayerType.PLAYER_ONE)) // Let player1 pass through right boundary
+                    || (obstacleMapState == -1 && playerNumber == PlayerType.PLAYER_TWO) // Let player2 pass through left boundary
+                    || ((obstacleMapState == -3 || obstacleMapState == -4) && (currentMapState != 0 && currentMapState != 4)) // Let anyone pass through cave obstacles in worlds 1,2,3
+                    || (obstacleMapState == -4 && playerNumber == PlayerType.PLAYER_ONE) // Let player1 pass through right cave blocker
+                    || (obstacleMapState == -3 && playerNumber == PlayerType.PLAYER_TWO) // Let player2 pass through left cave blocker
+                    || (obstacleMapState == -3 && currentMapState == 4) // In world 4, let anyone pass through left cave blocker
+                    || (obstacleMapState == -4 && currentMapState == 0)) // In world 0, let anyone pass through right cave blocker
                 continue;
 
-            if (!collisionRectRect(player, obstacle, 0, 0, 0, 0)) // Rect-Rect collision
-                continue; // Obstacle not near the player >> irrelevant for collision detection
-
-            if (collisionRectRect(player, obstacle, pixelOffsetX, pixelOffsetX, playersWidthHeight[1], 0)) {// Rect-Line collision >> Ground
+            // Ground collision
+            if (collisionRectRect(player, obstacle, pixelOffsetX, pixelOffsetX, playersWidthHeight[1], 0)) {
                 onGround = true;
                 player.currentObstacleStanding = obstacle;
             }
 
-//            if (collisionRectRect(player, obstacle, pixelOffsetX_2, pixelOffsetX_2, 0, playersWidthHeight[1])) {
-//                headBump = true;
-//            }
+            // Head collision in caves only (not in map-start-state)
+            if (collisionRectRect(player, obstacle, pixelOffsetX_2, pixelOffsetX_2, 0, playersWidthHeight[1]) && (GameLoop.currentLevel.getBackground().getWorldState() != 2))
+                headBump = true;
 
-            if (collisionRectRect(player, obstacle, playersWidthHeight[0], 0, pixelOffsetY, pixelOffsetY))  // Rect-Line collision >> Wall-right
+            // Wall collisions
+            if (collisionRectRect(player, obstacle, playersWidthHeight[0], 0, pixelOffsetY, pixelOffsetY)) // Rect-Line collision >> Wall-right
                 hitsWallRight = true;
             else if (collisionRectRect(player, obstacle, 0, playersWidthHeight[0], pixelOffsetY, pixelOffsetY)) // Rect-Line collision >> Wall-left
                 hitsWallLeft = true;
 
+            // Break if relevant obstacles have been found
             if ((hitsWallRight || hitsWallLeft) && onGround) // States have been set, no need to continue
                 break;
         }
@@ -289,18 +310,26 @@ public class CollisionController extends Controller {
             player1_onGround = onGround;
             player1_hitsWall_Left = hitsWallRight;
             player1_hitsWall_Right = hitsWallLeft;
-//            player1_headBump = headBump;
+            player1_headBump = headBump;
         } else {
             player2_onGround = onGround;
             player2_hitsWall_Left = hitsWallRight;
             player2_hitsWall_Right = hitsWallLeft;
-//            player2_headBump = headBump;
+            player2_headBump = headBump;
         }
     }
 
 
     /**
-     * Returns true, if there is a collision between the player and the given obstacle
+     * Checks, if a players rectangle hitBox collides with an obstacle
+     *
+     * @param player   Player whose collision is being checked
+     * @param obstacle Obstacle that is supposed to collide with the player
+     * @param x1       Offset on the left side of the players rectangle hitBox (added)
+     * @param x2       Offset on the right side of the players rectangle hitBox (subtracted)
+     * @param y1       Offset on the top of the players hitBox (added)
+     * @param y2       Offset on the bottom of the players hitBox (subtracted)
+     * @return [true] if there is a collision between {player} and {obstacle}
      */
     private boolean collisionRectRect(PlayerObject player, RectangleObstacle obstacle, int x1, int x2, int y1, int y2) {
         return (player.getX() + x1 <= obstacle.getX() + obstacle.getWidth() // Checks, that rect2 is close enough from the left side
@@ -314,38 +343,37 @@ public class CollisionController extends Controller {
     // ----------------------------------------------------------------------------------------------------
     // ---  checkMapBoundaries / winningCondition
 
-
     /**
      * Updates the map state, if a player reaches the opposite map boundary
      */
-    private void checkMapBoundaries() { // TODO :: MAKE NEW SPAWNS DEPENDENT ON MAP
+    private void checkMapBoundaries() {
         CameraController cam = CameraController.getInstance();
         Point2D player1 = cam.convertWorldToScreen(players.get(0).getX(), players.get(0).getY());
         Point2D player2 = cam.convertWorldToScreen(players.get(1).getX(), players.get(0).getY());
         Point2D map_begin = cam.convertWorldToScreen(0, 0);
         Point2D map_end = cam.convertWorldToScreen((int) Main.canvas.getWidth(), 0);
 
-        if (player1.getX() + playersWidthHeight[0] / 2.0 > map_end.getX()) { // Player 0
-            background.setWorldState(background.getWorldState() + 1);
-            players.get(0).setXY(500, GameLoop.currentLevel.getGroundLevel() - 50);
-            players.get(1).setXY(700, GameLoop.currentLevel.getGroundLevel() - 50);
+        if (player1.getX() + playersWidthHeight[0] / 2.0 > map_end.getX()) { // Player1 leaves map boundary on the right side
+            background.setWorldState(background.getWorldState() + 1, players.get(0), players.get(1));
 
-        } else if (player2.getX() - playersWidthHeight[0] / 2.0 < map_begin.getX()) { // Player 1
-            background.setWorldState(background.getWorldState() + -1);
-            players.get(0).setXY(500, GameLoop.currentLevel.getGroundLevel() - 50);
-            players.get(1).setXY(700, GameLoop.currentLevel.getGroundLevel() - 50);
+        } else if (player2.getX() - playersWidthHeight[0] / 2.0 < map_begin.getX()) { // Player2 leaves map boundary on the left side
+            background.setWorldState(background.getWorldState() - 1, players.get(0), players.get(1));
         }
     }
 
+
+    /**
+     * Sets boolean flag for player, that reaches the cave
+     */
     private void checkWinningCondition() {
         CameraController cam = CameraController.getInstance();
         Point2D player1 = cam.convertWorldToScreen(players.get(0).getX(), players.get(0).getY());
-        Point2D player2 = cam.convertWorldToScreen(players.get(1).getX(), players.get(0).getY());
-        Point2D ground = cam.convertWorldToScreen(0, (int) Main.canvas.getHeight());
+        Point2D player2 = cam.convertWorldToScreen(players.get(1).getX(), players.get(1).getY());
+        Point2D ground = cam.convertWorldToScreen(0, (int) Main.canvas.getHeight() * 4 / 3);
 
-        if (player1.getY() > ground.getY()) {
+        if (player1.getY() > ground.getY() && player1_onGround && background.getWorldState() == 4) {
             inCave[0] = true;
-        } else if (player2.getY() > ground.getY()) {
+        } else if (player2.getY() > ground.getY() && player2_onGround && background.getWorldState() == 0) {
             inCave[1] = true;
         }
     }
@@ -355,7 +383,7 @@ public class CollisionController extends Controller {
     // ----------------------------------------------------------------------------------------------------
     // ---  calcRectHitBox
 
-    private void fillPlayerRectangleHitBox() {
+    private void calculatePlayerRectangleHitBox() {
         int x_min = Integer.MAX_VALUE, x_max = Integer.MIN_VALUE, y_min = Integer.MAX_VALUE, y_max = Integer.MIN_VALUE;
         ArrayList<Point2D> hitBoxPoints;
 
@@ -384,7 +412,11 @@ public class CollisionController extends Controller {
 
     // ----------------------------------------------------------------------------------------------------
     // ----------------------------------------------------------------------------------------------------
-    // --- Getter / Setter
+    // --- Getter/Setter - PlayerHitBox :: Player Data
+
+    public HashSet<AnimationType> getNonStabAnimations() {
+        return nonStabAnimations;
+    }
 
     public static void setSwordLength(int length) { // static to allow call before Instance is constructed
         swordLength = length;
@@ -393,6 +425,19 @@ public class CollisionController extends Controller {
     public int[] getPlayersWidthHeight() {
         return playersWidthHeight;
     }
+
+    public int getSwordLength() {
+        return swordLength;
+    }
+
+    public Point2D[] getRectHitBoxP1_P2() {
+        return rectHitBoxP1_P2;
+    }
+
+
+    // ----------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------
+    // --- Getter/Setter - PlayerStates :: Obstacle / Map related
 
     public boolean getPlayerOnGround(PlayerType type) {
         return ((type == PlayerType.PLAYER_ONE) ? player1_onGround : player2_onGround);
@@ -410,16 +455,21 @@ public class CollisionController extends Controller {
         return ((type == PlayerType.PLAYER_ONE) ? player1_hitsWall_Right : player2_hitsWall_Right);
     }
 
+    public boolean getWin(PlayerType type) {
+        return (type == PlayerType.PLAYER_ONE) ? inCave[0] : inCave[1];
+    }
+
+
+    // ----------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------
+    // --- Getter/Setter - PlayerStates :: Attack related
+
     public boolean getPlayerHitOtherPlayer(PlayerType type) {
         return ((type == PlayerType.PLAYER_ONE) ? player1_hit_player2 : player2_hit_player1);
     }
 
     public boolean getPlayerHit(PlayerType type) {
         return ((type == PlayerType.PLAYER_ONE) ? player2_hit_player1 : player1_hit_player2);
-    }
-
-    public HashSet<AnimationType> getNonStabAnimations() {
-        return nonStabAnimations;
     }
 
     public boolean getSwordsHitting() {
@@ -435,17 +485,5 @@ public class CollisionController extends Controller {
             return false;
 
         return (type == PlayerType.PLAYER_TWO && disarming == 1) || (type == PlayerType.PLAYER_ONE && disarming == 2);
-    }
-
-    public boolean getWin(PlayerType type){
-        return (type == PlayerType.PLAYER_ONE) ? inCave[0] : inCave[1];
-    }
-
-    public int getSwordLength() {
-        return swordLength;
-    }
-
-    public Point2D[] getRectHitBoxP1_P2() {
-        return rectHitBoxP1_P2;
     }
 }

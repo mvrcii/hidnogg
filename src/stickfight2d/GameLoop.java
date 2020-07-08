@@ -1,5 +1,7 @@
 package stickfight2d;
 
+import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Control;
 import javafx.scene.layout.VBox;
@@ -44,7 +46,7 @@ public class GameLoop extends Thread implements Runnable {
         gameControllers.add(CameraController.getInstance());
         gameControllers.add(SoundController.getInstance());
 
-        currentLevel = new WorldObject(LevelType.LEVEL_ONE);
+        currentLevel = new WorldObject();
         currentLevel.initObjects();
 
         gameControllers.add(CollisionController.getInstance());

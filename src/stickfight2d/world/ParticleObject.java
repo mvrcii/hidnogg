@@ -28,12 +28,12 @@ public class ParticleObject extends GameObject {
             alive = false;
         } else {
             if (onGround) {
-                vy = vy * 0.99;
-                vx = vx * 0.95;
+                vy = vy * 0.999;
+                vx = vx * 0.999;
             } else if (collisionRectRect(this, GameLoop.currentLevel.getGround())) {
                 onGround = true;
-                vy = vy * 0.99;
-                vx = vx * 0.95;
+                vy = vy * 0.999;
+                vx = vx * 0.999;
             } else {
                 vy -= (diffMillis / 10.0);    //gravity
             }
