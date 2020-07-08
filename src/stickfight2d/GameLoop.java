@@ -42,6 +42,7 @@ public class GameLoop extends Thread implements Runnable {
         gameControllers.add(CameraController.getInstance());
         gameControllers.add(SoundController.getInstance());
 
+
         currentLevel = new WorldObject();
         currentLevel.initObjects();
 
@@ -108,11 +109,7 @@ public class GameLoop extends Thread implements Runnable {
 
     private void draw() {
         for (GameObject obj : currentLevel.getGameObjects()) {
-            Platform.runLater(new Runnable() {
-                @Override public void run() {
-                    obj.draw(gc);
-                }
-            });
+            obj.draw(gc);
         }
     }
 
@@ -121,7 +118,7 @@ public class GameLoop extends Thread implements Runnable {
     }
 
     private void updateCounter(){
-        Platform.runLater(() -> {
+
             if (counterOn) {
                 if (diffTimeMs / 1000 >= 3 && counterState == 0) {
                     counterState = 1;
@@ -145,11 +142,10 @@ public class GameLoop extends Thread implements Runnable {
                     counterOn = false;
                 }
             }
-        });
     }
 
     public static void startCounter() {
-        Platform.runLater(() -> {
+
             Stage stage = Main.getPrimaryStage();
             counterOn = true;
             VBox counterBox = new VBox();
@@ -164,7 +160,7 @@ public class GameLoop extends Thread implements Runnable {
 
             KeyController.getInstance().setKeyPressBlockedP1(true);
             KeyController.getInstance().setKeyPressBlockedP2(true);
-        });
+
     }
 
 }

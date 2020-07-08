@@ -1,5 +1,6 @@
 package stickfight2d.misc;
 
+import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -24,13 +25,15 @@ public class FPSObject extends GameObject {
         super(0,0, DirectionType.RIGHT);
         printMode = Config.fps_print_mode;
 
-        Stage stage = Main.getPrimaryStage();
-        displayText.setText("60 FPS");
-        displayText.setX(stage.getWidth()-90);
-        displayText.setY(25);
-        displayText.setFill(Color.AQUAMARINE);
-        displayText.setFont(Font.font("Verdana", 18));
-        Main.getRoot().getChildren().add(displayText);
+
+            Stage stage = Main.getPrimaryStage();
+            displayText.setText("60 FPS");
+            displayText.setX(stage.getWidth()-90);
+            displayText.setY(25);
+            displayText.setFill(Color.AQUAMARINE);
+            displayText.setFont(Font.font("Verdana", 18));
+            Main.getRoot().getChildren().add(displayText);
+
     }
 
     @Override

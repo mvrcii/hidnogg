@@ -35,7 +35,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private boolean canAccelerate;
     private boolean onGround;
     private boolean alive;
-    private boolean spread_blood[] = new boolean[10];
+    private final boolean[] spread_blood = new boolean[10];
     private boolean inputDisabled;
 
     private double time_passed = 0;
@@ -111,6 +111,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     public void processInput(long diffMillis) {
         checkCollisions();
         checkWin();
+        checkSwordInNewScreen();
         handleDeathAnimation(diffMillis);
 
         if(!inputDisabled && this.alive) {
@@ -120,6 +121,13 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             handleDownKey();
             handleStabKey();
             handleJumpKey(diffMillis);
+        }
+    }
+
+    private void checkSwordInNewScreen() {
+        if(swordObject == null){
+            swordObject = new SwordObject(this.x, this.y, DirectionType.RIGHT, this);
+            GameLoop.currentLevel.addSword(swordObject);
         }
     }
 
