@@ -1,6 +1,5 @@
 package stickfight2d;
 
-import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -108,7 +107,11 @@ public class GameLoop extends Thread implements Runnable {
 
     private void draw() {
         for (GameObject obj : currentLevel.getGameObjects()) {
-            obj.draw(gc);
+            Platform.runLater(new Runnable() {
+                @Override public void run() {
+                    obj.draw(gc);
+                }
+            });
         }
     }
 
@@ -117,44 +120,48 @@ public class GameLoop extends Thread implements Runnable {
     }
 
     private void updateCounter(){
-        if(counterOn){
-            if(diffTimeMs/1000 >= 3 && counterState == 0){
-                counterState = 1;
-                counterText.setX(Main.getPrimaryStage().getWidth()/2-90);
-                counterText.setFont(Font.font("Verdana", 80));
-                counterText.setText("3");
-            }else if(diffTimeMs/1000 >= 4 && counterState == 1){
-                counterState = 2;
-                counterText.setText("2");
-            }else if(diffTimeMs/1000 >= 5 && counterState == 2){
-                counterState = 3;
-                counterText.setText("1");
-            }else if(diffTimeMs/1000 >= 6 && counterState == 3){
-                counterState = 4;
-                counterText.setText("GO");
-            }else if(diffTimeMs/1000 >= 7 && counterState == 4){
-                counterState = 5;
-                counterText.setText("");
-                KeyController.getInstance().setKeyPressBlockedP1(false);
-                KeyController.getInstance().setKeyPressBlockedP2(false);
-                counterOn = false;
+        Platform.runLater(() -> {
+            if (counterOn) {
+                if (diffTimeMs / 1000 >= 3 && counterState == 0) {
+                    counterState = 1;
+                    counterText.setX(Main.getPrimaryStage().getWidth() / 2 - 90);
+                    counterText.setFont(Font.font("Verdana", 80));
+                    counterText.setText("3");
+                } else if (diffTimeMs / 1000 >= 4 && counterState == 1) {
+                    counterState = 2;
+                    counterText.setText("2");
+                } else if (diffTimeMs / 1000 >= 5 && counterState == 2) {
+                    counterState = 3;
+                    counterText.setText("1");
+                } else if (diffTimeMs / 1000 >= 6 && counterState == 3) {
+                    counterState = 4;
+                    counterText.setText("GO");
+                } else if (diffTimeMs / 1000 >= 7 && counterState == 4) {
+                    counterState = 5;
+                    counterText.setText("");
+                    KeyController.getInstance().setKeyPressBlockedP1(false);
+                    KeyController.getInstance().setKeyPressBlockedP2(false);
+                    counterOn = false;
+                }
             }
-        }
+        });
     }
 
     public static void startCounter() {
-        Stage stage = Main.getPrimaryStage();
-        counterOn = true;
-        counterText = new Text("Get ready!");
-        counterText.setTextAlignment(TextAlignment.CENTER);
-        counterText.setX(stage.getWidth()/2-140);
-        counterText.setY(stage.getHeight()/2);
-        counterText.setFill(Color.LIGHTGREEN);
-        counterText.setFont(Font.font("Verdana", 50));
-        Main.getRoot().getChildren().add(counterText);
+        Platform.runLater(() -> {
+            Stage stage = Main.getPrimaryStage();
+            counterOn = true;
+            counterText = new Text("Get ready!");
+            counterText.setTextAlignment(TextAlignment.CENTER);
+            counterText.setX(stage.getWidth() / 2 - 140);
+            counterText.setY(stage.getHeight() / 2);
+            counterText.setFill(Color.LIGHTGREEN);
+            counterText.setFont(Font.font("Verdana", 50));
+            Main.getRoot().getChildren().add(counterText);
 
-        KeyController.getInstance().setKeyPressBlockedP1(true);
-        KeyController.getInstance().setKeyPressBlockedP2(true);
+            KeyController.getInstance().setKeyPressBlockedP1(true);
+            KeyController.getInstance().setKeyPressBlockedP2(true);
+        });
     }
 
 }

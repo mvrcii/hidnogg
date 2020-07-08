@@ -54,49 +54,53 @@ public class MenuController extends Controller {
         mainMenuMusic = SoundController.getInstance().getMusic(SoundType.MAIN_MENU_THEME_01);
         mainMenuMusic.play(true, 0.01);
 
+
         root.setOnKeyPressed(keyEvent -> {
             processInput(keyEvent);
         });
-
         displayMenu("main");
+
     }
 
     public static MenuController getInstance() {
         if (instance == null) {
-            Debugger.log("Key Controller instantiated");
+            Debugger.log("MenuController instantiated");
             instance = new MenuController();
         }
         return instance;
     }
 
     public void processInput(KeyEvent keyEvent) {
-        if (keyEvent.getCode() == KeyCode.ESCAPE) {
-            displayMenu(lastMenu);
-        }
-        if (!inGame) {
-            int oldIndex = menu.getSelectedIndex();
-            for (KeySet keySet : new KeySet[]{Config.keySet1, Config.keySet2}) {
-                KeyCode keyCode = keyEvent.getCode();
-                if (keyCode.equals(keySet.getUpKey())) {
-                    menu.getMenuItems().get(oldIndex).exitAnimation();
-                    menu.getMenuItems().get(Math.floorMod(oldIndex - 1, menu.getMenuItems().size())).enterAnimation();
-                } else if (keyCode.equals(keySet.getDownKey())) {
-                    menu.getMenuItems().get(oldIndex).exitAnimation();
-                    menu.getMenuItems().get(Math.floorMod(oldIndex + 1, menu.getMenuItems().size())).enterAnimation();
-                } else if (keyCode.equals(keySet.getMoveLeftKey())) {
-                    if (menu.getTitle().equals("Options")) {
 
-                    }
-                } else if (keyCode.equals(keySet.getMoveRightKey())) {
-                    if (menu.getTitle().equals("Options")) {
 
-                    }
-                } else if (keyCode.equals(keySet.getStabKey())) {
-                    menu.getMenuItems().get(oldIndex).runOnClick();
-                }
-
+            if (keyEvent.getCode() == KeyCode.ESCAPE) {
+                displayMenu(lastMenu);
             }
-        }
+            if (!inGame) {
+                int oldIndex = menu.getSelectedIndex();
+                for (KeySet keySet : new KeySet[]{Config.keySet1, Config.keySet2}) {
+                    KeyCode keyCode = keyEvent.getCode();
+                    if (keyCode.equals(keySet.getUpKey())) {
+                        menu.getMenuItems().get(oldIndex).exitAnimation();
+                        menu.getMenuItems().get(Math.floorMod(oldIndex - 1, menu.getMenuItems().size())).enterAnimation();
+                    } else if (keyCode.equals(keySet.getDownKey())) {
+                        menu.getMenuItems().get(oldIndex).exitAnimation();
+                        menu.getMenuItems().get(Math.floorMod(oldIndex + 1, menu.getMenuItems().size())).enterAnimation();
+                    } else if (keyCode.equals(keySet.getMoveLeftKey())) {
+                        if (menu.getTitle().equals("Options")) {
+
+                        }
+                    } else if (keyCode.equals(keySet.getMoveRightKey())) {
+                        if (menu.getTitle().equals("Options")) {
+
+                        }
+                    } else if (keyCode.equals(keySet.getStabKey())) {
+                        menu.getMenuItems().get(oldIndex).runOnClick();
+                    }
+
+                }
+            }
+
     }
 
     @Override

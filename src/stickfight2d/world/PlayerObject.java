@@ -230,29 +230,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x, y+yOffset, DirectionType.RIGHT,30,300,2,10,180,60));
                     case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x+xOffset, y+yOffset, DirectionType.RIGHT,30,300,2,10,180,60));
                 }
-                /*
-                switch (directionType){
-                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x, y+yOffset, DirectionType.RIGHT,600,1500,2,15,180,60));
-                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x+xOffset, y+yOffset, DirectionType.RIGHT,600,1500,2,15,180,60));
-                }
-                 */
                 spread_blood[i] = true;
             }
         }
-
-
-        /*
-        if(animation.isLastFrame() && animation.getAnimationType() == PLAYER_DYING){
-           animation.stop();
-           if(!spread_blood){
-               switch (directionType){
-                   case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x, y+38, DirectionType.RIGHT,600,1500,2,15,180,60));
-                   case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x+36, y+38, DirectionType.RIGHT,600,1500,2,15,180,60));
-               }
-               spread_blood = true;
-           }
-        }
-        */
 
         if(!alive){
             time_passed += diffMillis;
