@@ -261,11 +261,7 @@ public class CollisionController extends Controller {
         boolean hitsWallRight = false;
         boolean hitsWallLeft = false;
         boolean headBump = false;
-
-        // RectangleHitBox offset for head, feet and arms
-        int pixelOffsetX = 8;
-        int pixelOffsetX_2 = 10;
-        int pixelOffsetY = 12;
+        DirectionType runningDirection = background.getCurrentEnabledRunningDirection();
 
         // Check Avatar-Obstacle collisions
         for (RectangleObstacle obstacle : obstacles) {
@@ -273,10 +269,10 @@ public class CollisionController extends Controller {
             int obstacleMapState = obstacle.getMapState();
             PlayerType playerNumber = player.getPlayerNumber();
 
-            if (obstacleMapState != currentMapState && obstacle.getMapState() >= 0 // Obstacle not in current map state
+            if (obstacleMapState != currentMapState && obstacleMapState >= 0 // Obstacle not in current map state
                     || (!collisionRectRect(player, obstacle, 0, 0, 0, 0)) // Rect-Rect collision
-                    || ((obstacleMapState == -2 && playerNumber == PlayerType.PLAYER_ONE)) // Let player1 pass through right boundary
-                    || (obstacleMapState == -1 && playerNumber == PlayerType.PLAYER_TWO) // Let player2 pass through left boundary
+                    || ((obstacleMapState == -2 && playerNumber == PlayerType.PLAYER_ONE && runningDirection == DirectionType.RIGHT)) // Let player1 pass through right boundary
+                    || (obstacleMapState == -1 && playerNumber == PlayerType.PLAYER_TWO && runningDirection == DirectionType.LEFT) // Let player2 pass through left boundary
                     || ((obstacleMapState == -3 || obstacleMapState == -4) && (currentMapState != 0 && currentMapState != 4)) // Let anyone pass through cave obstacles in worlds 1,2,3
                     || (obstacleMapState == -4 && playerNumber == PlayerType.PLAYER_ONE) // Let player1 pass through right cave blocker
                     || (obstacleMapState == -3 && playerNumber == PlayerType.PLAYER_TWO) // Let player2 pass through left cave blocker
@@ -285,19 +281,19 @@ public class CollisionController extends Controller {
                 continue;
 
             // Ground collision
-            if (collisionRectRect(player, obstacle, pixelOffsetX, pixelOffsetX, playersWidthHeight[1], 0)) {
+            if (collisionRectRect(player, obstacle, 8, 8, playersWidthHeight[1], 0)) {
                 onGround = true;
                 player.currentObstacleStanding = obstacle;
             }
 
             // Head collision in caves only (not in map-start-state)
-            if (collisionRectRect(player, obstacle, pixelOffsetX_2, pixelOffsetX_2, 0, playersWidthHeight[1]) && (GameLoop.currentLevel.getBackground().getWorldState() != 2))
+            if (collisionRectRect(player, obstacle, 10, 10, 0, playersWidthHeight[1]) && (GameLoop.currentLevel.getBackground().getWorldState() != 2))
                 headBump = true;
 
             // Wall collisions
-            if (collisionRectRect(player, obstacle, playersWidthHeight[0], 0, pixelOffsetY, pixelOffsetY)) // Rect-Line collision >> Wall-right
+            if (collisionRectRect(player, obstacle, playersWidthHeight[0], 0, 12, 12)) // Rect-Line collision >> Wall-right
                 hitsWallRight = true;
-            else if (collisionRectRect(player, obstacle, 0, playersWidthHeight[0], pixelOffsetY, pixelOffsetY)) // Rect-Line collision >> Wall-left
+            else if (collisionRectRect(player, obstacle, 0, playersWidthHeight[0], 12, 12)) // Rect-Line collision >> Wall-left
                 hitsWallLeft = true;
 
             // Break if relevant obstacles have been found
@@ -352,13 +348,13 @@ public class CollisionController extends Controller {
         Point2D player2 = cam.convertWorldToScreen(players.get(1).getX(), players.get(0).getY());
         Point2D map_begin = cam.convertWorldToScreen(0, 0);
         Point2D map_end = cam.convertWorldToScreen((int) Main.canvas.getWidth(), 0);
+        DirectionType currentRunningDirection = background.getCurrentEnabledRunningDirection();
 
-        if (player1.getX() + playersWidthHeight[0] / 2.0 > map_end.getX()) { // Player1 leaves map boundary on the right side
+        if (player1.getX() + playersWidthHeight[0] / 2.0 > map_end.getX() && currentRunningDirection == DirectionType.RIGHT) // Player1 leaves map boundary on the right side
             background.setWorldState(background.getWorldState() + 1, players.get(0), players.get(1));
 
-        } else if (player2.getX() - playersWidthHeight[0] / 2.0 < map_begin.getX()) { // Player2 leaves map boundary on the left side
+        else if (player2.getX() - playersWidthHeight[0] / 2.0 < map_begin.getX() && currentRunningDirection == DirectionType.LEFT) // Player2 leaves map boundary on the left side
             background.setWorldState(background.getWorldState() - 1, players.get(0), players.get(1));
-        }
     }
 
 
