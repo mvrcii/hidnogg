@@ -111,7 +111,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     public void processInput(long diffMillis) {
         checkCollisions();
         checkWin();
-        checkSwordInNewScreen();
         handleDeathAnimation(diffMillis);
 
         if(!inputDisabled && this.alive) {

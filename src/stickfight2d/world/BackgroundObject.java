@@ -107,6 +107,9 @@ public class BackgroundObject extends GameObject {
 
         GameLoop.currentLevel.clearSwordsOnGround();
 
+        p1.checkSwordInNewScreen();
+        p2.checkSwordInNewScreen();
+
         Point2D pointP1 = spawnPoints.get(this.worldState).get(p1.getPlayerNumber());
         Point2D pointP2 = spawnPoints.get(this.worldState).get(p2.getPlayerNumber());
 
