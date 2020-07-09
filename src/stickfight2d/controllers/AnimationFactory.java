@@ -9,7 +9,7 @@ import stickfight2d.misc.Debugger;
 
 import java.util.HashMap;
 
-public class AnimationFactory extends Controller {
+public class AnimationFactory {
 
     private static AnimationFactory instance;
     private final HashMap<AnimationType, AnimationData> basicAnimationData = new HashMap<>();
@@ -19,7 +19,6 @@ public class AnimationFactory extends Controller {
     {
         if(instance == null)
         {
-            Debugger.log("Data Controller instantiated");
             instance = new AnimationFactory();
         }
         return instance;
@@ -67,10 +66,6 @@ public class AnimationFactory extends Controller {
 
         basicAnimationData.put(AnimationType.PLAYER_WIN, new AnimationData(20));
 
-    }
-
-    @Override
-    public void update(long diffMillis) {
     }
 
     // Get any kind of animation by the animationType enum
