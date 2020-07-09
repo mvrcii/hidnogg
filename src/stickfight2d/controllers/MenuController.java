@@ -21,6 +21,7 @@ import javafx.util.Duration;
 import kuusisto.tinysound.Music;
 import stickfight2d.GameLoop;
 import stickfight2d.Main;
+import stickfight2d.enums.DirectionType;
 import stickfight2d.enums.SoundType;
 import stickfight2d.misc.Config;
 import stickfight2d.misc.Debugger;
@@ -40,6 +41,7 @@ public class MenuController extends Controller {
     private Menu menu;
     private String lastMenu = "main";
     private boolean inGame = false;
+    private DirectionType dir = DirectionType.LEFT;
 
     private Music mainMenuMusic;
 
@@ -52,50 +54,52 @@ public class MenuController extends Controller {
         root.getChildren().addAll(menuBox);
 
         mainMenuMusic = SoundController.getInstance().getMusic(SoundType.MAIN_MENU_THEME_01);
-        mainMenuMusic.play(true, 0.01);
+        mainMenuMusic.play(true, Config.volume);
 
 
         root.setOnKeyPressed(keyEvent -> {
             processInput(keyEvent);
         });
+
         displayMenu("main");
 
     }
 
     public static MenuController getInstance() {
         if (instance == null) {
-            Debugger.log("MenuController instantiated");
+            Debugger.log("Key Controller instantiated");
             instance = new MenuController();
         }
         return instance;
     }
 
     public void processInput(KeyEvent keyEvent) {
-
-            if (keyEvent.getCode() == KeyCode.ESCAPE) {
-                displayMenu(lastMenu);
-            }
-            if (!inGame) {
-                int oldIndex = menu.getSelectedIndex();
-                for (KeySet keySet : new KeySet[]{Config.keySet1, Config.keySet2}) {
-                    KeyCode keyCode = keyEvent.getCode();
-                    if (keyCode.equals(keySet.getUpKey())) {
-                        menu.getMenuItems().get(oldIndex).exitAnimation();
-                        menu.getMenuItems().get(Math.floorMod(oldIndex - 1, menu.getMenuItems().size())).enterAnimation();
-                    } else if (keyCode.equals(keySet.getDownKey())) {
-                        menu.getMenuItems().get(oldIndex).exitAnimation();
-                        menu.getMenuItems().get(Math.floorMod(oldIndex + 1, menu.getMenuItems().size())).enterAnimation();
-                    } else if (keyCode.equals(keySet.getMoveLeftKey())) {
-                        if (menu.getTitle().equals("Options")) {
-                            System.out.println("sound down");
-                        }
-                    } else if (keyCode.equals(keySet.getMoveRightKey())) {
-                        if (menu.getTitle().equals("Options")) {
-                            System.out.println("sound down");
-                        }
-                    } else if (keyCode.equals(keySet.getStabKey())) {
+        if (keyEvent.getCode() == KeyCode.ESCAPE) {
+            displayMenu(lastMenu);
+        }
+        if (!inGame) {
+            int oldIndex = menu.getSelectedIndex();
+            for (KeySet keySet : new KeySet[]{Config.keySet1, Config.keySet2}) {
+                KeyCode keyCode = keyEvent.getCode();
+                if (keyCode.equals(keySet.getUpKey())) {
+                    menu.getMenuItems().get(oldIndex).exitAnimation();
+                    menu.getMenuItems().get(Math.floorMod(oldIndex - 1, menu.getMenuItems().size())).enterAnimation();
+                } else if (keyCode.equals(keySet.getDownKey())) {
+                    menu.getMenuItems().get(oldIndex).exitAnimation();
+                    menu.getMenuItems().get(Math.floorMod(oldIndex + 1, menu.getMenuItems().size())).enterAnimation();
+                } else if (keyCode.equals(keySet.getMoveLeftKey())) {
+                    if (menu.getTitle().toString().equals("Options")) {
+                        dir = DirectionType.LEFT;
                         menu.getMenuItems().get(oldIndex).runOnClick();
                     }
+                } else if (keyCode.equals(keySet.getMoveRightKey())) {
+                    if (menu.getTitle().toString().equals("Options")) {
+                        dir = DirectionType.RIGHT;
+                        menu.getMenuItems().get(oldIndex).runOnClick();
+                    }
+                } else if (keyCode.equals(keySet.getStabKey())) {
+                    menu.getMenuItems().get(oldIndex).runOnClick();
+                }
 
                 }
             }
@@ -134,6 +138,7 @@ public class MenuController extends Controller {
         }
         if (menu != null) {
             menuBox.getChildren().add(menu);
+            //menu.getMenuItems().get(menu.getSelectedIndex()).enterAnimation();
         }
     }
 
@@ -146,7 +151,7 @@ public class MenuController extends Controller {
                 displayMenu("none");
                 GameLoop.startCounter();
                 mainMenuMusic.stop();
-                GameLoop.currentMusic.play(false,0.01);
+                GameLoop.currentMusic.play(false,Config.volume);
             }));
             add(new MenuItem("Options", () -> {
                 displayMenu("options");
@@ -185,17 +190,26 @@ public class MenuController extends Controller {
     private Menu getOptionsMenu() {
         Title title = new Title("Options");
         List menuItems = new ArrayList<MenuItem>() {{
-            add(new MenuItem("\uD83E\uDC44Volume:" + Math.round(Config.volume * (100 / 0.15)) + "%\uD83E\uDC46", () -> {
-                System.out.println("sound test");
+            add(new MenuItem("\uD83E\uDC44Volume:" + Math.round(Config.volume * 1000) + "%\uD83E\uDC46", () -> {
+                double newVolume = Config.volume + (dir.equals(DirectionType.LEFT) ? -0.005 : 0.005);
+                Config.volume = Math.min(Math.max(newVolume, 0), 0.1);
+                GameLoop.currentMusic.setVolume(Config.volume);
+                displayMenu("options");
+                menu.setSelectedIndex(0);
+                menu.getMenuItems().get(menu.getSelectedIndex()).enterAnimation();
             }));
             add(new MenuItem("\uD83E\uDC44Debug Mode:" + booleanToOnOff(Config.debug_mode) + "\uD83E\uDC46", () -> {
                 Config.debug_mode = !Config.debug_mode;
                 displayMenu("options");
+                menu.setSelectedIndex(1);
+                menu.getMenuItems().get(menu.getSelectedIndex()).enterAnimation();
             }));
             add(new MenuItem("\uD83E\uDC44FPS Counter:" + booleanToOnOff(Config.fps_print_mode) + "\uD83E\uDC46", () -> {
                 Config.fps_print_mode = !Config.fps_print_mode;
                 GameLoop.currentLevel.getFpsObject().setPrintMode(Config.fps_print_mode);
                 displayMenu("options");
+                menu.setSelectedIndex(2);
+                menu.getMenuItems().get(menu.getSelectedIndex()).enterAnimation();
             }));
             add(new MenuItem("Back", () -> {
                 displayMenu(lastMenu);
@@ -218,6 +232,7 @@ public class MenuController extends Controller {
             }));
         }};
         Menu menu = new Menu(title, menuItems);
+        menu.setSelectedIndex(1);
         return menu;
     }
 
@@ -286,7 +301,10 @@ public class MenuController extends Controller {
 
         public MenuItem(String text, Runnable onClick) {
             this.onClick = onClick;
-            setOnMouseClicked(event -> this.onClick.run());
+            setOnMouseClicked(event -> {
+                dir = event.getX()>200 ? DirectionType.RIGHT : DirectionType.LEFT;
+                this.onClick.run();
+            });
             Text t = new Text(text);
             t.setFill(Color.WHITE);
             t.setFont(Font.font("Verdana", 50));
@@ -354,7 +372,9 @@ public class MenuController extends Controller {
     }
 
     private class Title extends StackPane {
+        String text;
         public Title(String text) {
+            this.text = text;
             Text t = new Text(text);
             t.setFill(Color.WHITE);
             t.setFont(Font.font("Verdana", 60));
@@ -364,6 +384,10 @@ public class MenuController extends Controller {
             bg.setFill(Color.GRAY);
 
             getChildren().addAll(bg, t);
+        }
+        @Override
+        public String toString() {
+            return text;
         }
     }
 }
