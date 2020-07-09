@@ -4,8 +4,10 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import stickfight2d.GameLoop;
 import stickfight2d.controllers.CameraController;
+import stickfight2d.controllers.CollisionController;
 import stickfight2d.enums.DirectionType;
 import stickfight2d.enums.PlayerType;
 import stickfight2d.misc.Debugger;
@@ -18,19 +20,56 @@ import java.util.HashMap;
 
 public class BackgroundObject extends GameObject {
 
+    /**
+     * map.png
+     */
     private BufferedImage defaultImage;
+
+    /**
+     * Current world background
+     */
     private Image worldSubImage = null;
 
+    /**
+     * Map split into 5 world states [0, 4], "2" being the middle
+     */
+    private boolean worldStateHasChanged = true;
     private int worldState = 2;
 
+    /**
+     * Key :: MapState
+     * Value :: Spawn location of player
+     */
+    private final HashMap<Integer, HashMap<PlayerType, Point2D>> spawnPoints = initializeSpawnMap();
+
+    /**
+     * For calculating the current sub image that has to be displayed in the background
+     */
     private final int subImageHeight = 810 * 2;
     private final int subImageWidth = 1032;
     private int subImageStartX = worldState * subImageWidth;
 
-    // Key :: MapState <> Value :: Spawn location of player
-    private final HashMap<Integer, HashMap<PlayerType, Point2D>> spawnPoints = initializeSpawnMap();
+    /**
+     * For enabling players to run out of opposite bounds if they get a hit on the enemy
+     */
+    private DirectionType currentEnabledRunningDirection = null;
 
-    public BackgroundObject(int x, int y, DirectionType directionType) { // x,y, dirType has to be 0, 0, null
+    /**
+     * Plz don't look at me I know I'm ugly
+     */
+    private final double[] arrowLeft_X = {516 - 160, 516 - 64, 516 - 64, 516, 516, 516 - 64, 516 - 64};
+    private final double[] arrowLeft_Y = {163, 156, 160, 160, 166, 166, 170};
+    private final double[] arrowRight_X = {516 + 160 + 192, 516 + 64 + 192, 516 + 64 + 192, 516 + 192, 516 + 192, 516 + 64 + 192, 516 + 64 + 192};
+    private final double[] arrowRight_Y = {163, 156, 160, 160, 166, 166, 170};
+
+    /**
+     * Read map image and save first sub image
+     *
+     * @param x             has to be 0
+     * @param y             has to be 0
+     * @param directionType has to be null
+     */
+    public BackgroundObject(int x, int y, DirectionType directionType) {
         super(x, y, directionType);
         try {
             String PATH_MAP = "src/map.png";
@@ -84,28 +123,55 @@ public class BackgroundObject extends GameObject {
 
     @Override
     public void update(long diffMillis) {
+        if (worldStateHasChanged) {
+            currentEnabledRunningDirection = null;
+
+        } else {
+            CollisionController collisionController = CollisionController.getInstance();
+
+            if (collisionController.getPlayerHitOtherPlayer(PlayerType.PLAYER_ONE))
+                currentEnabledRunningDirection = DirectionType.RIGHT;
+
+            else if (collisionController.getPlayerHitOtherPlayer(PlayerType.PLAYER_TWO))
+                currentEnabledRunningDirection = DirectionType.LEFT;
+
+        }
+
+        worldStateHasChanged = false;
     }
 
     @Override
     public void draw(GraphicsContext gc) {
-        Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(this.x, this.y);
-
+        Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(0, 0);
         gc.drawImage(worldSubImage, drawPoint.getX(), drawPoint.getY());
+
+        if (currentEnabledRunningDirection == DirectionType.RIGHT) {
+            gc.setFill(Color.BLACK);
+            gc.fillPolygon(arrowRight_X, arrowRight_Y, 7);
+
+        } else if (currentEnabledRunningDirection == DirectionType.LEFT) {
+            gc.setFill(Color.BLACK);
+            gc.fillPolygon(arrowLeft_X, arrowLeft_Y, 7);
+        }
     }
 
     /**
-     *  Updates player spawns when a new map is being loaded onto the screen
+     * Updates player spawns when a new map is being loaded onto the screen
      *
-     * @param worldState    new worldState, when new map has to be loaded
-     * @param p1            player1
-     * @param p2            player2
+     * @param worldState new worldState, when new map has to be loaded
+     * @param p1         player1
+     * @param p2         player2
      */
     public void setWorldState(int worldState, PlayerObject p1, PlayerObject p2) {
         this.worldState = worldState;
         this.subImageStartX = worldState * subImageWidth;
         worldSubImage = SwingFXUtils.toFXImage(defaultImage.getSubimage(subImageStartX, 0, subImageWidth, subImageHeight), null);
+        worldStateHasChanged = true;
 
         GameLoop.currentLevel.clearSwordsOnGround();
+
+        p1.checkSwordInNewScreen();
+        p2.checkSwordInNewScreen();
 
         Point2D pointP1 = spawnPoints.get(this.worldState).get(p1.getPlayerNumber());
         Point2D pointP2 = spawnPoints.get(this.worldState).get(p2.getPlayerNumber());
@@ -118,7 +184,15 @@ public class BackgroundObject extends GameObject {
         return worldState;
     }
 
+    /**
+     * @param type PlayerType
+     * @return Location where the given player should be spawning relative to the current map state
+     */
     public Point2D getCurrentSpawnPoint(PlayerType type) {
         return spawnPoints.get(worldState).get(type);
+    }
+
+    public DirectionType getCurrentEnabledRunningDirection() {
+        return currentEnabledRunningDirection;
     }
 }
