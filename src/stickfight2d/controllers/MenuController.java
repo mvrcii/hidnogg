@@ -21,6 +21,7 @@ import javafx.util.Duration;
 import kuusisto.tinysound.Music;
 import stickfight2d.GameLoop;
 import stickfight2d.Main;
+import stickfight2d.enums.DirectionType;
 import stickfight2d.enums.SoundType;
 import stickfight2d.misc.Config;
 import stickfight2d.misc.Debugger;
