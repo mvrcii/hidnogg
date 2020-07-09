@@ -43,6 +43,14 @@ public class MenuController extends Controller {
 
     private Music mainMenuMusic;
 
+    public static MenuController getInstance() {
+        if (instance == null) {
+            Debugger.log("MenuController instantiated");
+            instance = new MenuController();
+        }
+        return instance;
+    }
+
     public MenuController() {
         root = Main.getRoot();
         primaryStage = Main.getPrimaryStage();
@@ -62,14 +70,6 @@ public class MenuController extends Controller {
 
     }
 
-    public static MenuController getInstance() {
-        if (instance == null) {
-            Debugger.log("MenuController instantiated");
-            instance = new MenuController();
-        }
-        return instance;
-    }
-
     public void processInput(KeyEvent keyEvent) {
 
             if (keyEvent.getCode() == KeyCode.ESCAPE) {
@@ -87,11 +87,11 @@ public class MenuController extends Controller {
                         menu.getMenuItems().get(Math.floorMod(oldIndex + 1, menu.getMenuItems().size())).enterAnimation();
                     } else if (keyCode.equals(keySet.getMoveLeftKey())) {
                         if (menu.getTitle().equals("Options")) {
-                            System.out.println("sound down");
+
                         }
                     } else if (keyCode.equals(keySet.getMoveRightKey())) {
                         if (menu.getTitle().equals("Options")) {
-                            System.out.println("sound down");
+
                         }
                     } else if (keyCode.equals(keySet.getStabKey())) {
                         menu.getMenuItems().get(oldIndex).runOnClick();
@@ -186,7 +186,6 @@ public class MenuController extends Controller {
         Title title = new Title("Options");
         List menuItems = new ArrayList<MenuItem>() {{
             add(new MenuItem("\uD83E\uDC44Volume:" + Math.round(Config.volume * (100 / 0.15)) + "%\uD83E\uDC46", () -> {
-                System.out.println("sound test");
             }));
             add(new MenuItem("\uD83E\uDC44Debug Mode:" + booleanToOnOff(Config.debug_mode) + "\uD83E\uDC46", () -> {
                 Config.debug_mode = !Config.debug_mode;

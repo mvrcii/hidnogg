@@ -37,7 +37,7 @@ public class GameLoop extends Thread implements Runnable {
     public GameLoop() {
         TinySound.init();
         gameControllers.add(KeyController.getInstance());
-        gameControllers.add(DataController.getInstance());
+        gameControllers.add(AnimationFactory.getInstance());
         gameControllers.add(DirectionController.getInstance());
         gameControllers.add(CameraController.getInstance());
         gameControllers.add(SoundController.getInstance());
@@ -47,7 +47,7 @@ public class GameLoop extends Thread implements Runnable {
         currentLevel.initObjects();
 
         gameControllers.add(CollisionController.getInstance());
-        gameControllers.add(MenuController.getInstance());
+        //gameControllers.add(MenuController.getInstance());
 
         currentMusic = SoundController.getInstance().getMusic(SoundType.THEME_01); // Music theme
     }
@@ -109,7 +109,7 @@ public class GameLoop extends Thread implements Runnable {
 
     private void draw() {
         for (GameObject obj : currentLevel.getGameObjects()) {
-            obj.draw(gc);
+                obj.draw(gc);
         }
     }
 

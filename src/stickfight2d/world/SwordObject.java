@@ -6,14 +6,13 @@ import stickfight2d.GameLoop;
 import stickfight2d.animation.Animation;
 import stickfight2d.animation.FrameData;
 import stickfight2d.controllers.CameraController;
-import stickfight2d.controllers.DataController;
+import stickfight2d.controllers.AnimationFactory;
 import stickfight2d.enums.AnimationType;
 import stickfight2d.enums.DirectionType;
-import stickfight2d.misc.Debugger;
 
 public class SwordObject extends GameObject {
 
-    private Animation animation = DataController.getInstance().getAnimation(AnimationType.SWORD);
+    private Animation animation = AnimationFactory.getInstance().getAnimation(AnimationType.SWORD);
     private PlayerObject playerObject;
 
     private boolean falling;
@@ -155,7 +154,7 @@ public class SwordObject extends GameObject {
                 Point2D p2 = animation.getCurrentFrame().getSwordEndPoint();
                 bounceOffSet = Math.sin(360+currentAngle) * Math.sqrt(Math.pow(p2.getX() - p1.getX(), 2) + Math.pow(p2.getY() - p1.getY(), 2));
             }
-            animation = DataController.getInstance().getSwordAnimAngle(currentAngle);
+            animation = AnimationFactory.getInstance().getSwordAnimAngle(currentAngle);
 
         } else if(throwing){
 
@@ -174,7 +173,7 @@ public class SwordObject extends GameObject {
                     currentAngle = 0;
                 }
 
-                animation = DataController.getInstance().getSwordAnimAngle(currentAngle);
+                animation = AnimationFactory.getInstance().getSwordAnimAngle(currentAngle);
             }
 
         } else {
@@ -188,7 +187,7 @@ public class SwordObject extends GameObject {
 
             if (currentAngle != nextAngle) {
                 currentAngle = nextAngle;
-                animation = DataController.getInstance().getSwordAnimAngle(currentAngle);
+                animation = AnimationFactory.getInstance().getSwordAnimAngle(currentAngle);
             }
         }
 

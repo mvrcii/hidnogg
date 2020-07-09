@@ -26,7 +26,7 @@ import static stickfight2d.enums.AnimationType.*;
 public class PlayerObject extends MoveableObject implements InputSystem {
 
     private final KeyController keyCon = KeyController.getInstance();
-    private final DataController animCon = DataController.getInstance();
+    private final AnimationFactory animCon = AnimationFactory.getInstance();
 
     private final KeySet keySet;
     private final PlayerType playerNumber;
@@ -40,7 +40,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private double time_passed = 0;
 
-    private Animation animation = DataController.getInstance().getAnimation(PLAYER_IDLE_MEDIUM);
+    private Animation animation = AnimationFactory.getInstance().getAnimation(PLAYER_IDLE_MEDIUM);
     private AnimationType lastIdleAnimationType = PLAYER_IDLE_LOW;
 
     // Gravity-Ground detection
@@ -111,7 +111,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     public void processInput(long diffMillis) {
         checkCollisions();
         checkWin();
-        checkSwordInNewScreen();
         handleDeathAnimation(diffMillis);
 
         if(!inputDisabled && this.alive) {

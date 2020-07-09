@@ -6,28 +6,27 @@ import stickfight2d.animation.AnimationData;
 import stickfight2d.animation.FrameData;
 import stickfight2d.enums.AnimationType;
 import stickfight2d.misc.Debugger;
-import stickfight2d.world.PlayerObject;
 
 import java.util.HashMap;
 
-public class DataController extends Controller {
+public class AnimationFactory extends Controller {
 
-    private static DataController instance;
+    private static AnimationFactory instance;
     private final HashMap<AnimationType, AnimationData> basicAnimationData = new HashMap<>();
     private final HashMap<Integer, AnimationData> swordAngleData = new HashMap<>();
 
-    public static DataController getInstance()
+    public static AnimationFactory getInstance()
     {
         if(instance == null)
         {
             Debugger.log("Data Controller instantiated");
-            instance = new DataController();
+            instance = new AnimationFactory();
         }
         return instance;
     }
 
 
-    private DataController() {
+    private AnimationFactory() {
         // SWORD
         basicAnimationData.put(AnimationType.SWORD, new AnimationData(0));
         for (int i = 1; i < 360; i++) {
@@ -40,6 +39,7 @@ public class DataController extends Controller {
             }
         }
 
+        // PLAYER
         basicAnimationData.put(AnimationType.PLAYER_WALK, new AnimationData(1));
 
         basicAnimationData.put(AnimationType.PLAYER_JUMP_START, new AnimationData(2));
@@ -71,9 +71,9 @@ public class DataController extends Controller {
 
     @Override
     public void update(long diffMillis) {
-
     }
 
+    // Get any kind of animation by the animationType enum
     public Animation getAnimation(AnimationType animationType){
         return new Animation(animationType, basicAnimationData.get(animationType));
     }
@@ -102,6 +102,7 @@ public class DataController extends Controller {
         return new Animation(animType, basicAnimationData.get(animType));
     }
 
+    // Get the sword animation that corresponds to a given angle
     public Animation getSwordAnimAngle(int angle){
         if(angle == 0 || angle == 360){
             return getAnimation(AnimationType.SWORD);

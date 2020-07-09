@@ -15,47 +15,53 @@ import java.util.ArrayList;
 
 public class AnimationData {
 
-    private boolean imageTransparent = false;
-    private ArrayList<FrameData> frames = new ArrayList<>();
+    private static BufferedImage spriteSheet;
+    private boolean imageTransparent = false;                                   // Boolean to find out the last frame of an animation and stop the calculation
+    private ArrayList<FrameData> frames = new ArrayList<>();                    // List of Frames which will be used to create the  Animation Data
+    public static final int TILE_SIZE = 64;                                     // Quadratic sprite size
+    private static final String SPRITE_SHEET_PATH = "src/spritesheet.png";      // Path to the SpriteSheet
 
-    public static final int TILE_SIZE = 64;
-    private static final String SPRITE_SHEET_PATH = "src/spritesheet.png";
-
+    // Static color values for hit box calculations
     private static final int black = new Color(0, 0, 0).getRGB();
     private static final int red = new Color(255, 0, 0).getRGB();
     private static final int green = new Color(0, 255, 0).getRGB();
     private static final int blue = new Color(0, 0, 255).getRGB();
 
-    private static int previousGreen = 0; // prevent multiple calculations of sword length
+    private static int previousGreen = 0;                                       // prevent multiple calculations of sword length
 
-    public AnimationData() {
+    // Empty constructor
+    public AnimationData() {}
 
-    }
-
+    // Constructor which reads the sprite sheet and creates a FrameData object for a given row
     public AnimationData(int row) {
-        try {
-            BufferedImage spriteSheet = ImageIO.read(new File(SPRITE_SHEET_PATH));
-            int i;
-            for (i = 0; (i * TILE_SIZE) < spriteSheet.getWidth(); ) {
-                BufferedImage bf = spriteSheet.getSubimage(i * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        if(row < 0)
+            return;
 
-                if (!imageTransparent) {
-                    FrameData frame = calcFrameData(bf);
-
-                    if (imageTransparent) {
-                        break;
-                    }
-                    frame.setFrameNumber(i);
-                    frames.add(frame);
-                    i++;
-                }
+        if (spriteSheet == null) {
+            try {
+                spriteSheet = ImageIO.read(new File(SPRITE_SHEET_PATH));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (int i = 0; i*TILE_SIZE < spriteSheet.getWidth();) {
+            BufferedImage bf = spriteSheet.getSubimage(i * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+
+            if (!imageTransparent) {
+                FrameData frame = calcFrameData(bf);
+
+                if (imageTransparent) {
+                    break;
+                }
+                frame.setFrameNumber(i);
+                frames.add(frame);
+                i++;
+            }
         }
     }
 
+    // Rotates the complete AnimationData by a given angle
     public AnimationData rotateAnimDataByDegree(int angle) {
         AnimationData newAnimData = new AnimationData();
         ArrayList<FrameData> newFrameList = new ArrayList<>();
@@ -101,7 +107,7 @@ public class AnimationData {
     }
 
 
-
+    // Calculates all the important information out of a bufferedImage (hitbox, ..)
     private FrameData calcFrameData(BufferedImage bufferedImage) {
         // Data that has to be calculated
         FrameData frameData = new FrameData(bufferedImage);
@@ -138,16 +144,24 @@ public class AnimationData {
                         hitBox.add(new Point2D(col, row));
                         hitBoxInverted.add(new Point2D(bufferedImage.getWidth() - col, row));
                     }
+                }
 
-                } else if (currentRGB == green) { // start-mountPoint
+                // Setting the start mount point
+                else if (currentRGB == green) {
                     frameData.setSwordStartPoint(new Point2D(col, row));
                     frameData.setSwordStartPointInverted(new Point2D(bufferedImage.getWidth() - col, row));
                     previousGreen++; // for swordLength calculation
                     frameData.getBufferedImage().setRGB(col, row, bufferedImage.getRGB(col - 1, row));
-                } else if (currentRGB == blue) { // end mountPoint
+                }
+
+                // Setting the end mount point
+                else if (currentRGB == blue) {
                     frameData.setSwordEndPoint(new Point2D(col, row));
                     frameData.getBufferedImage().setRGB(col, row, bufferedImage.getRGB(col - 1, row));
-                } else if (currentRGB == red && previousGreen == 1) {
+                }
+
+                // Calculation of the sword length
+                else if (currentRGB == red && previousGreen == 1) {
                     calculateSwordLength(col, row, bufferedImage);
                     previousGreen++;
                 }
