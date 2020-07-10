@@ -9,7 +9,7 @@ import stickfight2d.misc.Debugger;
 
 import java.util.HashMap;
 
-public class AnimationFactory {
+public class AnimationFactory extends Controller {
 
     private static AnimationFactory instance;
     private final HashMap<AnimationType, AnimationData> basicAnimationData = new HashMap<>();
@@ -65,6 +65,11 @@ public class AnimationFactory {
         basicAnimationData.put(AnimationType.PLAYER_STEP_LOW, new AnimationData(19));
 
         basicAnimationData.put(AnimationType.PLAYER_WIN, new AnimationData(20));
+
+    }
+
+    @Override
+    public void update(long diffMillis) {
 
     }
 

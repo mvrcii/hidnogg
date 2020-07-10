@@ -110,6 +110,7 @@ public class MenuController extends Controller {
     }
 
     public void displayMenu(String s) {
+        disablePlayerInput(true);
         menuBox.getChildren().clear();
         inGame = false;
         switch (s.toLowerCase()) {
@@ -130,6 +131,7 @@ public class MenuController extends Controller {
             case "none":
                 inGame = true;
                 menu = null;
+                disablePlayerInput(false);
                 lastMenu = "pause";
                 break;
             default:
@@ -137,16 +139,14 @@ public class MenuController extends Controller {
         }
         if (menu != null) {
             menuBox.getChildren().add(menu);
-            //menu.getMenuItems().get(menu.getSelectedIndex()).enterAnimation();
+            menu.getMenuItems().get(menu.getSelectedIndex()).enterAnimation();
         }
     }
 
     private Menu getMainMenu() {
-        disablePlayerInput(true);
         Title title = new Title("Main Menu");
         List menuItems = new ArrayList<MenuItem>() {{
             add(new MenuItem("Start Game", () -> {
-                disablePlayerInput(false);
                 displayMenu("none");
                 GameLoop.startCounter();
                 mainMenuMusic.stop();
@@ -193,22 +193,16 @@ public class MenuController extends Controller {
                 double newVolume = Config.volume + (dir.equals(DirectionType.LEFT) ? -0.005 : 0.005);
                 Config.volume = Math.min(Math.max(newVolume, 0), 0.1);
                 GameLoop.currentMusic.setVolume(Config.volume);
-                displayMenu("options");
-                menu.setSelectedIndex(0);
-                menu.getMenuItems().get(menu.getSelectedIndex()).enterAnimation();
+                menu.getMenuItems().get(menu.getSelectedIndex()).setText("\uD83E\uDC44Volume:" + Math.round(Config.volume * 1000) + "%\uD83E\uDC46");
             }));
             add(new MenuItem("\uD83E\uDC44Debug Mode:" + booleanToOnOff(Config.debug_mode) + "\uD83E\uDC46", () -> {
                 Config.debug_mode = !Config.debug_mode;
-                displayMenu("options");
-                menu.setSelectedIndex(1);
-                menu.getMenuItems().get(menu.getSelectedIndex()).enterAnimation();
+                menu.getMenuItems().get(menu.getSelectedIndex()).setText("\uD83E\uDC44Debug Mode:" + booleanToOnOff(Config.debug_mode) + "\uD83E\uDC46");
             }));
             add(new MenuItem("\uD83E\uDC44FPS Counter:" + booleanToOnOff(Config.fps_print_mode) + "\uD83E\uDC46", () -> {
                 Config.fps_print_mode = !Config.fps_print_mode;
                 GameLoop.currentLevel.getFpsObject().setPrintMode(Config.fps_print_mode);
-                displayMenu("options");
-                menu.setSelectedIndex(2);
-                menu.getMenuItems().get(menu.getSelectedIndex()).enterAnimation();
+                menu.getMenuItems().get(menu.getSelectedIndex()).setText("\uD83E\uDC44FPS Counter:" + booleanToOnOff(Config.fps_print_mode) + "\uD83E\uDC46");
             }));
             add(new MenuItem("Back", () -> {
                 displayMenu(lastMenu);
@@ -236,8 +230,10 @@ public class MenuController extends Controller {
     }
 
     private void disablePlayerInput(boolean disable) {
-        GameLoop.currentLevel.getPlayer1().setInputDisabled(disable);
-        GameLoop.currentLevel.getPlayer2().setInputDisabled(disable);
+        KeyController.getInstance().setKeyPressBlockedP1(disable);
+        KeyController.getInstance().setKeyPressBlockedP2(disable);
+        //GameLoop.currentLevel.getPlayer1().setInputDisabled(disable);
+        //GameLoop.currentLevel.getPlayer2().setInputDisabled(disable);
     }
 
     private class Credits extends MenuItem {
@@ -245,8 +241,7 @@ public class MenuController extends Controller {
             TextArea textArea = new TextArea();
             textArea.setEditable(false);
             textArea.setWrapText(true);
-            textArea.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam condimentum tellus ut libero eleifend, non blandit sem semper. Fusce fringilla eget urna a condimentum. Integer ultricies lorem nibh, a iaculis justo posuere at. Etiam in dictum lorem. Suspendisse sem erat, euismod non dui non, aliquam pulvinar elit. Suspendisse scelerisque felis sed viverra consequat. Donec sed nisl non dui tincidunt pharetra.\n" + "\n" +
-                    "Vivamus non consectetur lorem. Suspendisse potenti. Proin ornare ante nec interdum aliquam. Mauris suscipit sollicitudin nunc quis faucibus. Duis orci ex, finibus a orci non, congue ullamcorper diam. Praesent dapibus nunc sit amet eros maximus consequat. Donec eget urna ex. Proin eu orci id arcu faucibus elementum. Vestibulum non ante risus. Morbi dictum leo in luctus facilisis. Proin ultrices elit vitae eros cursus interdum. Sed in velit in turpis dictum tempor ut et nisi. Vivamus tincidunt consequat lacus. Sed leo risus, sollicitudin id ipsum vitae, ullamcorper bibendum tortor.");
+            textArea.setText(Config.CREDITS);
             textArea.setPrefHeight(400);
             textArea.setPrefWidth(400);
             textArea.setStyle("-fx-control-inner-background:#D3D3D3;");
@@ -297,6 +292,7 @@ public class MenuController extends Controller {
         private ScaleTransition st;
         private FadeTransition ft;
         private Runnable onClick;
+        private Text textField;
 
         public MenuItem(String text, Runnable onClick) {
             this.onClick = onClick;
@@ -304,11 +300,11 @@ public class MenuController extends Controller {
                 dir = event.getX()>200 ? DirectionType.RIGHT : DirectionType.LEFT;
                 this.onClick.run();
             });
-            Text t = new Text(text);
-            t.setFill(Color.WHITE);
-            t.setFont(Font.font("Verdana", 50));
+            textField = new Text(text);
+            textField.setFill(Color.WHITE);
+            textField.setFont(Font.font("Verdana", 50));
 
-            Rectangle bg = new Rectangle(400, t.getLayoutBounds().getHeight() + 3);
+            Rectangle bg = new Rectangle(400, textField.getLayoutBounds().getHeight() + 3);
             LinearGradient lg = new LinearGradient(0, 0, 1, 1, true, CycleMethod.NO_CYCLE, new Stop(0, Color.TRANSPARENT), new Stop(0.2, Color.GRAY), new Stop(0.8, Color.GRAY), new Stop(1, Color.TRANSPARENT));
             bg.setFill(lg);
             st = new ScaleTransition(Duration.millis(200), this);
@@ -322,7 +318,7 @@ public class MenuController extends Controller {
                 exitAnimation();
             });
 
-            getChildren().addAll(bg, t);
+            getChildren().addAll(bg, textField);
         }
 
         private void startAnimations() {
@@ -351,7 +347,9 @@ public class MenuController extends Controller {
 
         public MenuItem() {
         }
-
+        public void setText(String s){
+            textField.setText(s);
+        }
         public void runOnClick() {
             onClick.run();
         }
