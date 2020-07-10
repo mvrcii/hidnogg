@@ -138,6 +138,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             if(animation.getAnimationType() != PLAYER_WIN){
                 keyCon.setKeyPressBlockedP1(true);
                 keyCon.setKeyPressBlockedP2(true);
+                GameLoop.currentLevel.removeGameObject(swordObject);
+                this.swordObject = null;
                 animation = animCon.getAnimation(PLAYER_WIN);
             }
         }
