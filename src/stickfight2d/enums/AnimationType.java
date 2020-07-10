@@ -9,6 +9,7 @@ public enum AnimationType {
     PLAYER_IDLE_HOLD_UP(90),
     PLAYER_IDLE_NO_SWORD(90),
 
+    PLAYER_DROPKICK(60),
     PLAYER_JUMP_START(60),
     PLAYER_JUMP_PEAK(60),
     PLAYER_JUMP_END(60),
@@ -29,6 +30,7 @@ public enum AnimationType {
     PLAYER_WIN(60),
 
     SWORD(150);
+
 
     private final int amount;
 

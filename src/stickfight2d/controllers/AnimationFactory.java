@@ -60,6 +60,8 @@ public class AnimationFactory {
         basicAnimationData.put(AnimationType.PLAYER_IDLE_NO_SWORD, new AnimationData(14));
         basicAnimationData.put(AnimationType.PLAYER_STAB_NO_SWORD, new AnimationData(15));
 
+        basicAnimationData.put(AnimationType.PLAYER_DROPKICK, new AnimationData(16));
+
         basicAnimationData.put(AnimationType.PLAYER_STEP_HIGH, new AnimationData(17));
         basicAnimationData.put(AnimationType.PLAYER_STEP_MEDIUM, new AnimationData(18));
         basicAnimationData.put(AnimationType.PLAYER_STEP_LOW, new AnimationData(19));
