@@ -2,11 +2,9 @@ package stickfight2d;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -17,7 +15,6 @@ public class Main extends Application {
 
     private final int SUB_MAP_WIDTH = 1032;
     private final int SUB_MAP_HEIGHT = 810;
-
 
     @Override
     public void start(Stage primaryStage) {
@@ -52,7 +49,6 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
 
     public static Group getRoot() {
         return root;

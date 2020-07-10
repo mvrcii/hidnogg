@@ -4,7 +4,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import stickfight2d.GameLoop;
 import stickfight2d.controllers.CameraController;
 import stickfight2d.controllers.CollisionController;
@@ -53,14 +52,8 @@ public class BackgroundObject extends GameObject {
      * For enabling players to run out of opposite bounds if they get a hit on the enemy
      */
     private DirectionType currentEnabledRunningDirection = null;
-
-    /**
-     * Plz don't look at me I know I'm ugly
-     */
-    private final double[] arrowLeft_X = {516 - 160, 516 - 64, 516 - 64, 516, 516, 516 - 64, 516 - 64};
-    private final double[] arrowLeft_Y = {163, 156, 160, 160, 166, 166, 170};
-    private final double[] arrowRight_X = {516 + 160 + 192, 516 + 64 + 192, 516 + 64 + 192, 516 + 192, 516 + 192, 516 + 64 + 192, 516 + 64 + 192};
-    private final double[] arrowRight_Y = {163, 156, 160, 160, 166, 166, 170};
+    private Image arrow_left;
+    private Image arrow_right;
 
     /**
      * Read map image and save first sub image
@@ -75,6 +68,12 @@ public class BackgroundObject extends GameObject {
             String PATH_MAP = "src/map.png";
             defaultImage = ImageIO.read(new File(PATH_MAP));
             worldSubImage = SwingFXUtils.toFXImage(defaultImage.getSubimage(subImageStartX, 0, subImageWidth, subImageHeight), null);
+
+            String PATH_ARROW_LEFT = "src/arrow_left.png";
+            String PATH_ARROW_RIGHT = "src/arrow_right.png";
+            arrow_left = SwingFXUtils.toFXImage(ImageIO.read(new File(PATH_ARROW_LEFT)), null);
+            arrow_right = SwingFXUtils.toFXImage(ImageIO.read(new File(PATH_ARROW_RIGHT)), null);
+
         } catch (IOException e) {
             e.printStackTrace();
             Debugger.log("BackgroundObject construction - Background image could not be initialized.\n");
@@ -145,14 +144,11 @@ public class BackgroundObject extends GameObject {
         Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(0, 0);
         gc.drawImage(worldSubImage, drawPoint.getX(), drawPoint.getY());
 
-        if (currentEnabledRunningDirection == DirectionType.RIGHT) {
-            gc.setFill(Color.BLACK);
-            gc.fillPolygon(arrowRight_X, arrowRight_Y, 7);
+        if (currentEnabledRunningDirection == DirectionType.RIGHT)
+            gc.drawImage(arrow_right, 676, 156);
 
-        } else if (currentEnabledRunningDirection == DirectionType.LEFT) {
-            gc.setFill(Color.BLACK);
-            gc.fillPolygon(arrowLeft_X, arrowLeft_Y, 7);
-        }
+        else if (currentEnabledRunningDirection == DirectionType.LEFT)
+            gc.drawImage(arrow_left, 356, 156);
     }
 
     /**
