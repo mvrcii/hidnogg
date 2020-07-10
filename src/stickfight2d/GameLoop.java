@@ -28,9 +28,9 @@ public class GameLoop extends Thread implements Runnable {
 
     private static Text counterText;
     private static boolean counterOn = false;
-    private int counterState = 0;
+    private static int counterState = 0;
 
-    private double diffTimeMs = 0;
+    private static double diffTimeMs = 0;
 
     public static Music currentMusic;
 
@@ -120,21 +120,21 @@ public class GameLoop extends Thread implements Runnable {
     private void updateCounter(){
 
             if (counterOn) {
-                if (diffTimeMs / 1000 >= 3 && counterState == 0) {
+                if (diffTimeMs / 1000 >= 2 && counterState == 0) {
                     counterState = 1;
                     counterText.setX(Main.getPrimaryStage().getWidth() / 2 - 90);
                     counterText.setFont(Font.font("Verdana", 80));
                     counterText.setText("3");
-                } else if (diffTimeMs / 1000 >= 4 && counterState == 1) {
+                } else if (diffTimeMs / 1000 >= 3 && counterState == 1) {
                     counterState = 2;
                     counterText.setText("2");
-                } else if (diffTimeMs / 1000 >= 5 && counterState == 2) {
+                } else if (diffTimeMs / 1000 >= 4 && counterState == 2) {
                     counterState = 3;
                     counterText.setText("1");
-                } else if (diffTimeMs / 1000 >= 6 && counterState == 3) {
+                } else if (diffTimeMs / 1000 >= 5 && counterState == 3) {
                     counterState = 4;
                     counterText.setText("GO");
-                } else if (diffTimeMs / 1000 >= 7 && counterState == 4) {
+                } else if (diffTimeMs / 1000 >= 6 && counterState == 4) {
                     counterState = 5;
                     counterText.setText("");
                     KeyController.getInstance().setKeyPressBlockedP1(false);
@@ -148,6 +148,8 @@ public class GameLoop extends Thread implements Runnable {
 
             Stage stage = Main.getPrimaryStage();
             counterOn = true;
+            counterState = 0;
+            diffTimeMs = 0;
             VBox counterBox = new VBox();
             counterBox.layoutXProperty().bind(Main.getPrimaryStage().widthProperty().divide(2).subtract(counterBox.widthProperty().divide(2)));
             counterBox.layoutYProperty().bind(Main.getPrimaryStage().heightProperty().divide(2).subtract(counterBox.heightProperty().divide(2)));
