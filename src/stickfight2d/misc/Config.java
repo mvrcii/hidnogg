@@ -35,7 +35,7 @@ public class Config {
 
     public static boolean debug_mode = false;
     public static boolean fps_print_mode = true;
-    public static double volume = 0.01;
+    public static double volume = 0.05;
 
     public Config(){
 

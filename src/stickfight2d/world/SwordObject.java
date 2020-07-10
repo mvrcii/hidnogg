@@ -30,7 +30,7 @@ public class SwordObject extends GameObject {
     private double bounceOffSet = 0;
     private double timePassedAir;
     private double timePassedAirCoordinates;
-    private final static int SINGLE_ROTATION_TIME = 1000; // 1seconds
+    private final static int SINGLE_ROTATION_TIME = 5000; // 1seconds
 
     public SwordObject(int x, int y, DirectionType directionType, PlayerObject playerObject) {
         super(x, y, directionType);

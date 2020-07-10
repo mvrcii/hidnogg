@@ -135,9 +135,11 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private void checkWin() {
         if(CollisionController.getInstance().getWin(this.playerNumber)){
-            keyCon.setKeyPressBlockedP1(true);
-            keyCon.setKeyPressBlockedP2(true);
-            animation = animCon.getAnimation(PLAYER_WIN);
+            if(animation.getAnimationType() != PLAYER_WIN){
+                keyCon.setKeyPressBlockedP1(true);
+                keyCon.setKeyPressBlockedP2(true);
+                animation = animCon.getAnimation(PLAYER_WIN);
+            }
         }
     }
 
@@ -473,7 +475,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 }
 
             }
-
         }
 
         if(dropkick){
@@ -482,7 +483,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 dropkick = false;
                 animation = animCon.getAnimation(lastIdleAnimationType);
             }else{
-                //vx += (2 * (double) diffMillis) / 10;
+                vx -= (vx > 0) ? (2 * (double) diffMillis) / 100 : 0 ;
                 x += vx * diffMillis / 100;
             }
         }

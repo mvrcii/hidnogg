@@ -54,10 +54,10 @@ public class WorldObject {
     private ArrayList<RectangleObstacle> getMapObstacles() {
         ArrayList<RectangleObstacle> obstacles = new ArrayList<>();
         int mapState = 0;
-        obstacles.add(new RectangleObstacle(-50, 0, 50, 810, Color.RED, -1)); // Player1 block boundary
+        obstacles.add(new RectangleObstacle(-80, 0, 80, 810, Color.RED, -1)); // Player1 block boundary
         obstacles.add(new RectangleObstacle(340, 584, 14, 160, Color.RED, -3)); // Player1 block cave
 
-        obstacles.add(new RectangleObstacle(1032, 0, 50, 810, Color.BLUE, -2)); // Player2 block boundary
+        obstacles.add(new RectangleObstacle(1032, 0, 80, 810, Color.BLUE, -2)); // Player2 block boundary
         obstacles.add(new RectangleObstacle(692 - 14, 584, 14, 160, Color.BLUE, -4)); // Player2 block cave
 
         // Map 00
