@@ -32,6 +32,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private final PlayerType playerNumber;
     private SwordObject swordObject;
 
+    private boolean dropkick;
     private boolean canAccelerate;
     private boolean onGround;
     private boolean alive;
@@ -60,6 +61,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         this.onGround = true;
         this.alive = true;
         this.inputDisabled = false;
+        this.dropkick = false;
     }
 
     public void reset(){
@@ -120,6 +122,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             handleDownKey();
             handleStabKey();
             handleJumpKey(diffMillis);
+            handleDropKick(diffMillis);
         }
     }
 
@@ -427,7 +430,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private void handleJumpKey(long diffMillis) {
         if (keyCon.isKeyPressed(keySet.getJumpKey())) {
-
             if (onGround) {
                 animation = animCon.getAnimation(PLAYER_JUMP_START);
                 vy = 20;
@@ -444,7 +446,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             canAccelerate = false;
         }
         if(animation.getAnimationType() == PLAYER_JUMP_START && vy >= 20){
-
             animation = animCon.getAnimation(PLAYER_JUMP_PEAK);
         }
         if(animation.getAnimationType() == PLAYER_JUMP_PEAK && vy <= -15){
@@ -456,9 +457,35 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }else{
                 animation = animCon.getAnimation(lastIdleAnimationType);
             }
+        }
+    }
+
+    private void handleDropKick(long diffMillis) {
+
+        if (keyCon.isKeyPressed(keySet.getJumpKey())|| animation.getAnimationType() == PLAYER_JUMP_PEAK || animation.getAnimationType() == PLAYER_JUMP_START || animation.getAnimationType() == PLAYER_JUMP_END) {
+            if (keyCon.isKeyPressed(keySet.getStabKey())) {
+                dropkick = true;
+                animation = animCon.getAnimation(PLAYER_DROPKICK);
+                if(directionType == DirectionType.RIGHT){
+                    vx = 30;
+                }else{
+                    vx = -30;
+                }
+
+            }
 
         }
 
+        if(dropkick){
+            if(onGround){
+                vx = 0;
+                dropkick = false;
+                animation = animCon.getAnimation(lastIdleAnimationType);
+            }else{
+                //vx += (2 * (double) diffMillis) / 10;
+                x += vx * diffMillis / 100;
+            }
+        }
     }
 
     /**
