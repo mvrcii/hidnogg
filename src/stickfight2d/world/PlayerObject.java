@@ -37,6 +37,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private boolean onGround;
     private boolean alive;
     private boolean deadAndMapChanged = false;
+
+    private ParticleEmitter particleEmitter;
     private final boolean[] spread_blood = new boolean[10];
 
     private double time_passed = 0;
@@ -248,9 +250,10 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 int yOffset = (int) bloodPoints[i].getY();
 
                 switch (directionType) {
-                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x, y + yOffset, DirectionType.RIGHT, 30, 300, 2, 10, 180, 60, "0xFF0000", 4));
-                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x + xOffset, y + yOffset, DirectionType.RIGHT, 30, 300, 2, 10, 180, 60, "0xFF0000", 4));
+                    case LEFT -> particleEmitter = new ParticleEmitter(this, x, y + yOffset, DirectionType.RIGHT, 30, 300, 2, 10, 180, 60, "0xFF0000", 4);
+                    case RIGHT -> particleEmitter = new ParticleEmitter(this, x + xOffset, y + yOffset, DirectionType.RIGHT, 30, 300, 2, 10, 180, 60, "0xFF0000", 4);
                 }
+                GameLoop.currentLevel.addGameObject(particleEmitter);
                 spread_blood[i] = true;
             }
         }
@@ -573,6 +576,12 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 }
             }
         }
+    }
+    
+    // Removes all particle emitters from a specific player from the gameObjects
+    public void removeParticleEmitter(){
+        GameLoop.currentLevel.removeGameObject(particleEmitter);
+        particleEmitter = null;
     }
 
     private void markPlayer(GraphicsContext gc, double x, double y) {

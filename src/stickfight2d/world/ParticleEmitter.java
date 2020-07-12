@@ -11,6 +11,8 @@ import java.lang.Math;
 
 public class ParticleEmitter extends GameObject {
 
+    private PlayerObject playerObject;
+
     private int amount;
     private int speed;
     private int speedRandomness;
@@ -22,8 +24,9 @@ public class ParticleEmitter extends GameObject {
     private String color;
     private int size;
 
-    public ParticleEmitter(int x, int y, DirectionType direction, int amount, int time, int speed, int speedRandomness, int angle, int angleRandomness,String color,int size) {
+    public ParticleEmitter(PlayerObject playerObject, int x, int y, DirectionType direction, int amount, int time, int speed, int speedRandomness, int angle, int angleRandomness,String color,int size) {
         super(x, y, direction);
+        this.playerObject = playerObject;
         this.totalTime = time;
         this.amount = amount;
         this.speed = speed;
