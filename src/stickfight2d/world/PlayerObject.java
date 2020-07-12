@@ -37,7 +37,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private boolean onGround;
     private boolean alive;
     private final boolean[] spread_blood = new boolean[10];
-    private boolean inputDisabled;
+    // private boolean inputDisabled;
 
     private double time_passed = 0;
 
@@ -60,7 +60,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         Arrays.fill(spread_blood, Boolean.FALSE);
         this.onGround = true;
         this.alive = true;
-        this.inputDisabled = false;
+        // this.inputDisabled = false;
         this.dropkick = false;
     }
 
@@ -115,7 +115,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         checkWin();
         handleDeathAnimation(diffMillis);
 
-        if(!inputDisabled && this.alive) {
+        if(this.alive) {
             handleMovementKeys(diffMillis);
             handleUpKey();
             handleThrowing();
@@ -466,26 +466,25 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private void handleDropKick(long diffMillis) {
 
-        if (keyCon.isKeyPressed(keySet.getJumpKey())|| animation.getAnimationType() == PLAYER_JUMP_PEAK || animation.getAnimationType() == PLAYER_JUMP_START || animation.getAnimationType() == PLAYER_JUMP_END) {
+        if (keyCon.isKeyPressed(keySet.getJumpKey()) || animation.getAnimationType() == PLAYER_JUMP_PEAK || animation.getAnimationType() == PLAYER_JUMP_START || animation.getAnimationType() == PLAYER_JUMP_END) {
             if (keyCon.isKeyPressed(keySet.getStabKey())) {
                 dropkick = true;
                 animation = animCon.getAnimation(PLAYER_DROPKICK);
-                if(directionType == DirectionType.RIGHT){
+                if (directionType == DirectionType.RIGHT) {
                     vx = 30;
-                }else{
+                } else {
                     vx = -30;
                 }
-
             }
         }
 
-        if(dropkick){
-            if(onGround){
+        if (dropkick) {
+            if (onGround || CollisionController.getInstance().getPlayerHitsWall(this.playerNumber)) {
                 vx = 0;
                 dropkick = false;
                 animation = animCon.getAnimation(lastIdleAnimationType);
-            }else{
-                vx -= (vx > 0) ? (2 * (double) diffMillis) / 100 : 0 ;
+            } else {
+                vx -= (vx > 0) ? (2 * (double) diffMillis) / 100 : 0;
                 x += vx * diffMillis / 100;
             }
         }
@@ -605,6 +604,4 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     public KeySet getKeySet() {
         return keySet;
     }
-
-    public void setInputDisabled(boolean inputDisabled) { this.inputDisabled = inputDisabled;}
 }

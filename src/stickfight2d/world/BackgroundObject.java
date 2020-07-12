@@ -144,13 +144,11 @@ public class BackgroundObject extends GameObject {
         Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(0, 0);
         gc.drawImage(worldSubImage, drawPoint.getX(), drawPoint.getY());
 
-        if (worldState != 0 && worldState != 4) {
-            if (currentEnabledRunningDirection == DirectionType.RIGHT)
-                gc.drawImage(arrow_right, 676, 156);
+        if (currentEnabledRunningDirection == DirectionType.RIGHT && worldState != 0)
+            gc.drawImage(arrow_right, 676, 156);
 
-            else if (currentEnabledRunningDirection == DirectionType.LEFT)
-                gc.drawImage(arrow_left, 356, 156);
-        }
+        else if (currentEnabledRunningDirection == DirectionType.LEFT && worldState != 4)
+            gc.drawImage(arrow_left, 356, 156);
     }
 
     /**

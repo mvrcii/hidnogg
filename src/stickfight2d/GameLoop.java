@@ -1,13 +1,11 @@
 package stickfight2d;
 
-import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 import kuusisto.tinysound.Music;
 import kuusisto.tinysound.TinySound;
 import stickfight2d.controllers.*;
@@ -52,8 +50,9 @@ public class GameLoop extends Thread implements Runnable {
     }
 
 
-    private final float interval = 1000.0f / 60;
+    private static final float interval = 1000.0f / 60;
 
+    @SuppressWarnings({"BusyWait", "InfiniteLoopStatement"})
     public void run() {
 
         long lastTick = System.currentTimeMillis();
@@ -144,8 +143,6 @@ public class GameLoop extends Thread implements Runnable {
     }
 
     public static void startCounter() {
-
-            Stage stage = Main.getPrimaryStage();
             counterOn = true;
             counterState = 0;
             diffTimeMs = 0;
@@ -161,7 +158,6 @@ public class GameLoop extends Thread implements Runnable {
 
             KeyController.getInstance().setKeyPressBlockedP1(true);
             KeyController.getInstance().setKeyPressBlockedP2(true);
-
     }
 
 }
