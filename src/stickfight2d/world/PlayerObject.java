@@ -263,11 +263,24 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         if (!alive) {
             time_passed += diffMillis;
+
             if (time_passed > Config.T_RESPAWN) {
                 GameLoop.currentLevel.respawnPlayer(this);
-                Arrays.fill(spread_blood, Boolean.FALSE);
+                resetBloodArray();
             }
         }
+    }
+
+    public void setTimePassed(double value){
+        if(value >= 0){
+            time_passed = value;
+        }else{
+            throw new IllegalArgumentException("No valid time value");
+        }
+    }
+
+    public void resetBloodArray(){
+        Arrays.fill(spread_blood, Boolean.FALSE);
     }
 
 
