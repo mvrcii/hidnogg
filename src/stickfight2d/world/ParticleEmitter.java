@@ -84,10 +84,11 @@ public class ParticleEmitter extends GameObject {
 
     @Override
     public void draw(GraphicsContext gc) {
-        if(playerObject != null){
-            for (ParticleObject p : particles) {
-                p.draw(gc);
-            }
+        if(this.playerObject.isDeadAndMapChanged())
+            return;
+
+        for (ParticleObject p : particles) {
+            p.draw(gc);
         }
     }
 

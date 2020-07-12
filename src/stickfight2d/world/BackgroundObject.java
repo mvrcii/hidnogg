@@ -172,9 +172,9 @@ public class BackgroundObject extends GameObject {
         Point2D pointP1 = spawnPoints.get(this.worldState).get(p1.getPlayerNumber());
         Point2D pointP2 = spawnPoints.get(this.worldState).get(p2.getPlayerNumber());
 
-        if(!p1.isAlive())
+        if (!p1.isAlive())
             p1.setDeadAndMapChanged(true);
-        if(!p2.isAlive())
+        if (!p2.isAlive())
             p2.setDeadAndMapChanged(true);
 
         p1.setXY((int) pointP1.getX(), (int) pointP1.getY());
@@ -197,7 +197,7 @@ public class BackgroundObject extends GameObject {
         return currentEnabledRunningDirection;
     }
 
-    public boolean isWorldStateChanged(){
+    public boolean isWorldStateChanged() {
         return worldStateChanged;
     }
 }
