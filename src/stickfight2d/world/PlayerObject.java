@@ -498,8 +498,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if (keyCon.isKeyPressed(keySet.getJumpKey())
                 || animation.getAnimationType() == PLAYER_JUMP_PEAK
                 || animation.getAnimationType() == PLAYER_JUMP_START
-                || animation.getAnimationType() == PLAYER_JUMP_END) {
-
+                || animation.getAnimationType() == PLAYER_JUMP_END)
+        {
             if (keyCon.isKeyPressed(keySet.getStabKey())) {
                 dropkick = true;
                 animation = animCon.getAnimation(PLAYER_DROPKICK);
