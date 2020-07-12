@@ -33,6 +33,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private SwordObject swordObject;
 
     private boolean dropkick;
+    private int prevX;
     private boolean canAccelerate;
     private boolean onGround;
     private boolean alive;
@@ -62,6 +63,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         this.alive = true;
         // this.inputDisabled = false;
         this.dropkick = false;
+        this.prevX = x;
     }
 
     public void reset(){
@@ -482,10 +484,12 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if (dropkick) {
             if (onGround || CollisionController.getInstance().getPlayerHitsWall(this.playerNumber)) {
                 vx = 0;
+                this.x = prevX;
                 dropkick = false;
                 animation = animCon.getAnimation(lastIdleAnimationType);
             } else {
                 vx -= (vx > 0) ? (2 * (double) diffMillis) / 100 : 0;
+                prevX = this.x;
                 x += vx * diffMillis / 100;
             }
         }

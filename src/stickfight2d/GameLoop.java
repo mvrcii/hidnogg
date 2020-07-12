@@ -64,7 +64,6 @@ public class GameLoop extends Thread implements Runnable {
             long diffMillis = currentTick - lastTick;
             lastTick = currentTick;
 
-
             update(diffMillis);
             clearScreen();
             draw();
