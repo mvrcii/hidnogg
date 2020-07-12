@@ -30,7 +30,7 @@ public class SwordObject extends GameObject {
     private double bounceOffSet = 0;
     private double timePassedAir;
     private double timePassedAirCoordinates;
-    private final static int SINGLE_ROTATION_TIME = 5000; // 1seconds
+    private final static int SINGLE_ROTATION_TIME = 600; // 1seconds
 
     public SwordObject(int x, int y, DirectionType directionType, PlayerObject playerObject) {
         super(x, y, directionType);
@@ -209,7 +209,7 @@ public class SwordObject extends GameObject {
         if(playerObject != null){
             int startAngle = calculateRotationAngle();
             timePassedAirCoordinates = 0;
-            vx = 100;
+            vx = 150;
             timePassedAir = (int) (startAngle * SINGLE_ROTATION_TIME / 360);
             x0 = x;
             y0 = y;
