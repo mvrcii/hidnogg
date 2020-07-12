@@ -84,8 +84,10 @@ public class ParticleEmitter extends GameObject {
 
     @Override
     public void draw(GraphicsContext gc) {
-        for (ParticleObject p : particles) {
-            p.draw(gc);
+        if(playerObject != null){
+            for (ParticleObject p : particles) {
+                p.draw(gc);
+            }
         }
     }
 
@@ -101,6 +103,14 @@ public class ParticleEmitter extends GameObject {
         } else {
             return angle;
         }
+    }
+
+    public PlayerObject getPlayerObject() {
+        return playerObject;
+    }
+
+    public void setPlayerObject(PlayerObject playerObject) {
+        this.playerObject = playerObject;
     }
 }
 
