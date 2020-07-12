@@ -16,8 +16,10 @@ public class Config {
     public static final double T_HOLDUP = 200;
     public static final double T_CROUCH = 200;
     public static final double T_RESPAWN = 2000;
-    public static final int KNOCKBACK_VALUE = 6;
 
+    public static final int KNOCKBACK_VALUE = 6;
+    public static final int DROPKICK_VX = 30;
+    public static final int JUMP_VY = 20;
 
     // MAIN MENU
     public static final String CREDITS = "Team:\n" +
