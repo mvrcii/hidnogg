@@ -177,10 +177,10 @@ public class BackgroundObject extends GameObject {
         p2.setDeadAndMapChanged(true);
 
         if (!p1.isAlive())
-            p1.setTimePassed(Config.T_RESPAWN - 600);
+            p1.setTimePassed(Config.T_RESPAWN - 300);
 
         if (!p2.isAlive())
-            p2.setTimePassed(Config.T_RESPAWN - 600);
+            p2.setTimePassed(Config.T_RESPAWN - 300);
 
         p1.setXY((int) pointP1.getX(), (int) pointP1.getY());
         p2.setXY((int) pointP2.getX(), (int) pointP2.getY());
