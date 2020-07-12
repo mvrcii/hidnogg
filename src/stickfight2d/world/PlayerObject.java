@@ -54,7 +54,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         super(x, y, directionType);
         this.keySet = keySet;
         this.playerNumber = playerNumber;
-        this.swordObject = new SwordObject(this.x, this.y, DirectionType.RIGHT, this);
+        this.swordObject = new SwordObject(this.x, this.y, directionType, this);
         GameLoop.currentLevel.addSword(swordObject);
 
         Arrays.fill(spread_blood, Boolean.FALSE);
@@ -68,7 +68,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         onGround = true;
         alive = true;
         animation = animCon.getAnimation(PLAYER_IDLE_MEDIUM);
-        swordObject = new SwordObject(this.x, this.y, DirectionType.RIGHT, this);
+        swordObject = new SwordObject(this.x, this.y, directionType, this);
         GameLoop.currentLevel.addSword(swordObject);
     }
 
@@ -387,6 +387,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             if(keyCon.isKeyPressed(keySet.getStabKey())){
                 if(swordObject != null){
                     swordObject.startThrowing();
+                    animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
                 }
             }
         }
