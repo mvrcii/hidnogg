@@ -33,12 +33,10 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private SwordObject swordObject;
 
     private boolean dropkick;
-    private int prevX;
     private boolean canAccelerate;
     private boolean onGround;
     private boolean alive;
     private final boolean[] spread_blood = new boolean[10];
-    // private boolean inputDisabled;
 
     private double time_passed = 0;
 
@@ -61,12 +59,10 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         Arrays.fill(spread_blood, Boolean.FALSE);
         this.onGround = true;
         this.alive = true;
-        // this.inputDisabled = false;
         this.dropkick = false;
-        this.prevX = x;
     }
 
-    public void reset(){
+    public void reset() {
         onGround = true;
         alive = true;
         animation = animCon.getAnimation(PLAYER_IDLE_MEDIUM);
@@ -81,7 +77,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         animation.update(diffMillis);
 
-        if(!(vy > 0 && CollisionController.getInstance().getPlayerHeadBump(this.playerNumber)))
+        if (!(vy > 0 && CollisionController.getInstance().getPlayerHeadBump(this.playerNumber)))
             y -= vy * diffMillis / 100;
 
         if (!onGround || jumps.contains(this.getAnimation().getAnimationType())) {
@@ -103,7 +99,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         markPlayer(gc, drawPoint.getX(), drawPoint.getY());
 
-        if(Config.debug_mode){
+        if (Config.debug_mode) {
             this.showHitBoxState(gc, 1);
             this.showHitBoxState(gc, 2);
             this.showHitBoxState(gc, 3);
@@ -117,7 +113,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         checkWin();
         handleDeathAnimation(diffMillis);
 
-        if(this.alive) {
+        if (this.alive) {
             handleMovementKeys(diffMillis);
             handleUpKey();
             handleThrowing();
@@ -129,15 +125,15 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     }
 
     public void checkSwordInNewScreen() {
-        if(swordObject == null){
+        if (swordObject == null) {
             swordObject = new SwordObject(this.x, this.y, DirectionType.RIGHT, this);
             GameLoop.currentLevel.addSword(swordObject);
         }
     }
 
     private void checkWin() {
-        if(CollisionController.getInstance().getWin(this.playerNumber)){
-            if(animation.getAnimationType() != PLAYER_WIN){
+        if (CollisionController.getInstance().getWin(this.playerNumber)) {
+            if (animation.getAnimationType() != PLAYER_WIN) {
                 keyCon.setKeyPressBlockedP1(true);
                 keyCon.setKeyPressBlockedP2(true);
                 GameLoop.currentLevel.removeGameObject(swordObject);
@@ -154,27 +150,27 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         onGround = colCon.getPlayerOnGround(this.playerNumber);
 
         // Player getting hit by other player
-        if(colCon.getPlayerHit(this.playerNumber) && alive && !colCon.isAttackBlocked()){
+        if (colCon.getPlayerHit(this.playerNumber) && alive && !colCon.isAttackBlocked()) {
             Debugger.log(playerNumber + " got hit");
             alive = false;
             time_passed = 0;
 
-            switch (playerNumber){
+            switch (playerNumber) {
                 case PLAYER_ONE -> keyCon.setKeyPressBlockedP1(true);
                 case PLAYER_TWO -> keyCon.setKeyPressBlockedP2(true);
             }
 
             keyCon.removePlayerKeyPress(this);   // only clear player specific keys
 
-            if(swordObject != null){    // only if PLAYER has a sword
+            if (swordObject != null) {    // only if PLAYER has a sword
                 swordObject.fallToGround();
                 this.swordObject = null;
             }
             animation = animCon.getAnimation(PLAYER_DYING);
-            if(animation.getAnimationType() == PLAYER_DYING){
+            if (animation.getAnimationType() == PLAYER_DYING) {
                 Debugger.log("player dieing");
             }
-        } else if (colCon.isAttackBlocked()){
+        } else if (colCon.isAttackBlocked()) {
             switch (directionType) {
                 case LEFT -> this.x = x + 6;
                 case RIGHT -> this.x = x - 6;
@@ -221,40 +217,40 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private void handleDeathAnimation(double diffMillis) {
 
         Point2D[] bloodPoints = new Point2D[]{    //   Frame   X       Y
-                new Point2D(12,19),     //   0       12      19
-                new Point2D(11,55),     //   1       11      55
-                new Point2D(9,30),      //   2       9       30
-                new Point2D(16,30),     //   3       16      30
-                new Point2D(23,35),     //   4       23      35
-                new Point2D(28,38),     //   5       28      38
-                new Point2D(29,41),     //   6       29      41
-                new Point2D(29,41),     //   7       29      41
-                new Point2D(30,42),     //   8       30      42
-                new Point2D(29,42)};    //   9       29      42
+                new Point2D(12, 19),     //   0       12      19
+                new Point2D(11, 55),     //   1       11      55
+                new Point2D(9, 30),      //   2       9       30
+                new Point2D(16, 30),     //   3       16      30
+                new Point2D(23, 35),     //   4       23      35
+                new Point2D(28, 38),     //   5       28      38
+                new Point2D(29, 41),     //   6       29      41
+                new Point2D(29, 41),     //   7       29      41
+                new Point2D(30, 42),     //   8       30      42
+                new Point2D(29, 42)};    //   9       29      42
 
-        if(animation.getAnimationType() == PLAYER_DYING){
-            if(animation.isLastFrame()){
+        if (animation.getAnimationType() == PLAYER_DYING) {
+            if (animation.isLastFrame()) {
                 animation.stop();
             }
             int i = animation.getCurrentFrameNumber();
 
-            if(!spread_blood[i]){
+            if (!spread_blood[i]) {
                 int xOffset = (int) bloodPoints[i].getX();
                 int yOffset = (int) bloodPoints[i].getY();
 
-                switch (directionType){
-                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x, y+yOffset, DirectionType.RIGHT,30,300,2,10,180,60,"0xFF0000",4));
-                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x+xOffset, y+yOffset, DirectionType.RIGHT,30,300,2,10,180,60,"0xFF0000",4));
+                switch (directionType) {
+                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x, y + yOffset, DirectionType.RIGHT, 30, 300, 2, 10, 180, 60, "0xFF0000", 4));
+                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(x + xOffset, y + yOffset, DirectionType.RIGHT, 30, 300, 2, 10, 180, 60, "0xFF0000", 4));
                 }
                 spread_blood[i] = true;
             }
         }
 
-        if(!alive){
+        if (!alive) {
             time_passed += diffMillis;
-            if(time_passed > Config.T_RESPAWN){
+            if (time_passed > Config.T_RESPAWN) {
                 GameLoop.currentLevel.respawnPlayer(this);
-                Arrays.fill(spread_blood,Boolean.FALSE);
+                Arrays.fill(spread_blood, Boolean.FALSE);
             }
         }
     }
@@ -269,9 +265,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     // Manual control is usually turned on while walking to the left / right
                     // by setting it to false here, the player always stabs towards his enemy
                     DirectionController.getInstance().setManualControl(this, false);
-                    if(swordObject == null){
+                    if (swordObject == null) {
                         animation = animCon.getAnimation(PLAYER_STAB_NO_SWORD);
-                    }else{
+                    } else {
                         animation = animCon.getStabAnim(lastIdleAnimationType);
                     }
                     switch (directionType) {
@@ -305,9 +301,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 DirectionController.getInstance().setManualControl(this, true);
                 directionType = DirectionType.RIGHT;
 
-                if(t_pressed > 100){
+                if (t_pressed > 100) {
                     animation = animCon.getAnimation(PLAYER_WALK);
-                }else{
+                } else {
                     animation = animCon.getStepAnim(lastIdleAnimationType);
                 }
             }
@@ -325,21 +321,21 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 DirectionController.getInstance().setManualControl(this, true);
                 directionType = DirectionType.LEFT;
 
-                if(t_pressed > 100){
+                if (t_pressed > 100) {
                     animation = animCon.getAnimation(PLAYER_WALK);
-                }else{
+                } else {
                     animation = animCon.getStepAnim(lastIdleAnimationType);
                 }
             }
         }
 
-        if (keyCon.isKeyPressed(keySet.getMoveLeftKey()) && keyCon.isKeyPressed(keySet.getMoveRightKey())){
-            if(animation.getAnimationType() != lastIdleAnimationType){
-                if(swordObject == null){
-                    if(animation.getAnimationType() != PLAYER_IDLE_NO_SWORD){
+        if (keyCon.isKeyPressed(keySet.getMoveLeftKey()) && keyCon.isKeyPressed(keySet.getMoveRightKey())) {
+            if (animation.getAnimationType() != lastIdleAnimationType) {
+                if (swordObject == null) {
+                    if (animation.getAnimationType() != PLAYER_IDLE_NO_SWORD) {
                         animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
                     }
-                }else{
+                } else {
                     animation = animCon.getAnimation(lastIdleAnimationType);
                 }
             }
@@ -347,9 +343,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         if (keyCon.isKeyReleased(keySet.getMoveLeftKey()) || keyCon.isKeyReleased(keySet.getMoveRightKey())) {
             DirectionController.getInstance().setManualControl(this, false);
-            if(swordObject == null){
+            if (swordObject == null) {
                 animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
-            }else{
+            } else {
                 animation = animCon.getAnimation(lastIdleAnimationType);
             }
         }
@@ -358,17 +354,17 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
     private void handleUpKey() {
-        if(swordObject != null){
+        if (swordObject != null) {
             if (keyCon.isKeyPressed(keySet.getUpKey())) {
                 double t_pressed = keyCon.getKeyPressedTime(keySet.getUpKey());
-                if(t_pressed > Config.T_HOLDUP){
-                    if(animation.getAnimationType() != PLAYER_IDLE_HOLD_UP){
+                if (t_pressed > Config.T_HOLDUP) {
+                    if (animation.getAnimationType() != PLAYER_IDLE_HOLD_UP) {
                         animation = animCon.getAnimation(PLAYER_IDLE_HOLD_UP);
                     }
                 }
             }
 
-            if (keyCon.isKeyReleased(keySet.getUpKey())){
+            if (keyCon.isKeyReleased(keySet.getUpKey())) {
                 AnimationType animType = animation.getAnimationType();
                 if (animType == PLAYER_IDLE_LOW) {
                     animation = animCon.getAnimation(PLAYER_IDLE_MEDIUM);
@@ -385,9 +381,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
     private void handleThrowing() {
-        if(animation.getAnimationType() == PLAYER_IDLE_HOLD_UP){
-            if(keyCon.isKeyPressed(keySet.getStabKey())){
-                if(swordObject != null){
+        if (animation.getAnimationType() == PLAYER_IDLE_HOLD_UP) {
+            if (keyCon.isKeyPressed(keySet.getStabKey())) {
+                if (swordObject != null) {
                     swordObject.startThrowing();
                     animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
                 }
@@ -397,20 +393,20 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
     private void handleDownKey() {
-        if(keyCon.isKeyPressed(keySet.getDownKey())){
+        if (keyCon.isKeyPressed(keySet.getDownKey())) {
             double t_pressed = keyCon.getKeyPressedTime(keySet.getDownKey());
 
-            if(t_pressed > Config.T_CROUCH){
+            if (t_pressed > Config.T_CROUCH) {
 
-                if(animation.getAnimationType() != PLAYER_CROUCH){
+                if (animation.getAnimationType() != PLAYER_CROUCH) {
                     animation = animCon.getAnimation(PLAYER_CROUCH);
                 }
-                if(swordObject == null){
+                if (swordObject == null) {
                     GameLoop.currentLevel.takeSwordFromGround(this);
                 }
             }
         }
-        if(keyCon.isKeyReleased(keySet.getDownKey())){
+        if (keyCon.isKeyReleased(keySet.getDownKey())) {
             AnimationType animType = animation.getAnimationType();
             if (animType == PLAYER_IDLE_HIGH) {
                 animation = animCon.getAnimation(PLAYER_IDLE_MEDIUM);
@@ -422,10 +418,10 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         }
 
         if (animation.isLastFrame()) {
-            if(animation.getAnimationType() == PLAYER_CROUCH){
-                if(swordObject != null){
+            if (animation.getAnimationType() == PLAYER_CROUCH) {
+                if (swordObject != null) {
                     animation = animCon.getAnimation(lastIdleAnimationType);
-                }else {
+                } else {
                     animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
                 }
 
@@ -442,32 +438,33 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 vy = 20;
                 canAccelerate = true;
             } else {
-                if(vy >= 30){
+                if (vy >= 30) {
                     canAccelerate = false;
                 }
-                if(canAccelerate){
+                if (canAccelerate) {
                     vy += ((3 * (double) diffMillis) / 10);
                 }
             }
-        }else{
+        } else {
             canAccelerate = false;
         }
-        if(animation.getAnimationType() == PLAYER_JUMP_START && vy >= 20){
+        if (animation.getAnimationType() == PLAYER_JUMP_START && vy >= 20) {
             animation = animCon.getAnimation(PLAYER_JUMP_PEAK);
         }
-        if(animation.getAnimationType() == PLAYER_JUMP_PEAK && vy <= -15){
+        if (animation.getAnimationType() == PLAYER_JUMP_PEAK && vy <= -15) {
             animation = animCon.getAnimation(PLAYER_JUMP_END);
         }
-        if(animation.getAnimationType() == PLAYER_JUMP_END && vy <= 1 && vy >= -1){
-            if(swordObject == null){
+        if (animation.getAnimationType() == PLAYER_JUMP_END && vy <= 1 && vy >= -1) {
+            if (swordObject == null) {
                 animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
-            }else{
+            } else {
                 animation = animCon.getAnimation(lastIdleAnimationType);
             }
         }
     }
 
     private void handleDropKick(long diffMillis) {
+        int prevX = this.x;
 
         if (keyCon.isKeyPressed(keySet.getJumpKey()) || animation.getAnimationType() == PLAYER_JUMP_PEAK || animation.getAnimationType() == PLAYER_JUMP_START || animation.getAnimationType() == PLAYER_JUMP_END) {
             if (keyCon.isKeyPressed(keySet.getStabKey())) {
@@ -482,21 +479,24 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         }
 
         if (dropkick) {
-            if (onGround || CollisionController.getInstance().getPlayerHitsWall(this.playerNumber)) {
+            if (onGround) {
                 vx = 0;
-                this.x = prevX;
                 dropkick = false;
                 animation = animCon.getAnimation(lastIdleAnimationType);
             } else {
                 vx -= (vx > 0) ? (2 * (double) diffMillis) / 100 : 0;
                 prevX = this.x;
                 x += vx * diffMillis / 100;
+                if (CollisionController.getInstance().getPlayerHitsWall(this.playerNumber)) {
+                    this.x = prevX;
+                    dropkick = false;
+                }
             }
         }
     }
 
     /**
-     *  HitBox Test method
+     * HitBox Test method
      */
     private void showHitBoxState(GraphicsContext gc, int testId) {
         CollisionController colCon = CollisionController.getInstance();
@@ -566,7 +566,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         }
     }
 
-    private void markPlayer(GraphicsContext gc, double x, double y){
+    private void markPlayer(GraphicsContext gc, double x, double y) {
         if (playerNumber == PlayerType.PLAYER_ONE)
             gc.setFill(Color.CYAN);
         else
@@ -577,7 +577,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     }
 
 
-    public void resetAnimationToIdle(){
+    public void resetAnimationToIdle() {
         this.animation = animCon.getAnimation(lastIdleAnimationType);
     }
 
@@ -597,7 +597,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         return playerNumber;
     }
 
-    public void setXY(int x, int y){
+    public void setXY(int x, int y) {
         this.setX(x);
         this.setY(y);
     }
