@@ -73,7 +73,7 @@ public class WorldObject {
         obstacles.add(new RectangleObstacle(497, 1044, 72, 810 * 2 - 671, Color.GREEN, mapState)); // Right cave wall
         obstacles.add(new RectangleObstacle(-44, 1044, 50, 810 * 2 - 671, Color.GREEN, mapState)); // Left cave wall
 
-        obstacles.add(new RectangleObstacle(5,1328,495,810 * 2 - 1328, Color.GREEN, mapState)); // cave ground
+        obstacles.add(new RectangleObstacle(5,1323,495,810 * 2 - 1328, Color.GREEN, mapState)); // cave ground
         obstacles.add(new RectangleObstacle(577, 648, 456, 810 - 648, Color.GREEN, mapState)); // ground
         grounds.add(obstacles.get(obstacles.size() - 1));
 
@@ -123,7 +123,7 @@ public class WorldObject {
         obstacles.add(new RectangleObstacle(535 - 72, 1044, 72, 810 * 2 - 671, Color.GREEN, mapState)); // Right cave wall
         obstacles.add(new RectangleObstacle(1076 - 50, 1044, 50, 810 * 2 - 671, Color.GREEN, mapState)); // Left cave wall
 
-        obstacles.add(new RectangleObstacle(1027 - 495,1328,495,810 * 2 - 1328, Color.GREEN, mapState)); // cave ground
+        obstacles.add(new RectangleObstacle(1027 - 495,1323,495,810 * 2 - 1328, Color.GREEN, mapState)); // cave ground
 
         obstacles.add(new RectangleObstacle(0, 648, 455, 810 - 648, Color.GREEN, mapState)); // ground
         grounds.add(obstacles.get(obstacles.size() - 1));
