@@ -10,6 +10,7 @@ import stickfight2d.controllers.*;
 import stickfight2d.enums.AnimationType;
 import stickfight2d.enums.DirectionType;
 import stickfight2d.enums.PlayerType;
+import stickfight2d.enums.SoundType;
 import stickfight2d.interfaces.InputSystem;
 import stickfight2d.misc.Config;
 import stickfight2d.misc.Debugger;
@@ -152,6 +153,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 GameLoop.currentLevel.removeGameObject(swordObject);
                 this.swordObject = null;
                 animation = animCon.getAnimation(PLAYER_WIN);
+                SoundController.getInstance().getMusic(SoundType.GAME_WON_THEME).play(true, Config.volume);
             }
         }
     }
