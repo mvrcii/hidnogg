@@ -132,7 +132,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     }
 
     public void checkSwordInNewScreen() {
-        if (swordObject == null) {
+        if (alive && swordObject == null) {
             swordObject = new SwordObject(this.x, this.y, DirectionType.RIGHT, this);
             GameLoop.currentLevel.addSword(swordObject);
         }
