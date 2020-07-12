@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static stickfight2d.enums.AnimationType.*;
+import static stickfight2d.misc.Config.*;
 
 public class PlayerObject extends MoveableObject implements InputSystem {
 
@@ -43,8 +44,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private double time_passed = 0;
 
-    private Animation animation = AnimationFactory.getInstance().getAnimation(Config.INITIAL_ANIMATION_TYPE);
-    private AnimationType lastIdleAnimationType = Config.INITIAL_ANIMATION_TYPE;
+    private Animation animation = AnimationFactory.getInstance().getAnimation(INITIAL_ANIMATION_TYPE);
+    private AnimationType lastIdleAnimationType = INITIAL_ANIMATION_TYPE;
 
     // Gravity-Ground detection
     private final HashSet<AnimationType> jumps = Stream.of(
@@ -111,7 +112,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         markPlayer(gc, drawPoint.getX(), drawPoint.getY());
 
-        if (Config.debug_mode) {
+        if (debug_mode) {
             this.showHitBoxState(gc, 1);
             this.showHitBoxState(gc, 2);
             this.showHitBoxState(gc, 3);
@@ -185,8 +186,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         } else if (colCon.isAttackBlocked()) {
             if (!colCon.getPlayerHitsWallRight(this.playerNumber) && !colCon.getPlayerHitsWallLeft(this.playerNumber)) {
                 switch (directionType) {
-                    case LEFT -> this.x = x + Config.KNOCKBACK_VALUE;
-                    case RIGHT -> this.x = x - Config.KNOCKBACK_VALUE;
+                    case LEFT -> this.x = x + KNOCKBACK_VALUE;
+                    case RIGHT -> this.x = x - KNOCKBACK_VALUE;
                 }
             }
         }
@@ -218,8 +219,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
                 if (!colCon.getPlayerHitsWallRight(this.playerNumber) && !colCon.getPlayerHitsWallLeft(this.playerNumber)) {
                     switch (directionType) {
-                        case LEFT -> this.x = x + Config.KNOCKBACK_VALUE;
-                        case RIGHT -> this.x = x - Config.KNOCKBACK_VALUE;
+                        case LEFT -> this.x = x + KNOCKBACK_VALUE;
+                        case RIGHT -> this.x = x - KNOCKBACK_VALUE;
                     }
                 }
             }
@@ -264,7 +265,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if (!alive) {
             time_passed += diffMillis;
 
-            if (time_passed > Config.T_RESPAWN) {
+            if (time_passed > T_RESPAWN) {
                 GameLoop.currentLevel.respawnPlayer(this);
                 resetBloodArray();
             }
@@ -385,7 +386,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if (swordObject != null) {
             if (keyCon.isKeyPressed(keySet.getUpKey())) {
                 double t_pressed = keyCon.getKeyPressedTime(keySet.getUpKey());
-                if (t_pressed > Config.T_HOLDUP) {
+                if (t_pressed > T_HOLDUP) {
                     if (animation.getAnimationType() != PLAYER_IDLE_HOLD_UP) {
                         animation = animCon.getAnimation(PLAYER_IDLE_HOLD_UP);
                     }
@@ -424,7 +425,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if (keyCon.isKeyPressed(keySet.getDownKey())) {
             double t_pressed = keyCon.getKeyPressedTime(keySet.getDownKey());
 
-            if (t_pressed > Config.T_CROUCH) {
+            if (t_pressed > T_CROUCH) {
 
                 if (animation.getAnimationType() != PLAYER_CROUCH) {
                     animation = animCon.getAnimation(PLAYER_CROUCH);
@@ -463,10 +464,10 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if (keyCon.isKeyPressed(keySet.getJumpKey())) {
             if (onGround) {
                 animation = animCon.getAnimation(PLAYER_JUMP_START);
-                vy = 20;
+                vy = JUMP_VY;
                 canAccelerate = true;
             } else {
-                if (vy >= 30) {
+                if (vy >= 1.5*JUMP_VY) {
                     canAccelerate = false;
                 }
                 if (canAccelerate) {
@@ -476,10 +477,10 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         } else {
             canAccelerate = false;
         }
-        if (animation.getAnimationType() == PLAYER_JUMP_START && vy >= 20) {
+        if (animation.getAnimationType() == PLAYER_JUMP_START && vy >= JUMP_VY) {
             animation = animCon.getAnimation(PLAYER_JUMP_PEAK);
         }
-        if (animation.getAnimationType() == PLAYER_JUMP_PEAK && vy <= -15) {
+        if (animation.getAnimationType() == PLAYER_JUMP_PEAK && vy <= -0.75*JUMP_VY) {
             animation = animCon.getAnimation(PLAYER_JUMP_END);
         }
         if (animation.getAnimationType() == PLAYER_JUMP_END && vy <= 1 && vy >= -1) {
@@ -494,14 +495,18 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private void handleDropKick(long diffMillis) {
         int prevX;
 
-        if (keyCon.isKeyPressed(keySet.getJumpKey()) || animation.getAnimationType() == PLAYER_JUMP_PEAK || animation.getAnimationType() == PLAYER_JUMP_START || animation.getAnimationType() == PLAYER_JUMP_END) {
+        if (keyCon.isKeyPressed(keySet.getJumpKey())
+                || animation.getAnimationType() == PLAYER_JUMP_PEAK
+                || animation.getAnimationType() == PLAYER_JUMP_START
+                || animation.getAnimationType() == PLAYER_JUMP_END) {
+
             if (keyCon.isKeyPressed(keySet.getStabKey())) {
                 dropkick = true;
                 animation = animCon.getAnimation(PLAYER_DROPKICK);
                 if (directionType == DirectionType.RIGHT) {
-                    vx = 30;
+                    vx = DROPKICK_VX;
                 } else {
-                    vx = -30;
+                    vx = -DROPKICK_VX;
                 }
             }
         }
