@@ -43,8 +43,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private double time_passed = 0;
 
-    private Animation animation = AnimationFactory.getInstance().getAnimation(PLAYER_IDLE_MEDIUM);
-    private AnimationType lastIdleAnimationType = PLAYER_IDLE_LOW;
+    private Animation animation = AnimationFactory.getInstance().getAnimation(Config.INITIAL_ANIMATION_TYPE);
+    private AnimationType lastIdleAnimationType = Config.INITIAL_ANIMATION_TYPE;
 
     // Gravity-Ground detection
     private final HashSet<AnimationType> jumps = Stream.of(
@@ -66,8 +66,11 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     }
 
     public void reset() {
+        // Setting all the booleans
         onGround = true;
         alive = true;
+        dropkick = false;
+        canAccelerate = true;
         animation = animCon.getAnimation(PLAYER_IDLE_MEDIUM);
         swordObject = new SwordObject(this.x, this.y, directionType, this);
         GameLoop.currentLevel.addSword(swordObject);
@@ -182,8 +185,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         } else if (colCon.isAttackBlocked()) {
             if (!colCon.getPlayerHitsWallRight(this.playerNumber) && !colCon.getPlayerHitsWallLeft(this.playerNumber)) {
                 switch (directionType) {
-                    case LEFT -> this.x = x + 6;
-                    case RIGHT -> this.x = x - 6;
+                    case LEFT -> this.x = x + Config.KNOCKBACK_VALUE;
+                    case RIGHT -> this.x = x - Config.KNOCKBACK_VALUE;
                 }
             }
         }
@@ -215,8 +218,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
                 if (!colCon.getPlayerHitsWallRight(this.playerNumber) && !colCon.getPlayerHitsWallLeft(this.playerNumber)) {
                     switch (directionType) {
-                        case LEFT -> this.x = x + 6;
-                        case RIGHT -> this.x = x - 6;
+                        case LEFT -> this.x = x + Config.KNOCKBACK_VALUE;
+                        case RIGHT -> this.x = x - Config.KNOCKBACK_VALUE;
                     }
                 }
             }
