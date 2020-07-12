@@ -38,7 +38,7 @@ public class SwordObject extends GameObject {
         this.onGround = false;
         this.throwing = false;
         this.playerObject = playerObject;
-        this.vx = 100;
+        this.vx = 150;
 
         if (playerObject != null) {
             this.directionType = playerObject.getDirectionType();
@@ -172,7 +172,7 @@ public class SwordObject extends GameObject {
                     timePassedAir = 0;
                     currentAngle = 0;
                 }
-
+                //System.out.println(currentAngle);
                 animation = AnimationFactory.getInstance().getSwordAnimAngle(currentAngle);
             }
 
@@ -225,6 +225,10 @@ public class SwordObject extends GameObject {
         this.playerObject = playerObject;
     }
 
+    public PlayerObject getPlayerObject() {
+        return playerObject;
+    }
+
     public void setFalling(boolean falling) {
         this.falling = falling;
     }
@@ -241,4 +245,13 @@ public class SwordObject extends GameObject {
         return onGround;
     }
 
+    @Override
+    public String toString() {
+        return "SwordObject{" +
+                "playerObject=" + playerObject +
+                ", falling=" + falling +
+                ", onGround=" + onGround +
+                ", throwing=" + throwing +
+                '}';
+    }
 }

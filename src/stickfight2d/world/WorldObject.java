@@ -155,7 +155,7 @@ public class WorldObject {
     }
 
     public void clearSwordsOnGround(){
-        for (SwordObject sword: swordObjects) {
+        for (SwordObject sword : swordObjects) {
             if(sword.isOnGround()){
                 removeGameObject(sword);
             }
@@ -207,9 +207,20 @@ public class WorldObject {
     }
 
     public void addSword(SwordObject swordObject){
-        if(swordObjects.size() == 4){
-            removeGameObject(swordObjects.remove());
+
+        // If the amount of swords in the world is greater than 4
+        // First remove one sword without a player reference
+        // And then add the new one
+        if(swordObjects.size() >= 4){
+            for (SwordObject sword : swordObjects) {
+                if(sword.getPlayerObject() == null){
+                    removeGameObject(sword);
+                    swordObjects.remove(sword);
+                    break;
+                }
+            }
         }
+
         swordObjects.add(swordObject);
         addGameObject(swordObject);
     }
