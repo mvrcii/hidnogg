@@ -196,8 +196,8 @@ public class CollisionController extends Controller {
      */
     private boolean checkCollisionSwordSword() {
         if (players.get(0).getSwordObject() == null || players.get(1).getSwordObject() == null // Player has no sword
-                || players.get(0).getAnimation().getAnimationType() == AnimationType.PLAYER_IDLE_HOLD_UP  // Player 1 in hold-up animation
-                || players.get(1).getAnimation().getAnimationType() == AnimationType.PLAYER_IDLE_HOLD_UP) // Player 2 in hold-up animation
+                || nonStabAnimations.contains(players.get(0).getAnimation().getAnimationType())  // Player 1 in hold-up animation
+                || nonStabAnimations.contains(players.get(1).getAnimation().getAnimationType())) // Player 2 in hold-up animation
             return false;
 
         Point2D swordTip1, swordGrip2, swordTip2;
