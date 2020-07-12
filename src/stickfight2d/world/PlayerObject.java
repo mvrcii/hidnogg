@@ -36,6 +36,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private boolean canAccelerate;
     private boolean onGround;
     private boolean alive;
+    private boolean deadAndMapChanged = false;
     private final boolean[] spread_blood = new boolean[10];
 
     private double time_passed = 0;
@@ -75,6 +76,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     public void update(long diffMillis) {
         int playerOffset = CollisionController.getInstance().getPlayersWidthHeight()[1];
 
+        if(alive)
+            deadAndMapChanged = false;
+
         animation.update(diffMillis);
 
         if (!(vy > 0 && CollisionController.getInstance().getPlayerHeadBump(this.playerNumber)))
@@ -91,6 +95,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     @Override
     public void draw(GraphicsContext gc) {
+        if(deadAndMapChanged)
+            return;
+
         Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
         switch (directionType) {
             case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());
@@ -171,9 +178,11 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 Debugger.log("player dieing");
             }
         } else if (colCon.isAttackBlocked()) {
-            switch (directionType) {
-                case LEFT -> this.x = x + 6;
-                case RIGHT -> this.x = x - 6;
+            if (!colCon.getPlayerHitsWallRight(this.playerNumber) && !colCon.getPlayerHitsWallLeft(this.playerNumber)) {
+                switch (directionType) {
+                    case LEFT -> this.x = x + 6;
+                    case RIGHT -> this.x = x - 6;
+                }
             }
         }
 
@@ -464,7 +473,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     }
 
     private void handleDropKick(long diffMillis) {
-        int prevX = this.x;
+        int prevX;
 
         if (keyCon.isKeyPressed(keySet.getJumpKey()) || animation.getAnimationType() == PLAYER_JUMP_PEAK || animation.getAnimationType() == PLAYER_JUMP_START || animation.getAnimationType() == PLAYER_JUMP_END) {
             if (keyCon.isKeyPressed(keySet.getStabKey())) {
@@ -608,5 +617,17 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     public KeySet getKeySet() {
         return keySet;
+    }
+
+    public boolean isAlive(){
+        return this.alive;
+    }
+
+    public boolean isDeadAndMapChanged() {
+        return this.deadAndMapChanged;
+    }
+
+    public void setDeadAndMapChanged(boolean mapChanged) {
+        this.deadAndMapChanged = mapChanged;
     }
 }

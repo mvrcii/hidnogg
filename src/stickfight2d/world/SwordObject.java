@@ -63,6 +63,9 @@ public class SwordObject extends GameObject {
 
     @Override
     public void draw(GraphicsContext gc) {
+        if(playerObject != null && playerObject.isDeadAndMapChanged())
+            return;
+
         Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
         switch (directionType) {
             case LEFT -> FrameData.drawHorizontallyFlipped(gc, animation.getCurrentSprite(), (int) drawPoint.getX(), (int) drawPoint.getY());

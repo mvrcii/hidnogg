@@ -32,7 +32,7 @@ public class BackgroundObject extends GameObject {
     /**
      * Map split into 5 world states [0, 4], "2" being the middle
      */
-    private boolean worldStateHasChanged = true;
+    private boolean worldStateChanged = true;
     private int worldState = 2;
 
     /**
@@ -122,7 +122,7 @@ public class BackgroundObject extends GameObject {
 
     @Override
     public void update(long diffMillis) {
-        if (worldStateHasChanged) {
+        if (worldStateChanged) {
             currentEnabledRunningDirection = null;
 
         } else {
@@ -136,7 +136,7 @@ public class BackgroundObject extends GameObject {
 
         }
 
-        worldStateHasChanged = false;
+        worldStateChanged = false;
     }
 
     @Override
@@ -162,7 +162,7 @@ public class BackgroundObject extends GameObject {
         this.worldState = worldState;
         this.subImageStartX = worldState * subImageWidth;
         worldSubImage = SwingFXUtils.toFXImage(defaultImage.getSubimage(subImageStartX, 0, subImageWidth, subImageHeight), null);
-        worldStateHasChanged = true;
+        worldStateChanged = true;
 
         GameLoop.currentLevel.clearSwordsOnGround();
 
@@ -171,6 +171,11 @@ public class BackgroundObject extends GameObject {
 
         Point2D pointP1 = spawnPoints.get(this.worldState).get(p1.getPlayerNumber());
         Point2D pointP2 = spawnPoints.get(this.worldState).get(p2.getPlayerNumber());
+
+        if(!p1.isAlive())
+            p1.setDeadAndMapChanged(true);
+        if(!p2.isAlive())
+            p2.setDeadAndMapChanged(true);
 
         p1.setXY((int) pointP1.getX(), (int) pointP1.getY());
         p2.setXY((int) pointP2.getX(), (int) pointP2.getY());
@@ -190,5 +195,9 @@ public class BackgroundObject extends GameObject {
 
     public DirectionType getCurrentEnabledRunningDirection() {
         return currentEnabledRunningDirection;
+    }
+
+    public boolean isWorldStateChanged(){
+        return worldStateChanged;
     }
 }
