@@ -598,13 +598,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
         }
     }
-    
-    // Removes all particle emitters from a specific player from the gameObjects
-    public void removeParticleEmitter(){
-        GameLoop.currentLevel.removeGameObject(particleEmitter);
-        particleEmitter.setPlayerObject(null);
-        particleEmitter = null;
-    }
+
 
     private void markPlayer(GraphicsContext gc, double x, double y) {
         if (playerNumber == PlayerType.PLAYER_ONE)

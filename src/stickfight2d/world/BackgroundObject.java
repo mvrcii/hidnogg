@@ -174,10 +174,13 @@ public class BackgroundObject extends GameObject {
         Point2D pointP2 = spawnPoints.get(this.worldState).get(p2.getPlayerNumber());
 
         p1.setDeadAndMapChanged(true);
-        p1.setTimePassed(Config.T_RESPAWN);
-
         p2.setDeadAndMapChanged(true);
-        p1.setTimePassed(Config.T_RESPAWN);
+
+        if (!p1.isAlive())
+            p1.setTimePassed(Config.T_RESPAWN - 600);
+
+        if (!p2.isAlive())
+            p2.setTimePassed(Config.T_RESPAWN - 600);
 
         p1.setXY((int) pointP1.getX(), (int) pointP1.getY());
         p2.setXY((int) pointP2.getX(), (int) pointP2.getY());
