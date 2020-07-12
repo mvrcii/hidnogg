@@ -47,6 +47,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private Animation animation = AnimationFactory.getInstance().getAnimation(INITIAL_ANIMATION_TYPE);
     private AnimationType lastIdleAnimationType = INITIAL_ANIMATION_TYPE;
+    private AnimationType lastJumpAnimationType;
 
     // Gravity-Ground detection
     private final HashSet<AnimationType> jumps = Stream.of(
@@ -153,7 +154,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 GameLoop.currentLevel.removeGameObject(swordObject);
                 this.swordObject = null;
                 animation = animCon.getAnimation(PLAYER_WIN);
-                SoundController.getInstance().getMusic(SoundType.GAME_WON_THEME).play(true, Config.volume);
+                GameLoop.currentMusic.stop();
+                GameLoop.currentMusic = SoundController.getInstance().getMusic(SoundType.GAME_WON_THEME);
+                GameLoop.currentMusic.play(true, Config.volume);
             }
         }
     }
@@ -194,17 +197,23 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
         }
 
-        /* // TODO Sobald spieler Wand berührt soll er sich von ihr weg drehen (sodass das Schwert nicht in der Wand steckt)
-               und trotzdem zustechen können. Laufen gegen wand soll verhindert werden!
+         // TODO Sobald spieler Wand berührt soll er sich von ihr weg drehen (sodass das Schwert nicht in der Wand steckt)
+          //     und trotzdem zustechen können. Laufen gegen wand soll verhindert werden!
         // If the player runs against the wall, stop the movement
         if(colCon.getPlayerHitsWallRight(this.playerNumber) || colCon.getPlayerHitsWallLeft(this.playerNumber)){
             if(swordObject == null){
-                animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
+                if(animation.getAnimationType() != PLAYER_IDLE_NO_SWORD){
+                    animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
+                    DirectionController.getInstance().setManualControl(this, false);
+                }
             }else{
-                animation = animCon.getAnimation(lastIdleAnimationType);
+                if(animation.getAnimationType() != lastIdleAnimationType){
+                    animation = animCon.getAnimation(lastIdleAnimationType);
+                    DirectionController.getInstance().setManualControl(this, false);
+                }
             }
         }
-        */
+
 
 
         // Player's sword hitting another player's sword
@@ -466,6 +475,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         if (keyCon.isKeyPressed(keySet.getJumpKey())) {
             if (onGround) {
                 animation = animCon.getAnimation(PLAYER_JUMP_START);
+                lastJumpAnimationType = PLAYER_JUMP_START;
                 vy = JUMP_VY;
                 canAccelerate = true;
             } else {
@@ -481,9 +491,11 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         }
         if (animation.getAnimationType() == PLAYER_JUMP_START && vy >= JUMP_VY) {
             animation = animCon.getAnimation(PLAYER_JUMP_PEAK);
+            lastJumpAnimationType = PLAYER_JUMP_PEAK;
         }
         if (animation.getAnimationType() == PLAYER_JUMP_PEAK && vy <= -0.75*JUMP_VY) {
             animation = animCon.getAnimation(PLAYER_JUMP_END);
+            lastJumpAnimationType = PLAYER_JUMP_END;
         }
         if (animation.getAnimationType() == PLAYER_JUMP_END && vy <= 1 && vy >= -1) {
             if (swordObject == null) {
@@ -492,6 +504,14 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 animation = animCon.getAnimation(lastIdleAnimationType);
             }
         }
+        AnimationType animType = animation.getAnimationType();
+        if(!onGround && animType != PLAYER_JUMP_PEAK
+        && animType != PLAYER_JUMP_START
+        && animType != PLAYER_JUMP_END
+        && animType != PLAYER_DROPKICK){
+            animation = animCon.getAnimation(lastJumpAnimationType);
+        }
+
     }
 
     private void handleDropKick(long diffMillis) {
