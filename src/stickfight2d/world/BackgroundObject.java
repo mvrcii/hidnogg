@@ -9,6 +9,7 @@ import stickfight2d.controllers.CameraController;
 import stickfight2d.controllers.CollisionController;
 import stickfight2d.enums.DirectionType;
 import stickfight2d.enums.PlayerType;
+import stickfight2d.misc.Config;
 import stickfight2d.misc.Debugger;
 
 import javax.imageio.ImageIO;
@@ -172,10 +173,11 @@ public class BackgroundObject extends GameObject {
         Point2D pointP1 = spawnPoints.get(this.worldState).get(p1.getPlayerNumber());
         Point2D pointP2 = spawnPoints.get(this.worldState).get(p2.getPlayerNumber());
 
-        if (!p1.isAlive())
-            p1.setDeadAndMapChanged(true);
-        if (!p2.isAlive())
-            p2.setDeadAndMapChanged(true);
+        p1.setDeadAndMapChanged(true);
+        p1.setTimePassed(Config.T_RESPAWN);
+
+        p2.setDeadAndMapChanged(true);
+        p1.setTimePassed(Config.T_RESPAWN);
 
         p1.setXY((int) pointP1.getX(), (int) pointP1.getY());
         p2.setXY((int) pointP2.getX(), (int) pointP2.getY());
@@ -195,9 +197,5 @@ public class BackgroundObject extends GameObject {
 
     public DirectionType getCurrentEnabledRunningDirection() {
         return currentEnabledRunningDirection;
-    }
-
-    public boolean isWorldStateChanged() {
-        return worldStateChanged;
     }
 }
