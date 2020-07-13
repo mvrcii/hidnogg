@@ -72,6 +72,7 @@ public class CollisionController extends Controller {
     // --- --- Attack related states
     private boolean player1_hit_player2 = false;
     private boolean player2_hit_player1 = false;
+    private Point2D swordCollisionPoint = null;
     private boolean swordsHitting = false;
     private boolean attackBlocked = false;
     private AnimationType p1_prevState = AnimationType.PLAYER_IDLE_MEDIUM;
@@ -224,7 +225,12 @@ public class CollisionController extends Controller {
         boolean onSameY = (swordTip1.getY() - 2 <= swordTip2.getY() && swordTip2.getY() <= swordTip1.getY() + 2);
         boolean onSameXInterval = (swordTip1.getX() - swordTip2.getX()) * (swordTip1.getX() - swordGrip2.getX()) <= 0;
 
-        return onSameY && onSameXInterval;
+        if(onSameY && onSameXInterval) {
+            swordCollisionPoint = CameraController.getInstance().convertWorldToScreen((int)swordTip1.getX(), (int)swordTip1.getY());
+            return true;
+        }
+
+        return false;
     }
 
 
@@ -486,6 +492,10 @@ public class CollisionController extends Controller {
 
     public boolean getSwordsHitting() {
         return swordsHitting;
+    }
+
+    public Point2D getSwordCollisionPoint() {
+        return swordCollisionPoint;
     }
 
     public boolean isAttackBlocked() {
