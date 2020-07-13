@@ -509,11 +509,4 @@ public class CollisionController extends Controller {
         return (type == PlayerType.PLAYER_TWO && disarming == 1) || (type == PlayerType.PLAYER_ONE && disarming == 2);
     }
 
-    public PlayerObject getPlayerThatDisarmed(PlayerType type){
-        if(type == PlayerType.PLAYER_TWO && disarming == 1)
-            return GameLoop.currentLevel.getPlayer2();
-        if(type == PlayerType.PLAYER_ONE && disarming == 2)
-            return GameLoop.currentLevel.getPlayer1();
-        return null;
-    }
 }

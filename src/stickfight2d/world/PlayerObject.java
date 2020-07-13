@@ -29,6 +29,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private final KeyController keyCon = KeyController.getInstance();
     private final AnimationFactory animCon = AnimationFactory.getInstance();
+    private final SoundController soundCon = SoundController.getInstance();
 
     private final KeySet keySet;
     private final PlayerType playerNumber;
@@ -230,7 +231,12 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                         this.swordObject = null;
                         animation = animCon.getAnimation(PLAYER_IDLE_NO_SWORD);
                     }
+                    // HIT but not disarmed
+                }else{
+                    soundCon.getSound(SoundType.HIT_SWORD_SWORD).play(volume);
                 }
+
+
 
                 if(swordCollisionParticles){
                     Point2D collisionPoint = colCon.getSwordCollisionPoint();

@@ -34,6 +34,7 @@ public class SoundController extends Controller {
         musicData.put(GAME_WON_THEME, TinySound.loadMusic(GAME_WON_THEME.getFile()));
 
         // Sound
+        soundData.put(HIT_SWORD_SWORD, TinySound.loadSound(HIT_SWORD_SWORD.getFile()));
     }
 
     @Override
