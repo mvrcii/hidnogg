@@ -236,8 +236,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     Point2D collisionPoint = colCon.getSwordCollisionPoint();
                     int x_ = (int) collisionPoint.getX();
                     int y_ = (int) collisionPoint.getY();
-                    GameLoop.currentLevel.addGameObject(new ParticleEmitter(this, x_, y_, swordObject.directionType, 50, 100, 2, 10, 180, 60, "0xd4af37", 2));
-                   // createSwordCollisionParticles(this);
+                    GameLoop.currentLevel.addGameObject(new ParticleEmitter(this, x_, y_, 50, 100, 2, 10, 180, 60, "0xd4af37", 2));
                 }
 
 
@@ -303,8 +302,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 int yOffset = (int) bloodPoints[i].getY();
 
                 switch (directionType) {
-                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(this, x, y + yOffset, DirectionType.RIGHT, 30, 300, 2, 10, 180, 60, "0xFF0000", 4));
-                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(this, x + xOffset, y + yOffset, DirectionType.RIGHT, 30, 300, 2, 10, 180, 60, "0xFF0000", 4));
+                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(this, x, y + yOffset,30, 300, 2, 10, 180, 60, "0xFF0000", 4));
+                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(this, x + xOffset, y + yOffset, 30, 300, 2, 10, 180, 60, "0xFF0000", 4));
                 }
                 spread_blood[i] = true;
             }

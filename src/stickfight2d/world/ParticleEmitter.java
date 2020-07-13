@@ -24,8 +24,8 @@ public class ParticleEmitter extends GameObject {
     private String color;
     private int size;
 
-    public ParticleEmitter(PlayerObject playerObject, int x, int y, DirectionType direction, int amount, int time, int speed, int speedRandomness, int angle, int angleRandomness,String color,int size) {
-        super(x, y, direction);
+    public ParticleEmitter(PlayerObject playerObject, int x, int y, int amount, int time, int speed, int speedRandomness, int angle, int angleRandomness,String color,int size) {
+        super(x, y, null);
         this.playerObject = playerObject;
         this.totalTime = time;
         this.amount = amount;
@@ -33,8 +33,8 @@ public class ParticleEmitter extends GameObject {
         this.speedRandomness = speedRandomness;
         this.angle = Math.toRadians(angle);
         this.angleRandomness = angleRandomness;
-        this.color=color;
-        this.size=size;
+        this.color = color;
+        this.size = size;
         particles = new ArrayList<ParticleObject>();
     }
 
