@@ -54,6 +54,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             AnimationType.PLAYER_JUMP_PEAK).collect(Collectors.toCollection(HashSet::new));
     public RectangleObstacle currentObstacleStanding;
 
+
     public PlayerObject(int x, int y, PlayerType playerNumber, DirectionType directionType, KeySet keySet) {
         super(x, y, directionType);
         this.keySet = keySet;
@@ -66,6 +67,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         this.alive = true;
         this.dropkick = false;
     }
+
 
     public void reset() {
         // Setting all the booleans
@@ -138,12 +140,14 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         }
     }
 
+
     public void checkSwordInNewScreen() {
         if (alive && swordObject == null) {
             swordObject = new SwordObject(this.x, this.y, DirectionType.RIGHT, this);
             GameLoop.currentLevel.addSword(swordObject);
         }
     }
+
 
     private void checkWin() {
         if (CollisionController.getInstance().getWin(this.playerNumber)) {
@@ -228,8 +232,14 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     }
                 }
 
-                if(this == GameLoop.currentLevel.getPlayer1() && swordCollisionParticles)
-                    createSwordCollisionParticles(this);
+                if(swordCollisionParticles){
+                    Point2D collisionPoint = colCon.getSwordCollisionPoint();
+                    int x_ = (int) collisionPoint.getX();
+                    int y_ = (int) collisionPoint.getY();
+                    GameLoop.currentLevel.addGameObject(new ParticleEmitter(this, x_, y_, swordObject.directionType, 50, 100, 2, 10, 180, 60, "0xd4af37", 2));
+                   // createSwordCollisionParticles(this);
+                }
+
 
                 if (!colCon.getPlayerHitsWallRight(playerNumber) && !colCon.getPlayerHitsWallLeft(playerNumber)) {
                     switch (directionType) {
@@ -242,9 +252,11 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     }
 
+/*
     private void createSwordCollisionParticles(PlayerObject p) {
         double x_ = 0;
         double y_ = 0;
+
         switch (p.swordObject.directionType) {
             case LEFT -> {
                 x_ = p.x + p.animation.getCurrentFrame().getSwordStartPointInverted().getX()
@@ -263,18 +275,15 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                         + p.swordObject.getSwordTip().getY();
             }
         }
-        System.out.println(playerNumber);
-        System.out.println("PLAYER ONE || x: " + x_ + ", y: " + y_);
-        GameLoop.currentLevel.addGameObject(new ParticleEmitter(p, (int) x_, (int) y_, p.swordObject.directionType, 50, 100, 2, 10, 180, 60, "0xd4af37", 2));
     }
-
+*/
 
     private void handleDeathAnimation(double diffMillis) {
 
-        Point2D[] bloodPoints = new Point2D[]{    //   Frame   X       Y
+        Point2D[] bloodPoints = new Point2D[]{  //   Frame   X       Y
                 new Point2D(12, 19),     //   0       12      19
                 new Point2D(11, 55),     //   1       11      55
-                new Point2D(9, 30),      //   2       9       30
+                new Point2D(9,  30),     //   2       9       30
                 new Point2D(16, 30),     //   3       16      30
                 new Point2D(23, 35),     //   4       23      35
                 new Point2D(28, 38),     //   5       28      38
@@ -668,42 +677,52 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         this.animation = animCon.getAnimation(lastIdleAnimationType);
     }
 
+
     public Animation getAnimation() {
         return animation;
     }
+
 
     public void setSwordObject(SwordObject swordObject) {
         this.swordObject = swordObject;
     }
 
+
     public SwordObject getSwordObject() {
         return swordObject;
     }
 
+
     public PlayerType getPlayerNumber() {
         return playerNumber;
     }
+
 
     public void setXY(int x, int y) {
         this.setX(x);
         this.setY(y);
     }
 
+
     public boolean isOnGround() {
         return onGround;
     }
+
 
     public KeySet getKeySet() {
         return keySet;
     }
 
+
     public boolean isAlive(){
         return this.alive;
     }
 
+
     public boolean isDeadAndMapChanged() {
         return this.deadAndMapChanged;
     }
+
 
     public void setDeadAndMapChanged(boolean mapChanged) {
         this.deadAndMapChanged = mapChanged;
