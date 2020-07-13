@@ -1,5 +1,6 @@
 package stickfight2d;
 
+import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -44,7 +45,7 @@ public class GameLoop extends Thread implements Runnable {
         currentLevel.initObjects();
 
         gameControllers.add(CollisionController.getInstance());
-        gameControllers.add(MenuController.getInstance());
+        //gameControllers.add(MenuController.getInstance());
 
         currentMusic = SoundController.getInstance().getMusic(SoundType.INGAME_THEME_01); // Music theme
     }
@@ -66,7 +67,9 @@ public class GameLoop extends Thread implements Runnable {
 
             update(diffMillis);
             clearScreen();
+
             draw();
+            Main.copyCanvas();
 
             // Adjust timing if necessary
             currentTick = System.currentTimeMillis() - currentTick;
@@ -106,7 +109,7 @@ public class GameLoop extends Thread implements Runnable {
 
     private void draw() {
         for (GameObject obj : currentLevel.getGameObjects()) {
-                obj.draw(gc);
+            Platform.runLater(() -> obj.draw(gc));
         }
     }
 
@@ -115,7 +118,7 @@ public class GameLoop extends Thread implements Runnable {
     }
 
     private void updateCounter(){
-
+        Platform.runLater(() -> {
             if (counterOn) {
                 if (diffTimeMs / 1000 >= 2 && counterState == 0) {
                     counterState = 1;
@@ -139,12 +142,15 @@ public class GameLoop extends Thread implements Runnable {
                     counterOn = false;
                 }
             }
+        });
     }
 
     public static void startCounter() {
-            counterOn = true;
-            counterState = 0;
-            diffTimeMs = 0;
+        counterOn = true;
+        counterState = 0;
+        diffTimeMs = 0;
+
+        Platform.runLater(() -> {
             VBox counterBox = new VBox();
             counterBox.layoutXProperty().bind(Main.getPrimaryStage().widthProperty().divide(2).subtract(counterBox.widthProperty().divide(2)));
             counterBox.layoutYProperty().bind(Main.getPrimaryStage().heightProperty().divide(2).subtract(counterBox.heightProperty().divide(2)));
@@ -154,9 +160,10 @@ public class GameLoop extends Thread implements Runnable {
             counterText.setFont(Font.font("Verdana", 50));
             counterBox.getChildren().add(counterText);
             Main.getRoot().getChildren().add(counterBox);
+        });
 
-            KeyController.getInstance().setKeyPressBlockedP1(true);
-            KeyController.getInstance().setKeyPressBlockedP2(true);
+        KeyController.getInstance().setKeyPressBlockedP1(true);
+        KeyController.getInstance().setKeyPressBlockedP2(true);
     }
 
 }
