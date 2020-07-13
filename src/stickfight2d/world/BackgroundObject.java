@@ -146,10 +146,10 @@ public class BackgroundObject extends GameObject {
         gc.drawImage(worldSubImage, drawPoint.getX(), drawPoint.getY());
 
         if (currentEnabledRunningDirection == DirectionType.RIGHT && worldState != 4)
-            gc.drawImage(arrow_right, 676, 156);
+            gc.drawImage(arrow_right, 676 + 200, 156 + 50);
 
         else if (currentEnabledRunningDirection == DirectionType.LEFT && worldState != 0)
-            gc.drawImage(arrow_left, 356, 156);
+            gc.drawImage(arrow_left, 356 - 130, 156 + 50);
     }
 
     /**

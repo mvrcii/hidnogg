@@ -226,7 +226,7 @@ public class CollisionController extends Controller {
         boolean onSameXInterval = (swordTip1.getX() - swordTip2.getX()) * (swordTip1.getX() - swordGrip2.getX()) <= 0;
 
         if(onSameY && onSameXInterval) {
-            swordCollisionPoint = CameraController.getInstance().convertWorldToScreen((int)swordTip1.getX(), (int)swordTip1.getY());
+            swordCollisionPoint = new Point2D(swordTip1.getX(), swordTip1.getY());
             return true;
         }
 
