@@ -10,6 +10,8 @@ import stickfight2d.controllers.AnimationFactory;
 import stickfight2d.enums.AnimationType;
 import stickfight2d.enums.DirectionType;
 
+import java.awt.*;
+
 public class SwordObject extends GameObject {
 
     private Animation animation = AnimationFactory.getInstance().getAnimation(AnimationType.SWORD);
@@ -246,6 +248,14 @@ public class SwordObject extends GameObject {
 
     public boolean isOnGround() {
         return onGround;
+    }
+
+    public Animation getAnimation() {
+        return animation;
+    }
+
+    public Point2D getSwordTip(){
+        return animation.getCurrentFrame().getSwordEndPoint();
     }
 
     @Override

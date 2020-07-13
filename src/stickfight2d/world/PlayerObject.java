@@ -40,7 +40,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private boolean alive;
     private boolean deadAndMapChanged = false;
 
-    private ParticleEmitter particleEmitter;
     private final boolean[] spread_blood = new boolean[10];
 
     private double time_passed = 0;
@@ -197,9 +196,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
         }
 
-         // TODO Sobald spieler Wand berührt soll er sich von ihr weg drehen (sodass das Schwert nicht in der Wand steckt)
-          //     und trotzdem zustechen können. Laufen gegen wand soll verhindert werden!
-        // If the player runs against the wall, stop the movement
+
+        // If the player runs against the wall, stop the movement and change direction
         if(colCon.getPlayerHitsWallRight(this.playerNumber) || colCon.getPlayerHitsWallLeft(this.playerNumber)){
             if(swordObject == null){
                 if(animation.getAnimationType() != PLAYER_IDLE_NO_SWORD){
@@ -218,9 +216,11 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         // Player's sword hitting another player's sword
         if (colCon.getSwordsHitting()) {
-            Debugger.log("Player's swords hit each other");
+
             if (alive) {
-                if (colCon.getPlayerBeingDisarmed(this.playerNumber)) {
+
+                // This player is getting disarmed
+                if (colCon.getPlayerBeingDisarmed(playerNumber)) {
                     if (swordObject != null) {        // only if PLAYER has a sword
                         swordObject.fallToGround();
                         this.swordObject = null;
@@ -228,7 +228,10 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     }
                 }
 
-                if (!colCon.getPlayerHitsWallRight(this.playerNumber) && !colCon.getPlayerHitsWallLeft(this.playerNumber)) {
+                if(this == GameLoop.currentLevel.getPlayer1() && swordCollisionParticles)
+                    createSwordCollisionParticles(this);
+
+                if (!colCon.getPlayerHitsWallRight(playerNumber) && !colCon.getPlayerHitsWallLeft(playerNumber)) {
                     switch (directionType) {
                         case LEFT -> this.x = x + KNOCKBACK_VALUE;
                         case RIGHT -> this.x = x - KNOCKBACK_VALUE;
@@ -237,6 +240,32 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
         }
 
+    }
+
+    private void createSwordCollisionParticles(PlayerObject p) {
+        double x_ = 0;
+        double y_ = 0;
+        switch (p.swordObject.directionType) {
+            case LEFT -> {
+                x_ = p.x + p.animation.getCurrentFrame().getSwordStartPointInverted().getX()
+                        - (int) p.swordObject.getAnimation().getCurrentFrame().getSwordStartPointInverted().getX()
+                        + (64 - p.swordObject.getSwordTip().getX());
+                y_ = p.x + p.animation.getCurrentFrame().getSwordStartPointInverted().getY()
+                        - (int) p.swordObject.getAnimation().getCurrentFrame().getSwordStartPointInverted().getY()
+                        + (64 - p.swordObject.getSwordTip().getY());
+            }
+            case RIGHT -> {
+                x_ = p.x + p.animation.getCurrentFrame().getSwordStartPoint().getX()
+                        - (int) p.swordObject.getAnimation().getCurrentFrame().getSwordStartPoint().getX()
+                        + p.swordObject.getSwordTip().getX();
+                y_ = p.y + p.animation.getCurrentFrame().getSwordStartPoint().getY()
+                        - (int) p.swordObject.getAnimation().getCurrentFrame().getSwordStartPoint().getY()
+                        + p.swordObject.getSwordTip().getY();
+            }
+        }
+        System.out.println(playerNumber);
+        System.out.println("PLAYER ONE || x: " + x_ + ", y: " + y_);
+        GameLoop.currentLevel.addGameObject(new ParticleEmitter(p, (int) x_, (int) y_, p.swordObject.directionType, 50, 100, 2, 10, 180, 60, "0xd4af37", 2));
     }
 
 
@@ -265,10 +294,9 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 int yOffset = (int) bloodPoints[i].getY();
 
                 switch (directionType) {
-                    case LEFT -> particleEmitter = new ParticleEmitter(this, x, y + yOffset, DirectionType.RIGHT, 30, 300, 2, 10, 180, 60, "0xFF0000", 4);
-                    case RIGHT -> particleEmitter = new ParticleEmitter(this, x + xOffset, y + yOffset, DirectionType.RIGHT, 30, 300, 2, 10, 180, 60, "0xFF0000", 4);
+                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(this, x, y + yOffset, DirectionType.RIGHT, 30, 300, 2, 10, 180, 60, "0xFF0000", 4));
+                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(this, x + xOffset, y + yOffset, DirectionType.RIGHT, 30, 300, 2, 10, 180, 60, "0xFF0000", 4));
                 }
-                GameLoop.currentLevel.addGameObject(particleEmitter);
                 spread_blood[i] = true;
             }
         }
@@ -281,18 +309,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 resetBloodArray();
             }
         }
-    }
-
-    public void setTimePassed(double value){
-        if(value >= 0){
-            time_passed = value;
-        }else{
-            throw new IllegalArgumentException("No valid time value");
-        }
-    }
-
-    public void resetBloodArray(){
-        Arrays.fill(spread_blood, Boolean.FALSE);
     }
 
 
@@ -514,6 +530,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     }
 
+
     private void handleDropKick(long diffMillis) {
         int prevX;
 
@@ -619,6 +636,20 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 }
             }
         }
+    }
+
+
+    public void setTimePassed(double value){
+        if(value >= 0){
+            time_passed = value;
+        }else{
+            throw new IllegalArgumentException("No valid time value");
+        }
+    }
+
+
+    public void resetBloodArray(){
+        Arrays.fill(spread_blood, Boolean.FALSE);
     }
 
 

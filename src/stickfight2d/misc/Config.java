@@ -20,6 +20,7 @@ public class Config {
     public static final int KNOCKBACK_VALUE = 6;
     public static final int DROPKICK_VX = 30;
     public static final int JUMP_VY = 20;
+    public static boolean swordCollisionParticles = true;
 
     // MAIN MENU
     public static final String CREDITS = "Team:\n" +
