@@ -1,6 +1,7 @@
 package stickfight2d.controllers;
 
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 import stickfight2d.GameLoop;
 import stickfight2d.Main;
 import stickfight2d.enums.AnimationType;
@@ -312,7 +313,7 @@ public class CollisionController implements Controller {
                 headBump = true;
 
             // Wall collisions
-            if(obstacle.getMapState() != 2) {
+            if(obstacle.getColor() != Color.RED) {
                 if (collisionRectRect(player, obstacle, playersWidthHeight[0], 0, 12, 12)) // Rect-Line collision >> Wall-right
                     hitsWallRight = true;
                 else if (collisionRectRect(player, obstacle, 0, playersWidthHeight[0], 12, 12)) // Rect-Line collision >> Wall-left
