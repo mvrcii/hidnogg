@@ -6,8 +6,11 @@ import javafx.scene.paint.Color;
 import stickfight2d.GameLoop;
 import stickfight2d.controllers.CameraController;
 import stickfight2d.enums.DirectionType;
+import stickfight2d.enums.ParticleType;
 
 public class ParticleObject extends GameObject {
+
+    protected ParticleType particleType;
     protected int lifetime;
     protected int lifetimeRemaining;
     protected boolean alive = true;
@@ -15,8 +18,9 @@ public class ParticleObject extends GameObject {
     protected String color;
     protected int size;
 
-    public ParticleObject(int x, int y, double vx, double vy, int lifetime,String color,int size) {
+    public ParticleObject(ParticleType particleType, int x, int y, double vx, double vy, int lifetime, String color, int size) {
         super(x, y, DirectionType.RIGHT);
+        this.particleType = particleType;
         this.vx = vx;
         this.vy = vy;
         this.lifetime = lifetime;
@@ -31,15 +35,27 @@ public class ParticleObject extends GameObject {
         if (lifetimeRemaining < 0) {
             alive = false;
         } else {
+            // Gravity after hitting the ground
             if (onGround) {
-                vy = vy * 0.999;
-                vx = vx * 0.999;
-            } else if (collisionRectRect(this, GameLoop.currentLevel.getGround())) {
+                switch (particleType){
+                    default -> {
+                        vy = vy * 0.999;
+                        vx = vx * 0.999;
+                    }
+                }
+
+            }
+            // Gravity while hitting the ground
+            else if (collisionRectRect(this, GameLoop.currentLevel.getGround())) {
                 onGround = true;
-                vy = vy * 0.999;
-                vx = vx * 0.999;
-            } else {
-                vy -= (diffMillis / 10.0);    //gravity
+            }
+            // Gravity above the ground
+            else {
+                switch (particleType){
+                    case SWORD_FIRE -> vy += (diffMillis / 20.0);   // no gravity
+                    default -> vy -= (diffMillis / 9.81);           // gravity
+                }
+
             }
 
             y -= vy * diffMillis / 100.0;

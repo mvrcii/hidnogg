@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import stickfight2d.Main;
 import stickfight2d.controllers.CameraController;
 import stickfight2d.enums.DirectionType;
+import stickfight2d.enums.ParticleType;
 
 import java.util.*;
 import java.lang.Math;
@@ -12,6 +13,7 @@ import java.lang.Math;
 public class ParticleEmitter extends GameObject {
 
     private PlayerObject playerObject;
+    private final ParticleType particleType;
 
     private int amount;
     private int speed;
@@ -24,7 +26,7 @@ public class ParticleEmitter extends GameObject {
     private String color;
     private int size;
 
-    public ParticleEmitter(PlayerObject playerObject, int x, int y, int amount, int time, int speed, int speedRandomness, int angle, int angleRandomness,String color,int size) {
+    public ParticleEmitter(ParticleType particleType, PlayerObject playerObject, int x, int y, int amount, int time, int speed, int speedRandomness, int angle, int angleRandomness, String color, int size) {
         super(x, y, null);
         this.playerObject = playerObject;
         this.totalTime = time;
@@ -35,6 +37,7 @@ public class ParticleEmitter extends GameObject {
         this.angleRandomness = angleRandomness;
         this.color = color;
         this.size = size;
+        this.particleType = particleType;
         particles = new ArrayList<ParticleObject>();
     }
 
@@ -56,7 +59,7 @@ public class ParticleEmitter extends GameObject {
             double rngSpeed = (speed+continuousRng((totalTime+ (count-i)*diffMillis /(double)count)/150.0)*speedRandomness);//(continuousRng((totalTime)/100.0)*speedRandomness)
 
             //System.out.println(rngAngle);
-            particles.add(new ParticleObject(x, y, Math.cos(rngAngle) * rngSpeed, Math.sin(rngAngle) * rngSpeed, 1000,color,size));
+            particles.add(new ParticleObject(particleType, x, y, Math.cos(rngAngle) * rngSpeed, Math.sin(rngAngle) * rngSpeed, 1000,color,size));
         }
     }
 
@@ -84,9 +87,12 @@ public class ParticleEmitter extends GameObject {
 
     @Override
     public void draw(GraphicsContext gc) {
-        if(this.playerObject.isDeadAndMapChanged()) {
-            this.particles.clear();
-            return;
+
+        if(playerObject != null){
+            if(this.playerObject.isDeadAndMapChanged()) {
+                this.particles.clear();
+                return;
+            }
         }
 
         for (ParticleObject p : particles) {

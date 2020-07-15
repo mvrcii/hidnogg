@@ -5,12 +5,11 @@ import javafx.scene.canvas.GraphicsContext;
 import stickfight2d.GameLoop;
 import stickfight2d.animation.Animation;
 import stickfight2d.animation.FrameData;
-import stickfight2d.controllers.CameraController;
 import stickfight2d.controllers.AnimationFactory;
+import stickfight2d.controllers.CameraController;
 import stickfight2d.enums.AnimationType;
 import stickfight2d.enums.DirectionType;
-
-import java.awt.*;
+import stickfight2d.enums.ParticleType;
 
 public class SwordObject extends GameObject {
 
@@ -28,6 +27,7 @@ public class SwordObject extends GameObject {
     private int y0 = 0;
 
     private double diffSeconds = 0;
+    private double particleTimer = 0;
     private double timePassedGround = 0;
     private double bounceOffSet = 0;
     private double timePassedAir;
@@ -59,6 +59,7 @@ public class SwordObject extends GameObject {
                 directionType = playerObject.getDirectionType();    // Updating Direction
             }
             animation.update(diffSeconds);                      // Updating Animation
+            //updateFireParticles();                              // Update Fire Particles
         }
         updateCoordinates();
     }
@@ -122,6 +123,25 @@ public class SwordObject extends GameObject {
         }
 
     }
+
+
+    private void updateFireParticles(){
+        particleTimer += diffSeconds;
+
+        if (!onGround) {
+            if (particleTimer > 300) {
+                Point2D endPoint = animation.getCurrentFrame().getSwordEndPoint();
+
+                if(directionType == DirectionType.RIGHT) {
+                    GameLoop.currentLevel.addGameObject(new ParticleEmitter(ParticleType.SWORD_FIRE, null, (int) (x + endPoint.getX()), (int) (y + endPoint.getY()), 30, 50, 2, 5, 90, 180, "#fc5a03", 3));
+                }else{
+                    GameLoop.currentLevel.addGameObject(new ParticleEmitter(ParticleType.SWORD_FIRE, null, (int) (x - (64-endPoint.getX())), (int) (y + (endPoint.getY())), 30, 50, 2, 5, 90, 180, "#fc5a03", 3));
+                }
+                particleTimer = 0;
+            }
+        }
+    }
+
 
     private void update_x(){
         if(directionType == DirectionType.RIGHT){
