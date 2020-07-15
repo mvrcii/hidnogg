@@ -30,7 +30,7 @@ import stickfight2d.misc.KeySet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MenuController extends Controller {
+public class MenuController implements Controller {
 
     private static MenuController instance;
     private static Group root;
@@ -53,7 +53,7 @@ public class MenuController extends Controller {
         menuBox.layoutYProperty().bind(primaryStage.heightProperty().divide(2).subtract(menuBox.heightProperty().divide(2)));
         root.getChildren().addAll(menuBox);
 
-        mainMenuMusic = SoundController.getInstance().getMusic(SoundType.MAIN_MENU_THEME_01);
+        mainMenuMusic = SoundController.getInstance().getMusic(SoundType.MUSIC_MAIN_MENU);
         mainMenuMusic.play(true, Config.volume);
 
 
@@ -100,8 +100,8 @@ public class MenuController extends Controller {
                     menu.getMenuItems().get(oldIndex).runOnClick();
                 }
 
-                }
             }
+        }
 
     }
 

@@ -19,6 +19,7 @@ import stickfight2d.misc.KeySet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -159,7 +160,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 this.swordObject = null;
                 animation = animCon.getAnimation(PLAYER_WIN);
                 GameLoop.currentMusic.stop();
-                GameLoop.currentMusic = SoundController.getInstance().getMusic(SoundType.GAME_WON_THEME);
+                GameLoop.currentMusic = SoundController.getInstance().getMusic(SoundType.MUSIC_GAME_WON);
                 GameLoop.currentMusic.play(true, Config.volume);
             }
         }
@@ -189,6 +190,13 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 this.swordObject = null;
             }
             animation = animCon.getAnimation(PLAYER_DYING);
+
+            if (new Random().nextBoolean()) {
+                soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_HIT_BODY_1).play(volume);
+            } else {
+                soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_HIT_BODY_2).play(volume);
+            }
+
             if (animation.getAnimationType() == PLAYER_DYING) {
                 Debugger.log("player dieing");
             }
@@ -201,7 +209,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
         }
 
-
+        /*
         // If the player runs against the wall, stop the movement and change direction
         if(colCon.getPlayerHitsWallRight(this.playerNumber) || colCon.getPlayerHitsWallLeft(this.playerNumber)){
             if(swordObject == null){
@@ -216,7 +224,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 }
             }
         }
-
+        */
 
 
         // Player's sword hitting another player's sword
@@ -233,7 +241,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     }
                     // HIT but not disarmed
                 }else{
-                    soundCon.getSound(SoundType.HIT_SWORD_SWORD).play(volume);
+                    soundCon.getSound(SoundType.SOUND_SWORD_HIT_SWORD).play(volume);
                 }
 
 

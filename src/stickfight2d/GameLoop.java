@@ -12,6 +12,7 @@ import kuusisto.tinysound.TinySound;
 import stickfight2d.controllers.*;
 import stickfight2d.enums.SoundType;
 import stickfight2d.interfaces.InputSystem;
+import stickfight2d.menu_test.Menu_Controller;
 import stickfight2d.world.GameObject;
 import stickfight2d.world.WorldObject;
 
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 public class GameLoop extends Thread implements Runnable {
 
     private final GraphicsContext gc = Main.canvas.getGraphicsContext2D();
-    private final ArrayList<Controller> gameControllers = new ArrayList<>();
+    public static final ArrayList<Controller> gameControllers = new ArrayList<>();
 
     public static WorldObject currentLevel;
 
@@ -45,9 +46,11 @@ public class GameLoop extends Thread implements Runnable {
         currentLevel.initObjects();
 
         gameControllers.add(CollisionController.getInstance());
-        //gameControllers.add(MenuController.getInstance());
 
-        currentMusic = SoundController.getInstance().getMusic(SoundType.INGAME_THEME_01); // Music theme
+        gameControllers.add(MenuController.getInstance());
+        //Menu_Controller menu_controller = new Menu_Controller();
+
+        currentMusic = SoundController.getInstance().getMusic(SoundType.MUSIC_THEME_INGAME); // Music theme
     }
 
 

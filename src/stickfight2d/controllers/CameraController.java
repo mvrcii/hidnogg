@@ -6,7 +6,7 @@ import stickfight2d.Main;
 import stickfight2d.enums.PlayerType;
 import stickfight2d.misc.Debugger;
 
-public class CameraController extends Controller{
+public class CameraController implements Controller {
 
     private static CameraController instance;
     //players start positions

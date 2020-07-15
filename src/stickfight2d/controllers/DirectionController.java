@@ -9,7 +9,7 @@ import stickfight2d.world.PlayerObject;
 
 import java.util.ArrayList;
 
-public class DirectionController extends Controller{
+public class DirectionController implements Controller {
 
     private ArrayList<GameObject> gameObjects;
     private ArrayList<PlayerObject> playerObjects = new ArrayList<>();

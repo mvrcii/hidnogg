@@ -9,6 +9,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import stickfight2d.controllers.MenuController;
 
 public class Main extends Application {
 

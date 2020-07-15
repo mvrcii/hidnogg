@@ -10,7 +10,7 @@ import stickfight2d.world.PlayerObject;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class KeyController extends Controller {
+public class KeyController implements Controller {
 
     private KeyObject keyObject, previousKeyObject;
 

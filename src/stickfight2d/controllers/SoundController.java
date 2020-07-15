@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 import static stickfight2d.enums.SoundType.*;
 
-public class SoundController extends Controller {
+public class SoundController implements Controller {
 
     //TODO: add sound list with different sounds
     //TODO: add music
@@ -29,12 +29,14 @@ public class SoundController extends Controller {
 
     private SoundController(){
         // Music
-        musicData.put(INGAME_THEME_01, TinySound.loadMusic(INGAME_THEME_01.getFile()));
-        musicData.put(MAIN_MENU_THEME_01, TinySound.loadMusic(MAIN_MENU_THEME_01.getFile()));
-        musicData.put(GAME_WON_THEME, TinySound.loadMusic(GAME_WON_THEME.getFile()));
+        musicData.put(MUSIC_THEME_INGAME, TinySound.loadMusic(MUSIC_THEME_INGAME.getFile()));
+        musicData.put(MUSIC_MAIN_MENU, TinySound.loadMusic(MUSIC_MAIN_MENU.getFile()));
+        musicData.put(MUSIC_GAME_WON, TinySound.loadMusic(MUSIC_GAME_WON.getFile()));
 
         // Sound
-        soundData.put(HIT_SWORD_SWORD, TinySound.loadSound(HIT_SWORD_SWORD.getFile()));
+        soundData.put(SOUND_SWORD_HIT_SWORD, TinySound.loadSound(SOUND_SWORD_HIT_SWORD.getFile()));
+        soundData.put(SOUND_SWORD_SWING_FAST_HIT_BODY_1, TinySound.loadSound(SOUND_SWORD_SWING_FAST_HIT_BODY_1.getFile()));
+        soundData.put(SOUND_SWORD_SWING_FAST_HIT_BODY_2, TinySound.loadSound(SOUND_SWORD_SWING_FAST_HIT_BODY_2.getFile()));
     }
 
     @Override
