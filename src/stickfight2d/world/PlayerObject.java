@@ -200,8 +200,19 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             if (animation.getAnimationType() == PLAYER_DYING) {
                 Debugger.log("player dieing");
             }
-        } else if (colCon.isAttackBlocked()) {
+        } else if (colCon.isAttackBlocked()) {      // Player defending with holdup
             if (!colCon.getPlayerHitsWallRight(this.playerNumber) && !colCon.getPlayerHitsWallLeft(this.playerNumber)) {
+
+                // Sound Effect
+                soundCon.getSound(SoundType.SOUND_SWORD_HIT_SWORD).play(volume);
+
+                // Particles
+                Point2D collisionPoint = colCon.getSwordCollisionPoint();
+                int x_ = (int) collisionPoint.getX();
+                int y_ = (int) collisionPoint.getY();
+                GameLoop.currentLevel.addGameObject(new ParticleEmitter(this, x_, y_, 50, 100, 2, 10, 180, 60, "0xd4af37", 2));
+
+                // Knock back
                 switch (directionType) {
                     case LEFT -> this.x = x + KNOCKBACK_VALUE;
                     case RIGHT -> this.x = x - KNOCKBACK_VALUE;
@@ -225,6 +236,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
         }
         */
+
 
 
         // Player's sword hitting another player's sword
