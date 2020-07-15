@@ -54,8 +54,8 @@ public class WorldObject {
     private ArrayList<RectangleObstacle> getMapObstacles() {
         ArrayList<RectangleObstacle> obstacles = new ArrayList<>();
         int mapState = 0;
-        obstacles.add(new RectangleObstacle(-80, 0, 80, 810, Color.RED, -1)); // Player1 block boundary
-        obstacles.add(new RectangleObstacle(340, 584, 14, 160, Color.RED, -3)); // Player1 block cave
+        obstacles.add(new RectangleObstacle(-80, 0, 80, 810, Color.ORANGE, -1)); // Player1 block boundary
+        obstacles.add(new RectangleObstacle(340, 584, 14, 160, Color.ORANGE, -3)); // Player1 block cave
 
         obstacles.add(new RectangleObstacle(1032, 0, 80, 810, Color.BLUE, -2)); // Player2 block boundary
         obstacles.add(new RectangleObstacle(692 - 14, 584, 14, 160, Color.BLUE, -4)); // Player2 block cave
@@ -73,8 +73,8 @@ public class WorldObject {
         obstacles.add(new RectangleObstacle(497, 1044, 72, 810 * 2 - 671, Color.GREEN, mapState)); // Right cave wall
         obstacles.add(new RectangleObstacle(-44, 1044, 50, 810 * 2 - 671, Color.GREEN, mapState)); // Left cave wall
 
-        obstacles.add(new RectangleObstacle(5,1323,495,810 * 2 - 1328, Color.GREEN, mapState)); // cave ground
-        obstacles.add(new RectangleObstacle(577, 648, 456, 810 - 648, Color.GREEN, mapState)); // ground
+        obstacles.add(new RectangleObstacle(5,1323,495,810 * 2 - 1328, Color.PURPLE, mapState)); // cave ground
+        obstacles.add(new RectangleObstacle(577, 648, 456, 810 - 648, Color.PURPLE, mapState)); // ground
         grounds.add(obstacles.get(obstacles.size() - 1));
 
         mapState++;
@@ -84,7 +84,7 @@ public class WorldObject {
         obstacles.add(new RectangleObstacle(391, 575, 47, 80, Color.GREEN, mapState)); // Stair base 03
         obstacles.add(new RectangleObstacle(437, 599, 47, 62, Color.GREEN, mapState)); // Stair base 02
 
-        obstacles.add(new RectangleObstacle(0, 648, (int) Main.canvas.getWidth(), 162, Color.GREEN, mapState)); // ground
+        obstacles.add(new RectangleObstacle(0, 648, (int) Main.canvas.getWidth(), 162, Color.PURPLE, mapState)); // ground
         grounds.add(obstacles.get(obstacles.size() - 1));
 
         mapState++;
@@ -92,11 +92,19 @@ public class WorldObject {
         // Map 02
         obstacles.add(new RectangleObstacle(121, 624, 90, 30, Color.GREEN, mapState)); // Stair 01 left (from bottom to top)
         obstacles.add(new RectangleObstacle(144, 601, 43, 30, Color.GREEN, mapState)); // Stair 02 left
-        obstacles.add(new RectangleObstacle(457, 571, 118, 15, Color.GREEN, mapState)); // Floating Island
+        obstacles.add(new RectangleObstacle(92, 568, 46, 10, Color.RED, mapState)); // Stair 03 left
+        obstacles.add(new RectangleObstacle(74, 531, 142, 10, Color.RED, mapState)); // Stair 04 left
+
+        obstacles.add(new RectangleObstacle(320, 549, 70, 15, Color.RED, mapState)); // Floating Island left
+        obstacles.add(new RectangleObstacle(457, 571, 118, 15, Color.RED, mapState)); // Floating Island middle
+        obstacles.add(new RectangleObstacle(641, 549, 70, 15, Color.RED, mapState)); // Floating Island right
+
         obstacles.add(new RectangleObstacle(822, 625, 90, 30, Color.GREEN, mapState)); // Stair 01 right (from bottom to top)
         obstacles.add(new RectangleObstacle(845, 601, 43, 30, Color.GREEN, mapState)); // Stair 02 right
+        obstacles.add(new RectangleObstacle(893, 568, 46, 10, Color.RED, mapState)); // Stair 03 right
+        obstacles.add(new RectangleObstacle(815, 531, 142, 10, Color.RED, mapState)); // Stair 04 right
 
-        obstacles.add(new RectangleObstacle(0, 648, (int) Main.canvas.getWidth(), 162, Color.GREEN, mapState)); // ground
+        obstacles.add(new RectangleObstacle(0, 648, (int) Main.canvas.getWidth(), 162, Color.PURPLE, mapState)); // ground
         grounds.add(obstacles.get(obstacles.size() - 1));
 
         mapState++;
@@ -106,7 +114,7 @@ public class WorldObject {
         obstacles.add(new RectangleObstacle(596, 576, 47, 80, Color.GREEN, mapState)); // Stair base 03
         obstacles.add(new RectangleObstacle(642, 624, 24, 30, Color.GREEN, mapState)); // Stair base 01
 
-        obstacles.add(new RectangleObstacle(0, 648, (int) Main.canvas.getWidth(), 162, Color.GREEN, mapState)); // ground
+        obstacles.add(new RectangleObstacle(0, 648, (int) Main.canvas.getWidth(), 162, Color.PURPLE, mapState)); // ground
         grounds.add(obstacles.get(obstacles.size() - 1));
 
         mapState++;
@@ -123,9 +131,8 @@ public class WorldObject {
         obstacles.add(new RectangleObstacle(535 - 72, 1044, 72, 810 * 2 - 671, Color.GREEN, mapState)); // Right cave wall
         obstacles.add(new RectangleObstacle(1076 - 50, 1044, 50, 810 * 2 - 671, Color.GREEN, mapState)); // Left cave wall
 
-        obstacles.add(new RectangleObstacle(1027 - 495,1323,495,810 * 2 - 1328, Color.GREEN, mapState)); // cave ground
-
-        obstacles.add(new RectangleObstacle(0, 648, 455, 810 - 648, Color.GREEN, mapState)); // ground
+        obstacles.add(new RectangleObstacle(1027 - 495,1323,495,810 * 2 - 1328, Color.PURPLE, mapState)); // cave ground
+        obstacles.add(new RectangleObstacle(0, 648, 455, 810 - 648, Color.PURPLE, mapState)); // ground
         grounds.add(obstacles.get(obstacles.size() - 1));
 
         return obstacles;

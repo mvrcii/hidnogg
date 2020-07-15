@@ -63,4 +63,8 @@ public class RectangleObstacle extends GameObject {
     public int getMapState() {
         return mapState;
     }
+
+    public Color getColor() {
+        return this.color;
+    }
 }
