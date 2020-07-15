@@ -164,6 +164,9 @@ public class CollisionController implements Controller {
 
                 attackBlocked = (player2.getDirectionType() == DirectionType.RIGHT && swordTip.getX() <= player2.getX() + player2_block.getX() && player1.getX() > player2.getX())
                         || (player2.getDirectionType() == DirectionType.LEFT && swordTip.getX() >= player2.getX() + player2_block.getX() - offsetHitBox && player1.getX() < player2.getX());
+
+                if(attackBlocked)
+                    swordCollisionPoint = new Point2D(swordTip.getX(), swordTip.getY());
             }
         }
 
