@@ -193,6 +193,7 @@ public class MenuController implements Controller {
                 double newVolume = Config.volume + (dir.equals(DirectionType.LEFT) ? -0.005 : 0.005);
                 Config.volume = Math.min(Math.max(newVolume, 0), 0.1);
                 GameLoop.currentMusic.setVolume(Config.volume);
+                mainMenuMusic.setVolume(Config.volume);
                 menu.getMenuItems().get(menu.getSelectedIndex()).setText("\uD83E\uDC44Volume:" + Math.round(Config.volume * 1000) + "%\uD83E\uDC46");
             }));
             add(new MenuItem("\uD83E\uDC44Debug Mode:" + booleanToOnOff(Config.debug_mode) + "\uD83E\uDC46", () -> {
