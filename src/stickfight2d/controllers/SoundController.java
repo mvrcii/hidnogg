@@ -35,8 +35,12 @@ public class SoundController implements Controller {
 
         // Sound
         soundData.put(SOUND_SWORD_HIT_SWORD, TinySound.loadSound(SOUND_SWORD_HIT_SWORD.getFile()));
-        soundData.put(SOUND_SWORD_SWING_FAST_HIT_BODY_1, TinySound.loadSound(SOUND_SWORD_SWING_FAST_HIT_BODY_1.getFile()));
-        soundData.put(SOUND_SWORD_SWING_FAST_HIT_BODY_2, TinySound.loadSound(SOUND_SWORD_SWING_FAST_HIT_BODY_2.getFile()));
+        soundData.put(SOUND_HIT_BODY_1, TinySound.loadSound(SOUND_HIT_BODY_1.getFile()));
+        soundData.put(SOUND_HIT_BODY_2, TinySound.loadSound(SOUND_HIT_BODY_2.getFile()));
+        soundData.put(SOUND_HIT_BODY_FIST_VOCAL_1, TinySound.loadSound(SOUND_HIT_BODY_FIST_VOCAL_1.getFile()));
+        soundData.put(SOUND_HIT_BODY_FIST_VOCAL_2, TinySound.loadSound(SOUND_HIT_BODY_FIST_VOCAL_2.getFile()));
+        soundData.put(SOUND_SWORD_SWING_FAST_1, TinySound.loadSound(SOUND_SWORD_SWING_FAST_1.getFile()));
+        soundData.put(SOUND_SWORD_SWING_FAST_2, TinySound.loadSound(SOUND_SWORD_SWING_FAST_2.getFile()));
     }
 
     @Override

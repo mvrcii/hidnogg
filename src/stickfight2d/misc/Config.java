@@ -48,6 +48,7 @@ public class Config {
     public static boolean debug_mode = false;
     public static boolean fps_print_mode = true;
     public static double volume = 0.05;
+    public static double sfx_volume = 2*volume;
 
     public Config(){
 
