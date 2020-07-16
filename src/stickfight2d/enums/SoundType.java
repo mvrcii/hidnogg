@@ -10,14 +10,14 @@ public enum SoundType {
 
     SOUND_SWORD_HIT_SWORD("sound_sword_hit_sword.wav"),
 
-    SOUND_SWORD_SWING_FAST_1(""),
-    SOUND_SWORD_SWING_FAST_2(""),
+    SOUND_SWORD_SWING_FAST_1("sound_sword_swing_fast_hit_body_slash_1.wav"),
+    SOUND_SWORD_SWING_FAST_2("sound_sword_swing_fast_hit_body_slash_2.wav"),
 
-    SOUND_HIT_BODY_FIST_VOCAL_1(""),
-    SOUND_HIT_BODY_FIST_VOCAL_2(""),
+    SOUND_HIT_BODY_FIST_VOCAL_1("noisecreations_NC_SFX_FistPunch-Vocal_02.wav"),
+    SOUND_HIT_BODY_FIST_VOCAL_2("noisecreations_NC_SFX_FistPunch-Vocal_03.wav"),
 
-    SOUND_HIT_BODY_1(""),
-    SOUND_HIT_BODY_2("");
+    SOUND_HIT_BODY_1("sound_sword_swing_fast_hit_body_splash_1.wav"),
+    SOUND_HIT_BODY_2("sound_sword_swing_fast_hit_body_splash_2.wav");
 
     private final File file;
 
