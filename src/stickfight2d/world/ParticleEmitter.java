@@ -2,16 +2,20 @@ package stickfight2d.world;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import stickfight2d.GameLoop;
 import stickfight2d.Main;
 import stickfight2d.controllers.CameraController;
 import stickfight2d.enums.DirectionType;
+import stickfight2d.enums.ParticleType;
+import stickfight2d.interfaces.ParticleOwner;
 
 import java.util.*;
 import java.lang.Math;
 
 public class ParticleEmitter extends GameObject {
 
-    private PlayerObject playerObject;
+    private final GameObject gameObject;
+    private final ParticleType particleType;
 
     private int amount;
     private int speed;
@@ -24,10 +28,10 @@ public class ParticleEmitter extends GameObject {
     private String color;
     private int size;
 
-    public ParticleEmitter(PlayerObject playerObject, int x, int y, int amount, int time, int speed, int speedRandomness, int angle, int angleRandomness,String color,int size) {
+    public ParticleEmitter(ParticleType particleType, GameObject gameObject, int x, int y, int amount, int decayTime, int speed, int speedRandomness, int angle, int angleRandomness, String color, int size) {
         super(x, y, null);
-        this.playerObject = playerObject;
-        this.totalTime = time;
+        this.gameObject = gameObject;
+        this.totalTime = decayTime;
         this.amount = amount;
         this.speed = speed;
         this.speedRandomness = speedRandomness;
@@ -35,34 +39,14 @@ public class ParticleEmitter extends GameObject {
         this.angleRandomness = angleRandomness;
         this.color = color;
         this.size = size;
-        particles = new ArrayList<ParticleObject>();
+        this.particleType = particleType;
+        this.particles = new ArrayList<>();
     }
 
-    public void emit(long diffMillis, int count) {
-        Random rng = new Random();
-        SplittableRandom rand = new SplittableRandom();
-        Point2D drawPoint = CameraController.getInstance().convertWorldToScreen(x, y);
-
-        for (int i = 0; i < count; i++) {
-            //TODO BUG: No continuous degree possible
-            //TODO BUG: Particles left from emitter behave slightly differently than right from it
-            //double rngAngle = randomAngleInvert(1.0+(i*0.1));
-            //double rngAngle = rand.nextDouble((Math.PI/4.0),(3.0*Math.PI)/4.0);
-            double rngAngle = randomAngleInvert(angle + Math.toRadians(rng.nextInt(angleRandomness) - angleRandomness / 2.0));//randomAngleInvert
-            //double rngAngle = randomAngleInvert(angle+Math.toRadians(continuousRng((totalTime+ (count-i)*diffMillis /(double)count)/10.0)*angleRandomness));
-
-            //double rngSpeed = speed;
-            //double rngSpeed = Math.max(5,speed+rng.nextInt(speedRandomness)-speedRandomness/2);
-            double rngSpeed = (speed+continuousRng((totalTime+ (count-i)*diffMillis /(double)count)/150.0)*speedRandomness);//(continuousRng((totalTime)/100.0)*speedRandomness)
-
-            //System.out.println(rngAngle);
-            particles.add(new ParticleObject(x, y, Math.cos(rngAngle) * rngSpeed, Math.sin(rngAngle) * rngSpeed, 1000,color,size));
-        }
-    }
 
     @Override
     public void update(long diffMillis) {
-        //TODO Combine overlapping particles and combine direction vector to reduce particle count
+        // Spawning particles until the amount and totalTime is 0
         if (amount > 0 && totalTime > 0) {
             int count = (int) (amount * diffMillis) / totalTime;
             emit(diffMillis, count);
@@ -70,27 +54,55 @@ public class ParticleEmitter extends GameObject {
             totalTime -= diffMillis;
         }
 
+        // Check to remove dead particles
         if (particles.size() > 0) {
-            Iterator<ParticleObject> itr = particles.iterator();
+            ListIterator<ParticleObject> itr = particles.listIterator();
+
             while (itr.hasNext()) {
+
                 ParticleObject p = itr.next();
                 p.update(diffMillis);
+
                 if (p.y > Main.canvas.getHeight() || !p.alive) {
                     itr.remove();
                 }
+                //particles.removeIf(particle -> (particle.y > Main.canvas.getHeight() || !particle.alive));
+
+            }
+        }else{  // Remove Particle Emitter from GameObjects when finished
+            GameLoop.currentLevel.removeGameObject(this);
+        }
+
+        // Instantly clear all the particles if map state changes
+        if(gameObject != null){
+            if(ParticleOwner.class.isAssignableFrom(gameObject.getClass())){
+                if(((ParticleOwner) gameObject).isClearCondition()){
+                    this.particles.clear();
+                    GameLoop.currentLevel.removeGameObject(this);
+                }
             }
         }
+
     }
 
     @Override
     public void draw(GraphicsContext gc) {
-        if(this.playerObject.isDeadAndMapChanged()) {
-            this.particles.clear();
-            return;
+        for (ParticleObject particle: particles) {
+            particle.draw(gc);
         }
+    }
 
-        for (ParticleObject p : particles) {
-            p.draw(gc);
+    public void emit(long diffMillis, int count) {
+        Random rng = new Random();
+
+        for (int i = 0; i < count; i++) {
+            //TODO BUG: No continuous degree possible
+            //TODO BUG: Particles left from emitter behave slightly differently than right from it
+
+            double rngAngle = randomAngleInvert(angle + Math.toRadians(rng.nextInt(angleRandomness) - angleRandomness / 2.0));//randomAngleInvert
+            double rngSpeed = (speed+continuousRng((totalTime+ (count-i)*diffMillis /(double)count)/150.0)*speedRandomness);//(continuousRng((totalTime)/100.0)*speedRandomness)
+
+            particles.add(new ParticleObject(particleType, x, y, Math.cos(rngAngle) * rngSpeed, Math.sin(rngAngle) * rngSpeed, 1000,color,size));
         }
     }
 
@@ -106,14 +118,6 @@ public class ParticleEmitter extends GameObject {
         } else {
             return angle;
         }
-    }
-
-    public PlayerObject getPlayerObject() {
-        return playerObject;
-    }
-
-    public void setPlayerObject(PlayerObject playerObject) {
-        this.playerObject = playerObject;
     }
 }
 

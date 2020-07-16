@@ -5,14 +5,15 @@ import javafx.scene.canvas.GraphicsContext;
 import stickfight2d.GameLoop;
 import stickfight2d.animation.Animation;
 import stickfight2d.animation.FrameData;
-import stickfight2d.controllers.CameraController;
 import stickfight2d.controllers.AnimationFactory;
+import stickfight2d.controllers.CameraController;
 import stickfight2d.enums.AnimationType;
 import stickfight2d.enums.DirectionType;
+import stickfight2d.enums.ParticleType;
+import stickfight2d.enums.PlayerType;
+import stickfight2d.interfaces.ParticleOwner;
 
-import java.awt.*;
-
-public class SwordObject extends GameObject {
+public class SwordObject extends GameObject implements ParticleOwner {
 
     private Animation animation = AnimationFactory.getInstance().getAnimation(AnimationType.SWORD);
     private PlayerObject playerObject;
@@ -28,6 +29,7 @@ public class SwordObject extends GameObject {
     private int y0 = 0;
 
     private double diffSeconds = 0;
+    private double particleTimer = 0;
     private double timePassedGround = 0;
     private double bounceOffSet = 0;
     private double timePassedAir;
@@ -40,7 +42,7 @@ public class SwordObject extends GameObject {
         this.onGround = false;
         this.throwing = false;
         this.playerObject = playerObject;
-        this.vx = 150;
+        this.vx = 200;
 
         if (playerObject != null) {
             this.directionType = playerObject.getDirectionType();
@@ -53,12 +55,13 @@ public class SwordObject extends GameObject {
     public void update(long diffSeconds) {
         this.diffSeconds = diffSeconds;
 
-        updateAngle();                                          // Updating Angle
+        updateAngle();                                              // Updating Angle
         if (!onGround) {
             if(playerObject != null){
                 directionType = playerObject.getDirectionType();    // Updating Direction
             }
-            animation.update(diffSeconds);                      // Updating Animation
+            animation.update(diffSeconds);                          // Updating Animation
+            updateFireParticles();                                // Update Fire Particles
         }
         updateCoordinates();
     }
@@ -122,6 +125,35 @@ public class SwordObject extends GameObject {
         }
 
     }
+
+
+    private void updateFireParticles(){
+        particleTimer += diffSeconds;
+
+        if (!onGround) {
+            if (particleTimer > 300) {
+                int x_ = 0;
+                int y_ = (int) (y + (animation.getCurrentFrame().getSwordEndPoint().getY()));
+
+                if(directionType == DirectionType.RIGHT) {
+                    x_ = (int) (x + animation.getCurrentFrame().getSwordEndPoint().getX());
+                }else{
+                    x_ = (int) (x - animation.getCurrentFrame().getSwordEndPointInverted().getX());
+                }
+
+                /* For debugging
+                if(playerObject.getPlayerNumber() == PlayerType.PLAYER_ONE)
+                    System.out.println("X="+x_+" | PlayerX="+playerObject.x+" + PlayerSwordStartPointX="+
+                            (int) playerObject.getAnimation().getCurrentFrame().getSwordStartPoint().getX()+" - SwordSwordStartPointX="+
+                            (int) animation.getCurrentFrame().getSwordStartPoint().getX()+" + SwordSwordEndPointX="+endPoint.getX()+" Angle="+animation.getCurrentFrame().getAngle());
+                */
+
+                GameLoop.currentLevel.addGameObject(new ParticleEmitter(ParticleType.SWORD_FIRE, null, x_, y_, 200, 30, 5, 5, 90, 50, "#fc5a03", 1));
+                particleTimer = 0;
+            }
+        }
+    }
+
 
     private void update_x(){
         if(directionType == DirectionType.RIGHT){
@@ -266,5 +298,10 @@ public class SwordObject extends GameObject {
                 ", onGround=" + onGround +
                 ", throwing=" + throwing +
                 '}';
+    }
+
+    @Override
+    public boolean isClearCondition() {
+        return false;
     }
 }

@@ -7,11 +7,9 @@ import stickfight2d.GameLoop;
 import stickfight2d.animation.Animation;
 import stickfight2d.animation.FrameData;
 import stickfight2d.controllers.*;
-import stickfight2d.enums.AnimationType;
-import stickfight2d.enums.DirectionType;
-import stickfight2d.enums.PlayerType;
-import stickfight2d.enums.SoundType;
+import stickfight2d.enums.*;
 import stickfight2d.interfaces.InputSystem;
+import stickfight2d.interfaces.ParticleOwner;
 import stickfight2d.misc.Config;
 import stickfight2d.misc.Debugger;
 import stickfight2d.misc.KeySet;
@@ -26,7 +24,7 @@ import java.util.stream.Stream;
 import static stickfight2d.enums.AnimationType.*;
 import static stickfight2d.misc.Config.*;
 
-public class PlayerObject extends MoveableObject implements InputSystem {
+public class PlayerObject extends MoveableObject implements InputSystem, ParticleOwner {
 
     private final KeyController keyCon = KeyController.getInstance();
     private final AnimationFactory animCon = AnimationFactory.getInstance();
@@ -41,6 +39,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private boolean onGround;
     private boolean alive;
     private boolean deadAndMapChanged = false;
+    private int fistCounter = 0; // DON'T JUDGE, NAME IS FINE
+    private int fistTimer = 0;
 
     private final boolean[] spread_blood = new boolean[10];
 
@@ -100,6 +100,15 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         } else {
             vy = 0;
             y = currentObstacleStanding.getY() - playerOffset;
+        }
+
+        // Reset fistCount if it takes too long
+        if (fistCounter > 0) {
+            fistTimer += diffMillis;
+            if (fistTimer > 3000) {
+                fistTimer = 0;
+                fistCounter = 0;
+            }
         }
     }
 
@@ -168,38 +177,47 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
     private void checkCollisions() {
-
         CollisionController colCon = CollisionController.getInstance();
+        // Updating onGround boolean
         onGround = colCon.getPlayerOnGround(this.playerNumber);
 
-        // Player getting hit by other player
+        // Player getting hit by another player
         if (colCon.getPlayerHit(this.playerNumber) && alive && !colCon.isAttackBlocked()) {
-            Debugger.log(playerNumber + " got hit");
+
             alive = false;
             time_passed = 0;
 
+            // Block player key presses
             switch (playerNumber) {
                 case PLAYER_ONE -> keyCon.setKeyPressBlockedP1(true);
                 case PLAYER_TWO -> keyCon.setKeyPressBlockedP2(true);
             }
 
-            keyCon.removePlayerKeyPress(this);   // only clear player specific keys
+            // Clear player specific key presses
+            keyCon.removePlayerKeyPress(this);
 
-            if (swordObject != null) {    // only if PLAYER has a sword
+            // Sword falls to ground if player has one
+            if (swordObject != null) {
                 swordObject.fallToGround();
                 this.swordObject = null;
             }
             animation = animCon.getAnimation(PLAYER_DYING);
 
-            if (new Random().nextBoolean()) {
-                soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_HIT_BODY_1).play(volume);
-            } else {
-                soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_HIT_BODY_2).play(volume);
+            // Playing one random sound of two available when player dies by hit
+            if (colCon.getOtherPlayer(this.playerNumber).animation.getAnimationType() != PLAYER_STAB_NO_SWORD) {
+                if (new Random().nextBoolean()) {
+                    soundCon.getSound(SoundType.SOUND_HIT_BODY_1).play(volume);
+                } else {
+                    soundCon.getSound(SoundType.SOUND_HIT_BODY_2).play(volume);
+                }
+            }else{
+                if (new Random().nextBoolean()) {
+                    soundCon.getSound(SoundType.SOUND_HIT_BODY_FIST_VOCAL_1).play(volume);
+                } else {
+                    soundCon.getSound(SoundType.SOUND_HIT_BODY_FIST_VOCAL_2).play(volume);
+                }
             }
 
-            if (animation.getAnimationType() == PLAYER_DYING) {
-                Debugger.log("player dieing");
-            }
         } else if (colCon.isAttackBlocked()) {      // Player defending with holdup
             if (!colCon.getPlayerHitsWallRight(this.playerNumber) && !colCon.getPlayerHitsWallLeft(this.playerNumber)) {
 
@@ -210,7 +228,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 Point2D collisionPoint = colCon.getSwordCollisionPoint();
                 int x_ = (int) collisionPoint.getX();
                 int y_ = (int) collisionPoint.getY();
-                GameLoop.currentLevel.addGameObject(new ParticleEmitter(this, x_, y_, 50, 100, 2, 10, 180, 60, "0xd4af37", 2));
+                GameLoop.currentLevel.addGameObject(new ParticleEmitter(ParticleType.SWORD_COLLISION,this, x_, y_, 50, 100, 2, 10, 180, 60, "0xd4af37", 2));
 
                 // Knock back
                 switch (directionType) {
@@ -221,6 +239,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         }
 
         /*
+        // TODO
         // If the player runs against the wall, stop the movement and change direction
         if(colCon.getPlayerHitsWallRight(this.playerNumber) || colCon.getPlayerHitsWallLeft(this.playerNumber)){
             if(swordObject == null){
@@ -236,7 +255,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
         }
         */
-
 
 
         // Player's sword hitting another player's sword
@@ -256,16 +274,15 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                     soundCon.getSound(SoundType.SOUND_SWORD_HIT_SWORD).play(volume);
                 }
 
-
-
+                // Particles for sword collision
                 if(swordCollisionParticles){
                     Point2D collisionPoint = colCon.getSwordCollisionPoint();
                     int x_ = (int) collisionPoint.getX();
                     int y_ = (int) collisionPoint.getY();
-                    GameLoop.currentLevel.addGameObject(new ParticleEmitter(this, x_, y_, 50, 100, 2, 10, 180, 60, "0xd4af37", 2));
+                    GameLoop.currentLevel.addGameObject(new ParticleEmitter(ParticleType.SWORD_COLLISION,this, x_, y_, 50, 100, 2, 10, 180, 60, "0xd4af37", 2));
                 }
 
-
+                // Knock back while swords hitting
                 if (!colCon.getPlayerHitsWallRight(playerNumber) && !colCon.getPlayerHitsWallLeft(playerNumber)) {
                     switch (directionType) {
                         case LEFT -> this.x = x + KNOCKBACK_VALUE;
@@ -276,32 +293,6 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         }
 
     }
-
-/*
-    private void createSwordCollisionParticles(PlayerObject p) {
-        double x_ = 0;
-        double y_ = 0;
-
-        switch (p.swordObject.directionType) {
-            case LEFT -> {
-                x_ = p.x + p.animation.getCurrentFrame().getSwordStartPointInverted().getX()
-                        - (int) p.swordObject.getAnimation().getCurrentFrame().getSwordStartPointInverted().getX()
-                        + (64 - p.swordObject.getSwordTip().getX());
-                y_ = p.x + p.animation.getCurrentFrame().getSwordStartPointInverted().getY()
-                        - (int) p.swordObject.getAnimation().getCurrentFrame().getSwordStartPointInverted().getY()
-                        + (64 - p.swordObject.getSwordTip().getY());
-            }
-            case RIGHT -> {
-                x_ = p.x + p.animation.getCurrentFrame().getSwordStartPoint().getX()
-                        - (int) p.swordObject.getAnimation().getCurrentFrame().getSwordStartPoint().getX()
-                        + p.swordObject.getSwordTip().getX();
-                y_ = p.y + p.animation.getCurrentFrame().getSwordStartPoint().getY()
-                        - (int) p.swordObject.getAnimation().getCurrentFrame().getSwordStartPoint().getY()
-                        + p.swordObject.getSwordTip().getY();
-            }
-        }
-    }
-*/
 
     private void handleDeathAnimation(double diffMillis) {
 
@@ -328,8 +319,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 int yOffset = (int) bloodPoints[i].getY();
 
                 switch (directionType) {
-                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(this, x, y + yOffset,30, 300, 2, 10, 180, 60, "0xFF0000", 4));
-                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(this, x + xOffset, y + yOffset, 30, 300, 2, 10, 180, 60, "0xFF0000", 4));
+                    case LEFT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(ParticleType.BLOOD,this, x, y + yOffset,30, 300, 2, 10, 180, 60, "0xFF0000", 4));
+                    case RIGHT -> GameLoop.currentLevel.addGameObject(new ParticleEmitter(ParticleType.BLOOD,this, x + xOffset, y + yOffset, 30, 300, 2, 10, 180, 60, "0xFF0000", 4));
                 }
                 spread_blood[i] = true;
             }
@@ -349,8 +340,19 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private void handleStabKey() {
         if (keyCon.isKeyPressed(keySet.getStabKey())) {
             switch (animation.getAnimationType()) {
-                case PLAYER_IDLE_LOW, PLAYER_IDLE_MEDIUM, PLAYER_IDLE_HIGH -> animation = animCon.getStabAnim(lastIdleAnimationType);
-                case PLAYER_IDLE_NO_SWORD -> animation = animCon.getAnimation(PLAYER_STAB_NO_SWORD);
+                case PLAYER_IDLE_LOW, PLAYER_IDLE_MEDIUM, PLAYER_IDLE_HIGH -> {
+                    animation = animCon.getStabAnim(lastIdleAnimationType);
+                    if (new Random().nextBoolean()) {
+                        soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_1).play(volume);
+                    } else {
+                        soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_2).play(volume);
+                    }
+                }
+                case PLAYER_IDLE_NO_SWORD -> {
+                    animation = animCon.getAnimation(PLAYER_STAB_NO_SWORD);
+                    // TODO: Add box sound without vocal
+                }
+
                 case PLAYER_WALK -> {
                     // Manual control is usually turned on while walking to the left / right
                     // by setting it to false here, the player always stabs towards his enemy
@@ -381,7 +383,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     private void handleMovementKeys(long diffMillis) {
 
-        // RIGHT
+        // RIGHT pressed
         if (keyCon.isKeyPressed(keySet.getMoveRightKey()) && !keyCon.isKeyPressed(keySet.getMoveLeftKey()) && !CollisionController.getInstance().getPlayerHitsWallLeft(this.playerNumber)) {
 
             x += speed * diffMillis / 10;
@@ -400,8 +402,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
         }
 
-
-        // LEFT
+        // LEFT pressed
         if (keyCon.isKeyPressed(keySet.getMoveLeftKey()) && !keyCon.isKeyPressed(keySet.getMoveRightKey()) && !CollisionController.getInstance().getPlayerHitsWallRight(this.playerNumber)) {
 
             x -= speed * diffMillis / 10;
@@ -419,6 +420,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
         }
 
+        // LEFT and RIGHT pressed
         if (keyCon.isKeyPressed(keySet.getMoveLeftKey()) && keyCon.isKeyPressed(keySet.getMoveRightKey())) {
             if (animation.getAnimationType() != lastIdleAnimationType) {
                 if (swordObject == null) {
@@ -431,6 +433,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             }
         }
 
+        // LEFT or RIGHT released
         if (keyCon.isKeyReleased(keySet.getMoveLeftKey()) || keyCon.isKeyReleased(keySet.getMoveRightKey())) {
             DirectionController.getInstance().setManualControl(this, false);
             if (swordObject == null) {
@@ -471,6 +474,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
     private void handleThrowing() {
+        // Only allowed while animation state is HOLD UP
         if (animation.getAnimationType() == PLAYER_IDLE_HOLD_UP) {
             if (keyCon.isKeyPressed(keySet.getStabKey())) {
                 if (swordObject != null) {
@@ -483,6 +487,7 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
 
     private void handleDownKey() {
+        // Pickup a sword from the ground
         if (keyCon.isKeyPressed(keySet.getDownKey())) {
             double t_pressed = keyCon.getKeyPressedTime(keySet.getDownKey());
 
@@ -496,6 +501,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
                 }
             }
         }
+
+        // Change sword height
         if (keyCon.isKeyReleased(keySet.getDownKey())) {
             AnimationType animType = animation.getAnimationType();
             if (animType == PLAYER_IDLE_HIGH) {
@@ -751,5 +758,19 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     public void setDeadAndMapChanged(boolean mapChanged) {
         this.deadAndMapChanged = mapChanged;
+    }
+
+
+    @Override
+    public boolean isClearCondition() {
+        return isDeadAndMapChanged();
+    }
+
+    public int getFistCounter() {
+        return this.fistCounter;
+    }
+
+    public void setFistCounter(int counter) {
+        this.fistCounter = counter;
     }
 }

@@ -21,7 +21,7 @@ public class FrameData {
     private ArrayList<Point2D> hitBox;                  // Left and Right outline of the player
     private ArrayList<Point2D> hitBoxInverted;          // Same as hitBox but inverted
     private Point2D swordStartPoint, swordEndPoint;
-    private Point2D swordStartPointInverted;
+    private Point2D swordStartPointInverted, swordEndPointInverted;
     private int angle = 0;
 
     public FrameData(BufferedImage bufferedImage) {
@@ -73,30 +73,11 @@ public class FrameData {
         if(swordStartPoint != null){
             return swordStartPoint;
         }
-        throw new IllegalArgumentException("There is no swordEndPoint in Frame "+frameNumber+"! Possible Issues: wrong color code / missing green dot in sprite");
+        throw new IllegalArgumentException("There is no swordStartPoint in Frame "+frameNumber+"! Possible Issues: wrong color code / missing green dot in sprite");
     }
 
     public void setSwordStartPoint(Point2D swordStartPoint) {
         this.swordStartPoint = swordStartPoint;
-    }
-
-    public Point2D getSwordEndPoint() {
-        if(getSwordStartPoint() != null){
-            return swordEndPoint;
-        }
-        throw new IllegalArgumentException("Sword start Point is null in frame"+frameNumber+"!");
-    }
-
-    public void setSwordEndPoint(Point2D swordEndPoint) {
-        this.swordEndPoint = swordEndPoint;
-    }
-
-    public int getAngle() {
-        return angle;
-    }
-
-    public void setAngle(int angle) {
-        this.angle = angle;
     }
 
     public Point2D getSwordStartPointInverted(){
@@ -108,6 +89,33 @@ public class FrameData {
 
     public void setSwordStartPointInverted(Point2D swordStartPointInverted) {
         this.swordStartPointInverted = swordStartPointInverted;
+    }
+
+    public Point2D getSwordEndPoint() {
+        if(swordEndPoint != null){
+            return swordEndPoint;
+        }
+        throw new IllegalArgumentException("Sword end Point is null in frame"+frameNumber+"!");
+    }
+
+    public void setSwordEndPoint(Point2D swordEndPoint) {
+        this.swordEndPoint = swordEndPoint;
+    }
+
+    public Point2D getSwordEndPointInverted() {
+        return swordEndPointInverted;
+    }
+
+    public void setSwordEndPointInverted(Point2D swordEndPointInverted) {
+        this.swordEndPointInverted = swordEndPointInverted;
+    }
+
+    public int getAngle() {
+        return angle;
+    }
+
+    public void setAngle(int angle) {
+        this.angle = angle;
     }
 
     public void setFrameNumber(int frameNumber) {
