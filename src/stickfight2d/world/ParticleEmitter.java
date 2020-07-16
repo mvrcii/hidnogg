@@ -35,7 +35,7 @@ public class ParticleEmitter extends GameObject {
         this.amount = amount;
         this.speed = speed;
         this.speedRandomness = speedRandomness;
-        this.angle = Math.toRadians(angle);
+        this.angle = angle;
         this.angleRandomness = angleRandomness;
         this.color = color;
         this.size = size;
@@ -66,7 +66,6 @@ public class ParticleEmitter extends GameObject {
                 if (p.y > Main.canvas.getHeight() || !p.alive) {
                     itr.remove();
                 }
-                //particles.removeIf(particle -> (particle.y > Main.canvas.getHeight() || !particle.alive));
 
             }
         }else{  // Remove Particle Emitter from GameObjects when finished
@@ -95,16 +94,18 @@ public class ParticleEmitter extends GameObject {
     public void emit(long diffMillis, int count) {
         Random rng = new Random();
 
+
         for (int i = 0; i < count; i++) {
             //TODO BUG: No continuous degree possible
             //TODO BUG: Particles left from emitter behave slightly differently than right from it
 
-            double rngAngle = randomAngleInvert(angle + Math.toRadians(rng.nextInt(angleRandomness) - angleRandomness / 2.0));//randomAngleInvert
-            double rngSpeed = (speed+continuousRng((totalTime+ (count-i)*diffMillis /(double)count)/150.0)*speedRandomness);//(continuousRng((totalTime)/100.0)*speedRandomness)
+            double rngAngle = randomAngleInvert(angle + rng.nextInt(angleRandomness) - angleRandomness / 2.0);//randomAngleInvert
+            double rngSpeed = (speed + continuousRng((totalTime + (count-i)*diffMillis/(double)count)/150.0) * speedRandomness - speedRandomness/2.0); //(continuousRng((totalTime)/100.0)*speedRandomness)
+            particles.add(new ParticleObject(particleType, x, y, Math.cos(Math.toRadians(rngAngle)) * rngSpeed, Math.sin(Math.toRadians(rngAngle)) * rngSpeed, 1000,color,size));
 
-            particles.add(new ParticleObject(particleType, x, y, Math.cos(rngAngle) * rngSpeed, Math.sin(rngAngle) * rngSpeed, 1000,color,size));
         }
     }
+
 
     private double continuousRng(double x) {
         //https://www.geogebra.org/graphing/yzgxvd8q adjusted so it gives continuous pseudo random numbers between 0 and 1
