@@ -208,7 +208,7 @@ public class PlayerObject extends MoveableObject implements InputSystem, Particl
                 if (new Random().nextBoolean()) {
                     soundCon.getSound(SoundType.SOUND_HIT_BODY_1).play(volume);
                 } else {
-                    soundCon.getSound(SoundType.SOUND_HIT_BODY_2).play(volume);
+//                    soundCon.getSound(SoundType.SOUND_HIT_BODY_2).play(volume);
                 }
             }else{
                 if (new Random().nextBoolean()) {

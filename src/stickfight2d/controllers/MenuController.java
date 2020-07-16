@@ -302,8 +302,8 @@ public class MenuController implements Controller {
                 this.onClick.run();
             });
             textField = new Text(text);
-            textField.setFill(Color.WHITE);
-            textField.setFont(Font.font("Verdana", 50));
+            textField.setFill(Config.FONT_COLOR);
+            textField.setFont(Font.loadFont(Config.FONT_PATH, 50));
 
             Rectangle bg = new Rectangle(400, textField.getLayoutBounds().getHeight() + 3);
             LinearGradient lg = new LinearGradient(0, 0, 1, 1, true, CycleMethod.NO_CYCLE, new Stop(0, Color.TRANSPARENT), new Stop(0.2, Color.GRAY), new Stop(0.8, Color.GRAY), new Stop(1, Color.TRANSPARENT));
@@ -374,8 +374,8 @@ public class MenuController implements Controller {
         public Title(String text) {
             this.text = text;
             Text t = new Text(text);
-            t.setFill(Color.WHITE);
-            t.setFont(Font.font("Verdana", 60));
+            t.setFill(Config.FONT_MENU);
+            t.setFont(Font.loadFont(Config.FONT_PATH, 60));
 
             Rectangle bg = new Rectangle(400, t.getLayoutBounds().getHeight() + 3);
             bg.setStrokeWidth(4);

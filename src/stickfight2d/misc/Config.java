@@ -1,6 +1,8 @@
 package stickfight2d.misc;
 
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import stickfight2d.animation.Animation;
 import stickfight2d.controllers.AnimationFactory;
 import stickfight2d.enums.AnimationType;
@@ -49,6 +51,10 @@ public class Config {
     public static boolean fps_print_mode = true;
     public static double volume = 0.05;
     public static double sfx_volume = 2*volume;
+    public static final String FONT_PATH = "file:src/caesar.ttf";
+    public static final Color FONT_COLOR = Color.WHITE;
+    public static final Color FONT_MENU = Color.CYAN;
+    public static final Color FONT_FPS = Color.ORANGERED;
 
     public Config(){
 

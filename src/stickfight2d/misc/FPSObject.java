@@ -30,8 +30,8 @@ public class FPSObject extends GameObject {
             displayText.setText("60 FPS");
             displayText.setX(stage.getWidth()-90);
             displayText.setY(25);
-            displayText.setFill(Color.AQUAMARINE);
-            displayText.setFont(Font.font("Verdana", 18));
+            displayText.setFill(Config.FONT_FPS);
+            displayText.setFont(Font.loadFont(Config.FONT_PATH, 18));
             Main.getRoot().getChildren().add(displayText);
 
     }

@@ -218,9 +218,6 @@ public class CollisionController implements Controller {
      * @return [true] if player1 hits player2 with his fists
      */
     private boolean checkCollisionFist(PlayerObject player1, PlayerObject player2, int p2_x_front, int p2_x_back) {
-        if (p1_prevState == AnimationType.PLAYER_STAB_NO_SWORD || p2_prevState == AnimationType.PLAYER_STAB_NO_SWORD)
-            return false;
-
         Point2D fist;
         Point2D fistStartPoint;
         int offsetHitBox = 0;

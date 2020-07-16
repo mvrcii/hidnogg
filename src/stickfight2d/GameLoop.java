@@ -12,6 +12,7 @@ import kuusisto.tinysound.TinySound;
 import stickfight2d.controllers.*;
 import stickfight2d.enums.SoundType;
 import stickfight2d.interfaces.InputSystem;
+import stickfight2d.misc.Config;
 import stickfight2d.world.GameObject;
 import stickfight2d.world.WorldObject;
 
@@ -46,7 +47,7 @@ public class GameLoop extends Thread implements Runnable {
 
         gameControllers.add(CollisionController.getInstance());
 
-        //gameControllers.add(MenuController.getInstance());
+        gameControllers.add(MenuController.getInstance());
         //Menu_Controller menu_controller = new Menu_Controller();
 
         currentMusic = SoundController.getInstance().getMusic(SoundType.MUSIC_THEME_INGAME); // Music theme
@@ -125,7 +126,7 @@ public class GameLoop extends Thread implements Runnable {
                 if (diffTimeMs / 1000 >= 2 && counterState == 0) {
                     counterState = 1;
                     counterText.setX(Main.getPrimaryStage().getWidth() / 2 - 90);
-                    counterText.setFont(Font.font("Verdana", 80));
+                    counterText.setFont(Font.loadFont(Config.FONT_PATH, 80));
                     counterText.setText("3");
                 } else if (diffTimeMs / 1000 >= 3 && counterState == 1) {
                     counterState = 2;
@@ -158,8 +159,8 @@ public class GameLoop extends Thread implements Runnable {
             counterBox.layoutYProperty().bind(Main.getPrimaryStage().heightProperty().divide(2).subtract(counterBox.heightProperty().divide(2)));
             counterText = new Text("Get ready!");
             counterText.setTextAlignment(TextAlignment.CENTER);
-            counterText.setFill(Color.LIGHTGREEN);
-            counterText.setFont(Font.font("Verdana", 50));
+            counterText.setFill(Config.FONT_COLOR);
+            counterText.setFont(Font.loadFont(Config.FONT_PATH, 50));
             counterBox.getChildren().add(counterText);
             Main.getRoot().getChildren().add(counterBox);
         });
