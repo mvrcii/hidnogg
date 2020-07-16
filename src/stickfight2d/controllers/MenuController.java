@@ -246,6 +246,7 @@ public class MenuController implements Controller {
             textArea.setPrefHeight(470);
             textArea.setPrefWidth(400);
             textArea.setStyle("-fx-control-inner-background:#D3D3D3;");
+            textArea.setFont(Font.loadFont("file:src/indian.ttf", 14));
             getChildren().add(textArea);
         }
 
