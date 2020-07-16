@@ -28,7 +28,7 @@ public class AnimationData {
     private static final int blue = new Color(0, 0, 255).getRGB();
 
     private static int previousGreen = 0;                                       // prevent multiple calculations of sword length
-
+    private int row;
     // Empty constructor
     public AnimationData() {}
 
@@ -36,6 +36,8 @@ public class AnimationData {
     public AnimationData(int row) {
         if(row < 0)
             return;
+
+        this.row = row;
 
         if (spriteSheet == null) {
             try {
@@ -78,16 +80,17 @@ public class AnimationData {
             // SwordStartPoint Normal and Inverted have to be set here, because there is a chance that the green color
             // value gets lost while rotating the sword
             newFrame.setSwordStartPoint(oldFrame.getSwordStartPoint());
-            newFrame.setSwordStartPointInverted(new Point2D(width_ -
-                    newFrame.getSwordStartPoint().getX(), newFrame.getSwordStartPoint().getY()));
+            newFrame.setSwordStartPointInverted(new Point2D(width_ - newFrame.getSwordStartPoint().getX(), newFrame.getSwordStartPoint().getY()));
 
             // Calculating new SwordEndPoint
+            double angle_ = Math.toRadians(angle);
             double x = oldFrame.getSwordEndPoint().getX();
             double y = oldFrame.getSwordEndPoint().getY();
-            double x_ = x * Math.cos(angle) - y * Math.sin(angle);
-            double y_ = x * Math.sin(angle) - y * Math.cos(angle);
-            newFrame.setSwordEndPoint(new Point2D(x_, y_));
+            double x_ = x * Math.cos(angle_) + y * Math.sin(angle_);
+            double y_ = y * Math.cos(angle_) - x * Math.sin(angle_);
 
+            newFrame.setSwordEndPoint(new Point2D(x_, y_));
+            newFrame.setSwordEndPointInverted(new Point2D(width_ - newFrame.getSwordEndPoint().getX(), newFrame.getSwordEndPoint().getY()));
             newFrameList.add(newFrame);
             i++;
         }
@@ -158,6 +161,7 @@ public class AnimationData {
                 // Setting the end mount point
                 else if (currentRGB == blue) {
                     frameData.setSwordEndPoint(new Point2D(col, row));
+                    frameData.setSwordEndPointInverted(new Point2D(bufferedImage.getWidth() - col, row));
                     frameData.getBufferedImage().setRGB(col, row, bufferedImage.getRGB(col - 1, row));
                 }
 

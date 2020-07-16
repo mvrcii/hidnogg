@@ -13,6 +13,7 @@ public class ParticleObject extends GameObject {
     protected ParticleType particleType;
     protected int lifetime;
     protected int lifetimeRemaining;
+    protected int alpha;
     protected boolean alive = true;
     protected boolean onGround = false;
     protected String color;
@@ -27,14 +28,18 @@ public class ParticleObject extends GameObject {
         this.lifetimeRemaining = lifetime;
         this.color = color;
         this.size = size;
+        this.alpha = 1;
     }
 
     @Override
     public void update(long diffMillis) {
         lifetimeRemaining -= diffMillis;
-        if (lifetimeRemaining < 0) {
+
+        if(lifetimeRemaining < 0) {
             alive = false;
-        } else {
+
+        }else{
+
             // Gravity after hitting the ground
             if (onGround) {
                 switch (particleType){
@@ -45,14 +50,16 @@ public class ParticleObject extends GameObject {
                 }
 
             }
+
             // Gravity while hitting the ground
             else if (collisionRectRect(this, GameLoop.currentLevel.getGround())) {
                 onGround = true;
             }
+
             // Gravity above the ground
             else {
                 switch (particleType){
-                    case SWORD_FIRE -> vy += (diffMillis / 20.0);   // no gravity
+                    case SWORD_FIRE -> vy *= 0.8;   // no gravity
                     default -> vy -= (diffMillis / 9.81);           // gravity
                 }
 
@@ -60,6 +67,7 @@ public class ParticleObject extends GameObject {
 
             y -= vy * diffMillis / 100.0;
             x += vx * diffMillis / 100.0;
+
         }
     }
 
