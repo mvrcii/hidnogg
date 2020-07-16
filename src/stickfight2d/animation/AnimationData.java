@@ -88,9 +88,7 @@ public class AnimationData {
             double y = oldFrame.getSwordEndPoint().getY();
             double x_ = x * Math.cos(angle_) + y * Math.sin(angle_);
             double y_ = y * Math.cos(angle_) - x * Math.sin(angle_);
-            if(angle == 2){
-                System.out.println("Angle Deg="+angle+"Angle Rad"+angle_+" X="+x+" Y="+y+" X'="+x_+" Y'="+y_);
-            }
+
             newFrame.setSwordEndPoint(new Point2D(x_, y_));
             newFrame.setSwordEndPointInverted(new Point2D(width_ - newFrame.getSwordEndPoint().getX(), newFrame.getSwordEndPoint().getY()));
             newFrameList.add(newFrame);

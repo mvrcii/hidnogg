@@ -199,6 +199,8 @@ public class PlayerObject extends MoveableObject implements InputSystem, Particl
                 } else {
                     soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_HIT_BODY_2).play(volume);
                 }
+            }else{
+                // FAUST SOUND
             }
 
         } else if (colCon.isAttackBlocked()) {      // Player defending with holdup

@@ -42,7 +42,7 @@ public class SwordObject extends GameObject implements ParticleOwner {
         this.onGround = false;
         this.throwing = false;
         this.playerObject = playerObject;
-        this.vx = 150;
+        this.vx = 200;
 
         if (playerObject != null) {
             this.directionType = playerObject.getDirectionType();
@@ -61,7 +61,7 @@ public class SwordObject extends GameObject implements ParticleOwner {
                 directionType = playerObject.getDirectionType();    // Updating Direction
             }
             animation.update(diffSeconds);                          // Updating Animation
-            updateFireParticles();                                // Update Fire Particles
+            //updateFireParticles();                                // Update Fire Particles
         }
         updateCoordinates();
     }
