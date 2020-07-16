@@ -12,11 +12,17 @@ import kuusisto.tinysound.TinySound;
 import stickfight2d.controllers.*;
 import stickfight2d.enums.SoundType;
 import stickfight2d.interfaces.InputSystem;
+import stickfight2d.world.*;
 import stickfight2d.misc.Config;
 import stickfight2d.world.GameObject;
 import stickfight2d.world.WorldObject;
 
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class GameLoop extends Thread implements Runnable {
@@ -48,7 +54,6 @@ public class GameLoop extends Thread implements Runnable {
         gameControllers.add(CollisionController.getInstance());
 
         gameControllers.add(MenuController.getInstance());
-        //Menu_Controller menu_controller = new Menu_Controller();
 
         currentMusic = SoundController.getInstance().getMusic(SoundType.MUSIC_THEME_INGAME); // Music theme
     }
@@ -88,6 +93,9 @@ public class GameLoop extends Thread implements Runnable {
 
 
     private void update(long diffMillis) {
+
+        //determineCurrentObjects();
+
         if(counterOn){
             diffTimeMs += diffMillis;
         }
@@ -110,6 +118,7 @@ public class GameLoop extends Thread implements Runnable {
     }
 
 
+
     private void draw() {
         for (GameObject obj : currentLevel.getGameObjects()) {
             Platform.runLater(() -> obj.draw(gc));
@@ -118,6 +127,37 @@ public class GameLoop extends Thread implements Runnable {
 
     private void clearScreen() {
         gc.clearRect(0, 0, Main.canvas.getWidth(), Main.canvas.getHeight());
+    }
+
+
+    private void determineCurrentObjects() {
+
+        Map<Class<? extends GameObject>, List<GameObject>> counted = currentLevel.getGameObjects().stream().collect(Collectors.groupingBy(gameObject -> {
+            if (gameObject instanceof RectangleObstacle) return RectangleObstacle.class;
+            if (gameObject instanceof PlayerObject) return PlayerObject.class;
+            if (gameObject instanceof SwordObject) return SwordObject.class;
+            if (gameObject instanceof ParticleEmitter) return ParticleEmitter.class;
+            if (gameObject instanceof BackgroundObject) return BackgroundObject.class;
+            return GameObject.class;
+        }));
+
+        int n = 0;
+        if(counted.get(ParticleEmitter.class) != null){
+            n = counted.get(ParticleEmitter.class).size();
+        }
+
+        System.out.println(MessageFormat.format("\nGameObjects {0}:" +
+                "\n{1} RectangleObstacle" +
+                "\n{2} PlayerObject" +
+                "\n{3} SwordObject" +
+                "\n{4} ParticleEmitter" +
+                "\n{5} BackgroundObject",
+                counted.values().stream().mapToInt(List::size).sum(),
+                counted.get(RectangleObstacle.class).size(),
+                counted.get(PlayerObject.class).size(),
+                counted.get(SwordObject.class).size(),
+                n,
+                counted.get(BackgroundObject.class).size()));
     }
 
     private void updateCounter(){

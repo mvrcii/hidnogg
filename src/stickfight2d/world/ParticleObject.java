@@ -59,7 +59,10 @@ public class ParticleObject extends GameObject {
             // Gravity above the ground
             else {
                 switch (particleType){
-                    case SWORD_FIRE -> vy *= 0.8;   // no gravity
+                    case SWORD_FIRE -> {
+                        vy *= 0.8;   // no gravity 0.8
+                        vx *= 0.9;  // 0.9
+                    }
                     default -> vy -= (diffMillis / 9.81);           // gravity
                 }
 

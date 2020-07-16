@@ -206,15 +206,15 @@ public class PlayerObject extends MoveableObject implements InputSystem, Particl
             // Playing one random sound of two available when player dies by hit
             if (colCon.getOtherPlayer(this.playerNumber).animation.getAnimationType() != PLAYER_STAB_NO_SWORD) {
                 if (new Random().nextBoolean()) {
-                    soundCon.getSound(SoundType.SOUND_HIT_BODY_1).play(volume);
+                    soundCon.getSound(SoundType.SOUND_HIT_BODY_1).play(sfx_volume);
                 } else {
-//                    soundCon.getSound(SoundType.SOUND_HIT_BODY_2).play(volume);
+                    //soundCon.getSound(SoundType.SOUND_HIT_BODY_2).play(sfx_volume);
                 }
             }else{
                 if (new Random().nextBoolean()) {
-                    soundCon.getSound(SoundType.SOUND_HIT_BODY_FIST_VOCAL_1).play(volume);
+                    soundCon.getSound(SoundType.SOUND_HIT_BODY_FIST_VOCAL_1).play(sfx_volume);
                 } else {
-                    soundCon.getSound(SoundType.SOUND_HIT_BODY_FIST_VOCAL_2).play(volume);
+                    soundCon.getSound(SoundType.SOUND_HIT_BODY_FIST_VOCAL_2).play(sfx_volume);
                 }
             }
 
@@ -222,7 +222,7 @@ public class PlayerObject extends MoveableObject implements InputSystem, Particl
             if (!colCon.getPlayerHitsWallRight(this.playerNumber) && !colCon.getPlayerHitsWallLeft(this.playerNumber)) {
 
                 // Sound Effect
-                soundCon.getSound(SoundType.SOUND_SWORD_HIT_SWORD).play(volume);
+                soundCon.getSound(SoundType.SOUND_SWORD_HIT_SWORD).play(sfx_volume);
 
                 // Particles
                 Point2D collisionPoint = colCon.getSwordCollisionPoint();
@@ -271,7 +271,7 @@ public class PlayerObject extends MoveableObject implements InputSystem, Particl
                     }
                     // HIT but not disarmed
                 }else{
-                    soundCon.getSound(SoundType.SOUND_SWORD_HIT_SWORD).play(volume);
+                    soundCon.getSound(SoundType.SOUND_SWORD_HIT_SWORD).play(sfx_volume);
                 }
 
                 // Particles for sword collision
@@ -342,15 +342,19 @@ public class PlayerObject extends MoveableObject implements InputSystem, Particl
             switch (animation.getAnimationType()) {
                 case PLAYER_IDLE_LOW, PLAYER_IDLE_MEDIUM, PLAYER_IDLE_HIGH -> {
                     animation = animCon.getStabAnim(lastIdleAnimationType);
+                    /*
                     if (new Random().nextBoolean()) {
-                        soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_1).play(volume);
+                        soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_1).play(sfx_volume);
                     } else {
-                        soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_2).play(volume);
+                        soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_2).play(sfx_volume);
                     }
+                    */
+                    soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_1).play(sfx_volume);
                 }
                 case PLAYER_IDLE_NO_SWORD -> {
                     animation = animCon.getAnimation(PLAYER_STAB_NO_SWORD);
-                    // TODO: Add box sound without vocal
+                    // TODO: Add box sound without vocal --> TEMPORARY
+                    soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_2).play(sfx_volume);
                 }
 
                 case PLAYER_WALK -> {
