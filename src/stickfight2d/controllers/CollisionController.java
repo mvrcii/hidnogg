@@ -48,7 +48,6 @@ public class CollisionController implements Controller {
             AnimationType.PLAYER_DYING,
             AnimationType.SWORD,
             AnimationType.PLAYER_IDLE_NO_SWORD,
-            //AnimationType.PLAYER_STAB_NO_SWORD,
             AnimationType.PLAYER_CROUCH,
             AnimationType.PLAYER_WIN).collect(Collectors.toCollection(HashSet::new));
     private static int swordLength = 0; // swordLength for sword-tip-calculation
@@ -138,7 +137,9 @@ public class CollisionController implements Controller {
         // Blocking (sword-start point)
         Point2D player2_block;
 
-        // Get relevant hitBox of player2 and swordTip-position of player1
+        /*
+         * Get relevant hitBox of player2 (normal or inverted) and swordTip-position of player1 (normal or inverted)
+         */
         if (player2.getDirectionType() == DirectionType.RIGHT) { // --> player1 direction must be Direction.LEFT
             hitBox_Player2 = player2.getAnimation().getCurrentFrame().getHitBox();
             offset_x *= (-1);
@@ -187,12 +188,21 @@ public class CollisionController implements Controller {
             }
         }
 
-        if (x_back == Integer.MIN_VALUE) // No collision possible, sword isn't on the same y position as the player
+        /*
+         * No collision possible, sword not on the same y position as the player
+         */
+        if (x_back == Integer.MIN_VALUE)
             return false;
 
-        if (player1.getAnimation().getAnimationType() == AnimationType.PLAYER_STAB_NO_SWORD) // Check Fist collision instead of sword collision
+        /*
+         * Check Fist collision instead of sword collision
+         */
+        if (player1.getAnimation().getAnimationType() == AnimationType.PLAYER_STAB_NO_SWORD)
             return checkCollisionFist(player1, player2, x_front, x_back);
 
+        /*
+         * Check Sword collision
+         */
         int firstSign = ((int) swordTip.getX() - ((x_front + player2.getX()) - offsetHitBox));
         int secondSign = ((int) swordTip.getX() - ((x_back + player2.getX()) - offsetHitBox));
 
@@ -201,6 +211,10 @@ public class CollisionController implements Controller {
 
 
     /**
+     * @param player1 Attacking player
+     * @param player2 Player who is being attacked
+     * @param p2_x_front x-position of front-hitBox outline
+     * @param p2_x_back x-position of back-hitBox outline
      * @return [true] if player1 hits player2 with his fists
      */
     private boolean checkCollisionFist(PlayerObject player1, PlayerObject player2, int p2_x_front, int p2_x_back) {
@@ -225,6 +239,8 @@ public class CollisionController implements Controller {
 
 
     /**
+     * @param player1 Player1
+     * @param player2 Player2
      * @return [true] if swords of players collide, [false] otherwise
      */
     private boolean checkCollisionSwordSword(PlayerObject player1, PlayerObject player2) {
@@ -431,6 +447,10 @@ public class CollisionController implements Controller {
     // ----------------------------------------------------------------------------------------------------
     // ---  calcRectHitBox
 
+    /**
+     * Finds the upper left and bottom right pixel of the player hitBox and calculates the
+     * width and height of the players rectangle hitBox
+     */
     private void calculatePlayerRectangleHitBox() {
         int x_min = Integer.MAX_VALUE, x_max = Integer.MIN_VALUE, y_min = Integer.MAX_VALUE, y_max = Integer.MIN_VALUE;
         ArrayList<Point2D> hitBoxPoints;
