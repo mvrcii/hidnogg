@@ -195,12 +195,16 @@ public class PlayerObject extends MoveableObject implements InputSystem, Particl
             // Playing one random sound of two available when player dies by hit
             if (colCon.getOtherPlayer(this.playerNumber).animation.getAnimationType() != PLAYER_STAB_NO_SWORD) {
                 if (new Random().nextBoolean()) {
-                    soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_HIT_BODY_1).play(volume);
+                    soundCon.getSound(SoundType.SOUND_HIT_BODY_1).play(volume);
                 } else {
-                    soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_HIT_BODY_2).play(volume);
+                    soundCon.getSound(SoundType.SOUND_HIT_BODY_2).play(volume);
                 }
             }else{
-                // FAUST SOUND
+                if (new Random().nextBoolean()) {
+                    soundCon.getSound(SoundType.SOUND_HIT_BODY_FIST_VOCAL_1).play(volume);
+                } else {
+                    soundCon.getSound(SoundType.SOUND_HIT_BODY_FIST_VOCAL_2).play(volume);
+                }
             }
 
         } else if (colCon.isAttackBlocked()) {      // Player defending with holdup
@@ -325,8 +329,19 @@ public class PlayerObject extends MoveableObject implements InputSystem, Particl
     private void handleStabKey() {
         if (keyCon.isKeyPressed(keySet.getStabKey())) {
             switch (animation.getAnimationType()) {
-                case PLAYER_IDLE_LOW, PLAYER_IDLE_MEDIUM, PLAYER_IDLE_HIGH -> animation = animCon.getStabAnim(lastIdleAnimationType);
-                case PLAYER_IDLE_NO_SWORD -> animation = animCon.getAnimation(PLAYER_STAB_NO_SWORD);
+                case PLAYER_IDLE_LOW, PLAYER_IDLE_MEDIUM, PLAYER_IDLE_HIGH -> {
+                    animation = animCon.getStabAnim(lastIdleAnimationType);
+                    if (new Random().nextBoolean()) {
+                        soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_1).play(volume);
+                    } else {
+                        soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_2).play(volume);
+                    }
+                }
+                case PLAYER_IDLE_NO_SWORD -> {
+                    animation = animCon.getAnimation(PLAYER_STAB_NO_SWORD);
+                    // TODO: Add box sound without vocal
+                }
+
                 case PLAYER_WALK -> {
                     // Manual control is usually turned on while walking to the left / right
                     // by setting it to false here, the player always stabs towards his enemy

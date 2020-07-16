@@ -61,7 +61,7 @@ public class SwordObject extends GameObject implements ParticleOwner {
                 directionType = playerObject.getDirectionType();    // Updating Direction
             }
             animation.update(diffSeconds);                          // Updating Animation
-            //updateFireParticles();                                // Update Fire Particles
+            updateFireParticles();                                // Update Fire Particles
         }
         updateCoordinates();
     }
@@ -148,7 +148,7 @@ public class SwordObject extends GameObject implements ParticleOwner {
                             (int) animation.getCurrentFrame().getSwordStartPoint().getX()+" + SwordSwordEndPointX="+endPoint.getX()+" Angle="+animation.getCurrentFrame().getAngle());
                 */
 
-                GameLoop.currentLevel.addGameObject(new ParticleEmitter(ParticleType.SWORD_FIRE, null, x_, y_, 100, 50, 2, 5, 90, 30, "#fc5a03", 3));
+                GameLoop.currentLevel.addGameObject(new ParticleEmitter(ParticleType.SWORD_FIRE, null, x_, y_, 200, 30, 5, 5, 90, 50, "#fc5a03", 1));
                 particleTimer = 0;
             }
         }
