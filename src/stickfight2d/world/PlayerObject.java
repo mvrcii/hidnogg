@@ -38,6 +38,8 @@ public class PlayerObject extends MoveableObject implements InputSystem {
     private boolean onGround;
     private boolean alive;
     private boolean deadAndMapChanged = false;
+    private int fistCounter = 0; // DON'T JUDGE, NAME IS FINE
+    private int fistTimer = 0;
 
     private final boolean[] spread_blood = new boolean[10];
 
@@ -97,6 +99,15 @@ public class PlayerObject extends MoveableObject implements InputSystem {
         } else {
             vy = 0;
             y = currentObstacleStanding.getY() - playerOffset;
+        }
+
+        // Reset fistCount if it takes too long
+        if (fistCounter > 0) {
+            fistTimer += diffMillis;
+            if (fistTimer > 3000) {
+                fistTimer = 0;
+                fistCounter = 0;
+            }
         }
     }
 
@@ -729,5 +740,13 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     public void setDeadAndMapChanged(boolean mapChanged) {
         this.deadAndMapChanged = mapChanged;
+    }
+
+    public int getFistCounter() {
+        return this.fistCounter;
+    }
+
+    public void setFistCounter(int counter) {
+        this.fistCounter = counter;
     }
 }

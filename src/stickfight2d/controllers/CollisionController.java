@@ -168,7 +168,7 @@ public class CollisionController implements Controller {
                 attackBlocked = (player2.getDirectionType() == DirectionType.RIGHT && swordTip.getX() <= player2.getX() + player2_block.getX() && player1.getX() > player2.getX())
                         || (player2.getDirectionType() == DirectionType.LEFT && swordTip.getX() >= player2.getX() + player2_block.getX() - offsetHitBox && player1.getX() < player2.getX());
 
-                if(attackBlocked)
+                if (attackBlocked)
                     swordCollisionPoint = new Point2D(swordTip.getX(), swordTip.getY());
             }
         }
@@ -211,18 +211,21 @@ public class CollisionController implements Controller {
 
 
     /**
-     * @param player1 Attacking player
-     * @param player2 Player who is being attacked
+     * @param player1    Attacking player
+     * @param player2    Player who is being attacked
      * @param p2_x_front x-position of front-hitBox outline
-     * @param p2_x_back x-position of back-hitBox outline
+     * @param p2_x_back  x-position of back-hitBox outline
      * @return [true] if player1 hits player2 with his fists
      */
     private boolean checkCollisionFist(PlayerObject player1, PlayerObject player2, int p2_x_front, int p2_x_back) {
+        if (p1_prevState == AnimationType.PLAYER_STAB_NO_SWORD || p2_prevState == AnimationType.PLAYER_STAB_NO_SWORD)
+            return false;
+
         Point2D fist;
         Point2D fistStartPoint;
         int offsetHitBox = 0;
 
-        if(player1.getDirectionType() == DirectionType.LEFT) {
+        if (player1.getDirectionType() == DirectionType.LEFT) {
             fistStartPoint = player1.getAnimation().getCurrentFrame().getSwordStartPointInverted();
             fist = new Point2D(player1.getX() + fistStartPoint.getX() - playersWidthHeight[0], player1.getY() + fistStartPoint.getY());
         } else {
@@ -234,7 +237,14 @@ public class CollisionController implements Controller {
         int firstSign = ((int) fist.getX() - ((p2_x_front + player2.getX()) - offsetHitBox));
         int secondSign = ((int) fist.getX() - ((p2_x_back + player2.getX()) - offsetHitBox));
 
-        return firstSign * secondSign <= 0; // Hit: negative or zero ; Miss: positive
+        if (firstSign * secondSign <= 0) { // Hit: negative or zero ; Miss: positive
+            player1.setFistCounter(player1.getFistCounter() + 1);
+            if (player1.getFistCounter() > 10) {
+                player1.setFistCounter(0);
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -273,7 +283,7 @@ public class CollisionController implements Controller {
         boolean onSameY = (swordTip1.getY() - 2 <= swordTip2.getY() && swordTip2.getY() <= swordTip1.getY() + 2);
         boolean onSameXInterval = (swordTip1.getX() - swordTip2.getX()) * (swordTip1.getX() - swordGrip2.getX()) <= 0;
 
-        if(onSameY && onSameXInterval) {
+        if (onSameY && onSameXInterval) {
             swordCollisionPoint = new Point2D(swordTip1.getX(), swordTip1.getY());
             return true;
         }
@@ -357,7 +367,7 @@ public class CollisionController implements Controller {
                 headBump = true;
 
             // Wall collisions
-            if(obstacle.getColor() != Color.RED) {
+            if (obstacle.getColor() != Color.RED) {
                 if (collisionRectRect(player, obstacle, playersWidthHeight[0], 0, 12, 12)) // Rect-Line collision >> Wall-right
                     hitsWallRight = true;
                 else if (collisionRectRect(player, obstacle, 0, playersWidthHeight[0], 12, 12)) // Rect-Line collision >> Wall-left
@@ -563,7 +573,7 @@ public class CollisionController implements Controller {
         return (type == PlayerType.PLAYER_TWO && disarming == 1) || (type == PlayerType.PLAYER_ONE && disarming == 2);
     }
 
-    public PlayerObject getOtherPlayer(PlayerType type){
+    public PlayerObject getOtherPlayer(PlayerType type) {
         return (type == PlayerType.PLAYER_ONE) ? players.get(1) : players.get(0);
     }
 
