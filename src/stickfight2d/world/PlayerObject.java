@@ -192,10 +192,12 @@ public class PlayerObject extends MoveableObject implements InputSystem {
             animation = animCon.getAnimation(PLAYER_DYING);
 
             // Playing one random sound of two available when player dies by hit
-            if (new Random().nextBoolean()) {
-                soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_HIT_BODY_1).play(volume);
-            } else {
-                soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_HIT_BODY_2).play(volume);
+            if (colCon.getOtherPlayer(this.playerNumber).animation.getAnimationType() != PLAYER_STAB_NO_SWORD) {
+                if (new Random().nextBoolean()) {
+                    soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_HIT_BODY_1).play(volume);
+                } else {
+                    soundCon.getSound(SoundType.SOUND_SWORD_SWING_FAST_HIT_BODY_2).play(volume);
+                }
             }
 
         } else if (colCon.isAttackBlocked()) {      // Player defending with holdup
