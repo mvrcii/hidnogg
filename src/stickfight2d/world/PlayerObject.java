@@ -9,6 +9,7 @@ import stickfight2d.animation.FrameData;
 import stickfight2d.controllers.*;
 import stickfight2d.enums.*;
 import stickfight2d.interfaces.InputSystem;
+import stickfight2d.interfaces.ParticleOwner;
 import stickfight2d.misc.Config;
 import stickfight2d.misc.Debugger;
 import stickfight2d.misc.KeySet;
@@ -23,7 +24,7 @@ import java.util.stream.Stream;
 import static stickfight2d.enums.AnimationType.*;
 import static stickfight2d.misc.Config.*;
 
-public class PlayerObject extends MoveableObject implements InputSystem {
+public class PlayerObject extends MoveableObject implements InputSystem, ParticleOwner {
 
     private final KeyController keyCon = KeyController.getInstance();
     private final AnimationFactory animCon = AnimationFactory.getInstance();
@@ -727,5 +728,11 @@ public class PlayerObject extends MoveableObject implements InputSystem {
 
     public void setDeadAndMapChanged(boolean mapChanged) {
         this.deadAndMapChanged = mapChanged;
+    }
+
+
+    @Override
+    public boolean isClearCondition() {
+        return isDeadAndMapChanged();
     }
 }
