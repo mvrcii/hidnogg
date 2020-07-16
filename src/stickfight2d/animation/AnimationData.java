@@ -104,7 +104,8 @@ public class AnimationData {
         AffineTransform affineTransform = new AffineTransform();
         affineTransform.rotate(-radian, anker.getX(), anker.getY());
 
-        AffineTransformOp affineTransformOp = new AffineTransformOp(affineTransform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        //AffineTransformOp affineTransformOp = new AffineTransformOp(affineTransform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        AffineTransformOp affineTransformOp = new AffineTransformOp(affineTransform, AffineTransformOp.TYPE_BILINEAR);
         BufferedImage rotated = new BufferedImage(bf.getWidth(), bf.getHeight(), bf.getType());
         return affineTransformOp.filter(bf, rotated);
     }
