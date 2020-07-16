@@ -243,7 +243,7 @@ public class MenuController implements Controller {
             textArea.setEditable(false);
             textArea.setWrapText(true);
             textArea.setText(Config.CREDITS);
-            textArea.setPrefHeight(470);
+            textArea.setPrefHeight(770);
             textArea.setPrefWidth(400);
             textArea.setStyle("-fx-control-inner-background:#D3D3D3;");
             textArea.setFont(Font.loadFont("file:src/indian.ttf", 14));

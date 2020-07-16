@@ -27,11 +27,12 @@ public class Config {
     // MAIN MENU
     public static final String CREDITS = "Team:\n" +
             "Andreas Schermann\tHitBoxes, Collision detection,\n" +
-            "\t\t\t\t\tMap obstacles/boundaries \n" +
-            "Erwin Kenner\t\t\tGeneral Artwork \n" +
-            "Marcel Roth\t\t\tManagement, Animation, Programming \n" +
-            "Marcus Waibel\t\t\tCameraController, Sounds\n" +
-            "Pascal Schaeffer\t\tMenus, Blood particles, Jump physics\n" +
+            "\t\t\tMap obstacles/boundaries \n" +
+            "Erwin Kenner\t\tGeneral Artwork \n" +
+            "Marcel Roth\t\tManagement, Animation, \n" +
+            "\t\t\tProgramming  \n" +
+            "Marcus Waibel\t\tCameraController, Sounds\n" +
+            "Pascal Schaeffer\tMenus, Blood particles, Jump physics\n" +
             "\n" +
             "The Idea:\n" +
             "They might be 5 inches thick, but they are 17 inches of stupid. After peaceful negotiation breaks down, violence erupts. \n" +
@@ -39,12 +40,14 @@ public class Config {
             "Stick Fight is a physics-based local fighting game where you battle it out as the iconic stick figures from the golden age of the internet. Fight it out against your friends!\n" +
             "\n" +
             "Game Description:\n" +
-            "-\tChallenge your friends to a one versus one budget fight\n" +
+            "-\tChallenge your friends to a one versus one budget\n" +
+            "\tfight  \n" +
             "-\tStab your friends without getting arrested\n" +
             "-\tLocal multiplayer, shared screen\n" +
             "-\tPhysics based combat system\n" +
             "-\tPixel accurate hitboxes\n" +
-            "-\tFast paced melee combat with exciting highs and lows and close calls\n";
+            "-\tFast paced melee combat with exciting highs and \n"+
+            "\tlows and close calls  \n";
 
     // MISC
     public static boolean debug_mode = false;
