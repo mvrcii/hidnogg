@@ -3,7 +3,6 @@ package stickfight2d;
 import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -12,12 +11,9 @@ import kuusisto.tinysound.TinySound;
 import stickfight2d.controllers.*;
 import stickfight2d.enums.SoundType;
 import stickfight2d.interfaces.InputSystem;
-import stickfight2d.world.*;
 import stickfight2d.misc.Config;
-import stickfight2d.world.GameObject;
-import stickfight2d.world.WorldObject;
+import stickfight2d.world.*;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +92,7 @@ public class GameLoop extends Thread implements Runnable {
 
         //determineCurrentObjects();
 
-        if(counterOn){
+        if (counterOn) {
             diffTimeMs += diffMillis;
         }
 
@@ -116,7 +112,6 @@ public class GameLoop extends Thread implements Runnable {
         currentLevel.refreshGameObjects();
         updateCounter();
     }
-
 
 
     private void draw() {
@@ -142,16 +137,16 @@ public class GameLoop extends Thread implements Runnable {
         }));
 
         int n = 0;
-        if(counted.get(ParticleEmitter.class) != null){
+        if (counted.get(ParticleEmitter.class) != null) {
             n = counted.get(ParticleEmitter.class).size();
         }
 
         System.out.println(MessageFormat.format("\nGameObjects {0}:" +
-                "\n{1} RectangleObstacle" +
-                "\n{2} PlayerObject" +
-                "\n{3} SwordObject" +
-                "\n{4} ParticleEmitter" +
-                "\n{5} BackgroundObject",
+                        "\n{1} RectangleObstacle" +
+                        "\n{2} PlayerObject" +
+                        "\n{3} SwordObject" +
+                        "\n{4} ParticleEmitter" +
+                        "\n{5} BackgroundObject",
                 counted.values().stream().mapToInt(List::size).sum(),
                 counted.get(RectangleObstacle.class).size(),
                 counted.get(PlayerObject.class).size(),
@@ -160,7 +155,7 @@ public class GameLoop extends Thread implements Runnable {
                 counted.get(BackgroundObject.class).size()));
     }
 
-    private void updateCounter(){
+    private void updateCounter() {
         Platform.runLater(() -> {
             if (counterOn) {
                 if (diffTimeMs / 1000 >= 2 && counterState == 0) {

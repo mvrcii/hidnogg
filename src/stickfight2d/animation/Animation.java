@@ -17,7 +17,7 @@ public class Animation {
         this.animationType = type;
         this.animationData = animationData;
         this.currentFrame = 0;
-        this.totalFrames = animationData.getFrames().size();
+        this.totalFrames = animationData != null ? animationData.getFrames().size() : 0;
         this.animationTimer = 0;
     }
 

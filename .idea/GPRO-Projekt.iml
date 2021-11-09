@@ -8,6 +8,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="lib1" level="project" />
+    <orderEntry type="library" exported="" name="JavaFx" level="project" />
+    <orderEntry type="library" exported="" name="tinySound" level="project" />
   </component>
 </module>
