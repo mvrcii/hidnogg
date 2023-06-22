@@ -1,4 +1,4 @@
-# Definitely-not-HidNogg.github.io
+# hidnogg
 
 **Run Configuration:**
 Add the following line of code to the VM-Options:
